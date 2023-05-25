@@ -2,3 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    :root {
+        @apply font-sans text-stone-200;
+    }
+
+    body {
+        @apply flex w-screen h-screen justify-center items-center bg-zinc-800;
+    }
+}
