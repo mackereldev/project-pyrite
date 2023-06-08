@@ -61,6 +61,6 @@
                 </RadioButtonGroup>
             </fieldset>
         </div>
-        <button id="create-room" on:click={createRoom} class="self-end w-fit h-fit px-4 py-1 mt-6 text-lg text-violet-100 font-medium text-center bg-violet-500 rounded-lg transition-all hover:text-violet-50 hover:bg-violet-400"> Create Room </button>
+        <button id="create-room" on:click={createRoom} class="self-end w-fit h-fit px-4 py-1 mt-6 text-lg text-zinc-100 font-medium text-center bg-violet-500 rounded-lg transition-all hover:text-zinc-50 hover:bg-violet-400"> Create Room </button>
     </div>
 </div>
