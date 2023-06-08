@@ -4,14 +4,19 @@
 
 @layer base {
     :root {
-        @apply font-sans text-zinc-600 duration-75;
+        @apply text-zinc-600 duration-75;
     }
 
     body {
         @apply flex w-screen h-screen justify-center items-center bg-zinc-50;
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         @apply text-zinc-700;
     }
 }
