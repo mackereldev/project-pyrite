@@ -4,8 +4,8 @@
     import RadioButton from "../lib/components/RadioButton.svelte";
 
     let joinCode: string = "";
-    let maxLatency = 100;
-    let maxClients = 2;
+    let maxLatency = 500;
+    let maxClients = 4;
 
     const validateJoinCodeNumerical = () => {
         joinCode = joinCode.replace(/\D/g, "");
