@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Input from "../lib/components/Input.svelte";
-    import RadioButtonGroup from "../lib/components/RadioButtonGroup.svelte";
-    import RadioButton from "../lib/components/RadioButton.svelte";
+    import Input from "$lib/components/Input.svelte";
+    import RadioButtonGroup from "$lib/components/RadioButtonGroup.svelte";
+    import RadioButton from "$lib/components/RadioButton.svelte";
 
     const JOIN_CODE_LENGTH = 6;
     let joinInput: HTMLInputElement;
