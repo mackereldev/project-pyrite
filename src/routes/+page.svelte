@@ -2,6 +2,7 @@
     import Input from "$lib/components/Input.svelte";
     import RadioButtonGroup from "$lib/components/RadioButtonGroup.svelte";
     import RadioButton from "$lib/components/RadioButton.svelte";
+    import Button from "$lib/components/Button.svelte";
 
     const JOIN_CODE_LENGTH = 6;
     let joinInput: HTMLInputElement;
@@ -64,6 +65,6 @@
                 </RadioButtonGroup>
             </fieldset>
         </div>
-        <button id="create-room" on:click={createRoom} class="self-end w-fit h-fit px-4 py-1 mt-6 text-lg text-zinc-100 font-medium text-center bg-violet-500 rounded-lg transition-all hover:text-zinc-50 hover:bg-violet-400"> Create Room </button>
+        <Button highlight class="self-end">Create Room</Button>
     </div>
 </div>
