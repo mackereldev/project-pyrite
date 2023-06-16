@@ -44,7 +44,7 @@
         <h1 class="text-center font-bold text-2xl mb-4">Host</h1>
         <div class="flex flex-col">
             <fieldset>
-                <legend class="text-lg font-bold">Maximum Latency</legend>
+                <legend class="text-lg font-light">Maximum Latency</legend>
                 <RadioButtonGroup>
                     <RadioButton name="max-latency" bind:group={maxLatency} label="100" value={100} />
                     <RadioButton name="max-latency" bind:group={maxLatency} label="250" value={250} />
@@ -56,7 +56,7 @@
         </div>
         <div class="flex flex-col">
             <fieldset>
-                <legend class="text-lg font-bold">Maximum Clients</legend>
+                <legend class="text-lg font-light">Maximum Clients</legend>
                 <RadioButtonGroup>
                     <RadioButton name="max-clients" bind:group={maxClients} label="2" value={2} />
                     <RadioButton name="max-clients" bind:group={maxClients} label="4" value={4} />
