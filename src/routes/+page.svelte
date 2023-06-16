@@ -39,7 +39,7 @@
             </button>
         </form>
     </div>
-    <div class="block w-px flex-grow bg-zinc-300" />
+    <div class="w-px flex-grow bg-zinc-300" />
     <div class="flex flex-col gap-2 w-64">
         <h1 class="text-center font-bold text-2xl mb-4">Host</h1>
         <div class="flex flex-col">

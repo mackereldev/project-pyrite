@@ -17,7 +17,7 @@
 <div class="flex flex-col items-center justify-center gap-12">
     <div class="flex flex-row items-center justify-center gap-4">
         <h1 class="text-5xl font-light">{$page.status}</h1>
-        <div class="block w-px h-12 flex-grow bg-zinc-300" />
+        <div class="w-px h-12 flex-grow bg-zinc-300" />
         <span class="text-lg">{statusDesc}</span>
     </div>
     <Button on:click={() => goto("/")} class="absolute top-[60%]">Return Home</Button>
