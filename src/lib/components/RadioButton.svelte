@@ -5,10 +5,10 @@
     export let group = -1;
 </script>
 
-<div class="relative flex-grow h-full">
-    <input type="radio" {name} {value} bind:group={group} class="peer appearance-none w-full h-full bg-zinc-100 transition-colors hover:bg-zinc-200 checked:bg-violet-500 hover:checked:bg-violet-600">
-    <div class="group absolute flex top-0 left-0 w-full h-full items-center pointer-events-none">
-        <div class="transition-colors peer-checked:group-[]:text-zinc-100 flex-grow text-center text-sm">
+<div class="relative h-full flex-grow">
+    <input type="radio" {name} {value} bind:group class="peer h-full w-full appearance-none bg-zinc-100 transition-colors checked:bg-violet-500 hover:bg-zinc-200 hover:checked:bg-violet-600" />
+    <div class="group pointer-events-none absolute left-0 top-0 flex h-full w-full items-center">
+        <div class="flex-grow text-center text-sm transition-colors peer-checked:group-[]:text-zinc-100">
             {label}
         </div>
     </div>

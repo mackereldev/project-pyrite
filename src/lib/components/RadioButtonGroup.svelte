@@ -1,3 +1,3 @@
-<div class="{$$props.class || ''} flex gap-px min-w-[8rem] h-9 overflow-clip rounded-lg bg-zinc-200 ring-1 ring-zinc-400">
+<div class="{$$props.class || ''} flex h-9 min-w-[8rem] gap-px overflow-clip rounded-lg bg-zinc-200 ring-1 ring-zinc-400">
     <slot />
 </div>

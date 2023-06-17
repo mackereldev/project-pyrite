@@ -28,11 +28,11 @@
 </script>
 
 <div class="flex flex-row gap-8">
-    <div class="flex flex-col gap-2 justify-center">
-        <h1 class="text-center font-bold text-2xl mb-4">Join</h1>
-        <form on:submit|preventDefault={joinRoom} class="flex flex-row w-48 h-fit overflow-clip ring-input">
-            <Input minlength={JOIN_CODE_LENGTH} maxlength={JOIN_CODE_LENGTH} min="0" bind:element={joinInput} bind:value={joinCode} on:input={validateJoinCodeNumerical} placeholder="Enter Code" required omitRingStyle class="flex-grow w-full h-9" />
-            <button type="submit" class="group flex box-content items-center w-8 px-0.5 bg-zinc-100 transition-colors hover:bg-violet-500">
+    <div class="flex flex-col justify-center gap-2">
+        <h1 class="mb-4 text-center text-2xl font-bold">Join</h1>
+        <form on:submit|preventDefault={joinRoom} class="ring-input flex h-fit w-48 flex-row overflow-clip">
+            <Input minlength={JOIN_CODE_LENGTH} maxlength={JOIN_CODE_LENGTH} min="0" bind:element={joinInput} bind:value={joinCode} on:input={validateJoinCodeNumerical} placeholder="Enter Code" required omitRingStyle class="h-9 w-full flex-grow" />
+            <button type="submit" class="group box-content flex w-8 items-center bg-zinc-100 px-0.5 transition-colors hover:bg-violet-500">
                 <svg viewBox="0 0 24 24" class="fill-zinc-400 transition-colors group-hover:fill-zinc-100">
                     <path d="M12.1714 10.9998L7.51451 6.34292L8.92872 4.92871L15.9998 11.9998L8.92872 19.0708L7.51451 17.6566L12.1713 12.9998L2.99953 12.9999L2.99951 10.9999L12.1714 10.9998ZM17.9996 18.9997L17.9996 4.99972H19.9996L19.9996 18.9997H17.9996Z" />
                 </svg>
@@ -40,8 +40,8 @@
         </form>
     </div>
     <div class="w-px flex-grow bg-zinc-300" />
-    <div class="flex flex-col gap-2 w-64">
-        <h1 class="text-center font-bold text-2xl mb-4">Host</h1>
+    <div class="flex w-64 flex-col gap-2">
+        <h1 class="mb-4 text-center text-2xl font-bold">Host</h1>
         <div class="flex flex-col">
             <fieldset>
                 <legend class="text-lg font-light">Maximum Latency</legend>

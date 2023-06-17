@@ -10,4 +10,4 @@
     export let element: HTMLInputElement | null = null;
 </script>
 
-<input {minlength} {maxlength} {min} {max} {placeholder} {required} bind:this={element} bind:value={value} on:input class="{$$props.class || ''} w-64 h-8 px-3 placeholder:text-zinc-300 text-lg font-medium text-center bg-zinc-100 transition-all {!omitRingStyle && "ring-input"}"/>
+<input {minlength} {maxlength} {min} {max} {placeholder} {required} bind:this={element} bind:value on:input class="{$$props.class || ''} h-8 w-64 bg-zinc-100 px-3 text-center text-lg font-medium transition-all placeholder:text-zinc-300 {!omitRingStyle && 'ring-input'}" />

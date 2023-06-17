@@ -8,11 +8,11 @@
     }
 
     * {
-        @apply outline-none
+        @apply outline-none;
     }
 
     body {
-        @apply flex w-screen h-screen justify-center items-center bg-zinc-50;
+        @apply flex h-screen w-screen items-center justify-center bg-zinc-50;
     }
 
     h1,
@@ -27,6 +27,6 @@
 
 @layer components {
     .ring-input {
-        @apply rounded-lg ring-1 ring-zinc-400 transition-all focus-within:ring-violet-500 focus-within:ring-[1.5px]
+        @apply rounded-lg ring-1 ring-zinc-400 transition-all focus-within:ring-[1.5px] focus-within:ring-violet-500;
     }
 }
