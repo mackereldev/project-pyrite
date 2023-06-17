@@ -4,9 +4,9 @@ import type { PageLoad } from "./$types";
 export const load = (({ params }) => {
     let openRooms: string[] = ["123456", "185274", "938588"];
 
-    if (openRooms.includes(params.slug)) {
+    if (openRooms.includes(params.code)) {
         return {
-            code: params.slug
+            code: params.code,
         };
     }
     throw error(404);
