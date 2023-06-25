@@ -1,3 +1,10 @@
 [build]
-    command = "npm run build"
+    command = "pnpm run build:app"
     publish = "build"
+
+[dev]
+    command = "pnpm run dev:app"
+    targetPort = 5173
+
+[functions]
+    directory = "netlify/functions"
