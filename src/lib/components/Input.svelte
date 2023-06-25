@@ -6,8 +6,9 @@
     export let placeholder: string = "";
     export let required: boolean = false;
     export let omitRingStyle: boolean = false;
+    export let disable1Password: boolean = true;
     export let value: any = "";
     export let element: HTMLInputElement | null = null;
 </script>
 
-<input {minlength} {maxlength} {min} {max} {placeholder} {required} bind:this={element} bind:value on:input class="{$$props.class || ''} h-8 w-64 bg-zinc-100 px-3 text-center text-lg font-medium transition-all placeholder:text-zinc-300 {!omitRingStyle && 'ring-input'}" />
+<input {minlength} {maxlength} {min} {max} {placeholder} {required} data-1p-ignore={disable1Password} bind:this={element} bind:value on:input class="{$$props.class || ''} h-8 w-64 bg-zinc-100 px-3 text-center text-lg font-medium transition-all placeholder:text-zinc-300 {!omitRingStyle && 'ring-input'}" />
