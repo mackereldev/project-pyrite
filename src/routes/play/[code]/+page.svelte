@@ -5,7 +5,7 @@
     import { Realtime, Types } from "ably/promises";
     
     export let data: PageData;
-    let { code, clientId } = data ?? {};
+    let { code, clientId, publicNamespace } = data ?? {};
     
     let channel: Types.RealtimeChannelPromise;
     $: serviceStatus = channel ? "Connected to Ably" : "Offline";
@@ -24,8 +24,12 @@
             authUrl: "/.netlify/functions/ably-token-request",
             clientId,
         });
-    
-        channel = realtime.channels.get(code);
+        
+        if (publicNamespace) {
+            channel = realtime.channels.get(`public:${code}`);
+        } else {
+            channel = realtime.channels.get(`dev:${code}`);
+        }
     
         await channel.presence.subscribe("present", (ctx) => {
             console.log(`${ctx.clientId} is already here.`);

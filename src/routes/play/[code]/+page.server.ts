@@ -1,5 +1,6 @@
-import type { PageLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
+import { CONTEXT } from "$env/static/private";
 
 export const prerender = false;
 
@@ -8,11 +9,13 @@ export const load = (async ({ fetch, params }) => {
 
     if (openRooms.includes(params.code)) {
         const username = await (await fetch("/api/username")).text();
+        const publicNamespace = CONTEXT == "production" || CONTEXT == "deploy-preview";
 
         return {
             code: params.code,
             clientId: username,
+            publicNamespace
         };
     }
     throw error(404);
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;
