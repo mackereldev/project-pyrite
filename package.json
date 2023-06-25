@@ -29,6 +29,8 @@
 		"vite": "^4.3.0"
 	},
 	"dependencies": {
-		"ably": "^1.2.40"
+		"@netlify/functions": "^1.6.0",
+		"ably": "^1.2.40",
+		"dotenv": "^16.3.1"
 	}
 }
