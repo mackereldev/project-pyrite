@@ -49,8 +49,11 @@
 
 <div class="flex flex-col items-center gap-4">
     {#each players as player}
-        <div class="bg-zinc-300 p-4 w-64 rounded">
-            <span class="font-bold">{player}</span>
+        <div class="flex bg-zinc-300 p-4 w-64 rounded">
+            <span class="flex-grow font-bold">{player}</span>
+            {#if player == clientId}
+                <span class="font-bold text-violet-500">(You)</span>
+            {/if}
         </div>
     {/each}
 </div>
