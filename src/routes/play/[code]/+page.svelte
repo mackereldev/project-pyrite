@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { PageData } from "./$types";
     import { onMount } from "svelte";
+    import { beforeNavigate } from '$app/navigation';
     import { Realtime, Types } from "ably/promises";
     
     export let data: PageData;
@@ -12,6 +13,11 @@
     
     let players: string[] = [];
     $: players;
+
+    beforeNavigate((ctx) => {
+        channel.presence.unsubscribe();
+        channel.presence.leave();
+    });
     
     onMount(async () => {
         const realtime = new Realtime.Promise({
