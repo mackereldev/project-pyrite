@@ -29,4 +29,12 @@
     .ring-input {
         @apply rounded-lg ring-1 ring-zinc-400 transition-all focus-within:ring-[1.5px] focus-within:ring-violet-500;
     }
+
+    .btn {
+        @apply rounded-lg px-4 py-1 text-center text-lg text-zinc-500 ring-1 ring-zinc-400 transition-all hover:text-violet-600 hover:ring-[1.5px] hover:ring-violet-500;
+    }
+
+    .btn-highlight {
+        @apply bg-violet-500 font-medium text-zinc-100 ring-0 hover:bg-violet-400 hover:text-zinc-50 hover:ring-0;
+    }
 }

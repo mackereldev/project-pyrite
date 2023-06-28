@@ -2,7 +2,6 @@
     import Input from "$lib/components/Input.svelte";
     import RadioButtonGroup from "$lib/components/RadioButtonGroup.svelte";
     import RadioButton from "$lib/components/RadioButton.svelte";
-    import Button from "$lib/components/Button.svelte";
     import { goto } from "$app/navigation";
 
     let username: string;
@@ -93,7 +92,7 @@
                         </RadioButtonGroup>
                     </fieldset>
                 </div>
-                <Button highlight class="mt-6 self-end">Create Room</Button>
+                <button class="btn btn-highlight mt-6 self-end">Create Room</button>
             </form>
         </div>
     </div>
