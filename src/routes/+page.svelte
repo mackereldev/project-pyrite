@@ -92,7 +92,7 @@
                         </RadioButtonGroup>
                     </fieldset>
                 </div>
-                <button class="btn btn-highlight mt-6 self-end">Create Room</button>
+                <button type="submit" class="btn btn-highlight mt-6 self-end">Create Room</button>
             </form>
         </div>
     </div>
