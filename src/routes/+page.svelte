@@ -3,8 +3,10 @@
     import RadioButtonGroup from "$lib/components/RadioButtonGroup.svelte";
     import RadioButton from "$lib/components/RadioButton.svelte";
     import { goto } from "$app/navigation";
+    import type { PageServerData } from "./$types";
 
-    let username: string;
+    export let data: PageServerData;
+    let { username } = data ?? {};
 
     const JOIN_CODE_LENGTH = 6;
     let joinInput: HTMLInputElement;
@@ -33,15 +35,15 @@
     };
 
     const updateUsername = async () => {
-        const res = await fetch("/api/username", {
+        const response = await fetch("/api/username", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain",
             },
-            body: JSON.stringify(username || "Player"),
+            body: JSON.stringify(username),
         });
 
-        return res;
+        return response;
     };
 </script>
 
