@@ -12,7 +12,6 @@
     $: console.log(`STATUS: ${serviceStatus}`);
     
     let players: string[] = [];
-    $: players;
 
     beforeNavigate((ctx) => {
         channel.presence.unsubscribe();
