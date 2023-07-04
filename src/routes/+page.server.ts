@@ -5,6 +5,6 @@ export const load = (async ({ cookies }) => {
     const username = getUsername(cookies) || "";
 
     return {
-        username
+        username,
     };
 }) satisfies PageServerLoad;

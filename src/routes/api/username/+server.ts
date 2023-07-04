@@ -7,7 +7,7 @@ export const GET = (({ cookies }) => {
 
 export const POST = (async ({ request, cookies }) => {
     const username = await request.json();
-    
+
     setUsername(cookies, username);
 
     return new Response(username);
