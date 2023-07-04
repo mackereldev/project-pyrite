@@ -9,7 +9,8 @@
         "build": "netlify build",
         "build:app": "vite build",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+        "format": "pnpm dlx prettier --write ."
     },
     "devDependencies": {
         "@sveltejs/adapter-auto": "^2.1.0",
