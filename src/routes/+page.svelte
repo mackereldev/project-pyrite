@@ -48,7 +48,7 @@
 </script>
 
 <div class="flex flex-col gap-12">
-    <div class="flex flex-col items-center rounded-lg p-6 ring-1 ring-zinc-300">
+    <div class="flex flex-col items-center rounded-lg p-6 ring-2 ring-zinc-300">
         <h2 class="mb-4 text-center text-2xl font-bold">Preferences</h2>
         <div class="flex flex-col">
             <span class="text-lg font-light">Username</span>
@@ -67,7 +67,7 @@
                 </button>
             </form>
         </div>
-        <div class="w-px flex-grow bg-zinc-300" />
+        <div class="w-0.5 flex-grow bg-zinc-200" />
         <div class="flex w-64 flex-col gap-2">
             <h2 class="mb-4 text-center text-2xl font-bold">Host</h2>
             <form on:submit|preventDefault={createRoom} class="flex flex-col gap-2">
