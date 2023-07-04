@@ -4,7 +4,7 @@
 
 @layer base {
     :root {
-        @apply text-zinc-600 duration-75;
+        @apply text-zinc-600;
     }
 
     * {
