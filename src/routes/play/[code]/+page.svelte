@@ -1,62 +1,88 @@
 <script lang="ts">
     import type { PageData } from "./$types";
-    import { onMount } from "svelte";
-    import { beforeNavigate } from '$app/navigation';
-    import { Realtime, Types } from "ably/promises";
-    
+    import { afterUpdate, onMount } from "svelte";
+    import { beforeNavigate } from "$app/navigation";
+    import type { Types } from "ably/promises";
+    import type Client from "$lib/server/classes/Client";
+    import { Realtime } from "ably";
+
     export let data: PageData;
-    let { code, clientId, publicNamespace } = data ?? {};
-    
+    let { code, clientId, channelNamespace, serverConnectionId } = data ?? {};
+
+    let realtime: Types.RealtimePromise;
     let channel: Types.RealtimeChannelPromise;
-    $: serviceStatus = channel ? "Connected to Ably" : "Offline";
-    $: console.log(`STATUS: ${serviceStatus}`);
-    
+
+    $: connected = !!channel;
+    $: console.log(`STATUS: ${connected ? "Connected to Ably" : "Offline"}`);
+
     let players: string[] = [];
 
-    beforeNavigate((ctx) => {
+    beforeNavigate(async () => {
+        if (channel.state == "attaching" || channel.state == "attached") {
+            channel.publish("server/leave", { clientId });
+        }
+        await channel.detach();
         channel.presence.unsubscribe();
-        channel.presence.leave();
     });
-    
+
     onMount(async () => {
-        const realtime = new Realtime.Promise({
+        realtime = new Realtime.Promise({
             authUrl: "/.netlify/functions/ably-token-request",
             clientId,
         });
-        
-        if (publicNamespace) {
-            channel = realtime.channels.get(`public:${code}`);
-        } else {
-            channel = realtime.channels.get(`dev:${code}`);
+
+        channel = realtime.channels.get(`${channelNamespace}:${code}`);
+
+        channel.subscribe("client/join", (msg) => {
+            if (isValidServerMessage(msg)) {
+                if (msg.data.success) {
+                    console.log("The server successfully connected the client to the room.");
+                } else {
+                    console.log("The server was unable to connect the client to the room.");
+                }
+            } else {
+                console.log("The server was unable to connect the client to the room.");
+            }
+        });
+
+        channel.subscribe("peer/chat", (msg) => {
+            console.log(`${msg.clientId} says '${msg.data.message}'`);
+        });
+
+        channel.presence.subscribe((ctx) => {
+            if (ctx.action == "present") {
+                players = [...players, ctx.clientId];
+            } else if (ctx.action == "enter") {
+                players = [...players, ctx.clientId];
+            } else if (ctx.action == "leave") {
+                players.splice(players.indexOf(ctx.clientId), 1);
+                players = [...players];
+            }
+        });
+
+        await channel.whenState("attached");
+        channel.publish("server/join", { clientId });
+    });
+
+    const messagePeers = async () => {
+        if (connected) {
+            channel.publish("peer/chat", { message: "hello, world!!!" });
         }
-    
-        await channel.presence.subscribe("present", (ctx) => {
-            console.log(`${ctx.clientId} is already here.`);
-            players = [...players, ctx.clientId];
-        });
-        
-        await channel.presence.subscribe("enter", (ctx) => {
-            console.log(`${ctx.clientId} joined the room.`);
-            players = [...players, ctx.clientId];
-        });
-        
-        await channel.presence.subscribe("leave", (ctx) => {
-            console.log(`${ctx.clientId} left the room.`);
-            players.splice(players.indexOf(ctx.clientId), 1);
-            players = [...players];
-        });
-        
-        await channel.presence.enter();
-    })
+    };
+
+    const isValidServerMessage = (msg: Types.Message) => {
+        return msg.connectionId == serverConnectionId;
+    };
 </script>
 
 <div class="flex flex-col items-center gap-4">
     {#each players as player}
-        <div class="flex bg-zinc-300 p-4 w-64 rounded">
+        <div class="flex w-64 rounded bg-zinc-300 p-4">
             <span class="flex-grow font-bold">{player}</span>
             {#if player == clientId}
                 <span class="font-bold text-violet-500">(You)</span>
             {/if}
         </div>
     {/each}
+    <button on:click={messagePeers} class="btn mt-8">Message All Players</button>
 </div>

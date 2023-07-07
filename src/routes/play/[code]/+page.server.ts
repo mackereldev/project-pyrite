@@ -1,21 +1,23 @@
 import type { PageServerLoad } from "./$types";
-import { error } from "@sveltejs/kit";
-import { CONTEXT } from "$env/static/private";
+import { getUsername } from "$lib/server/user-handler";
+import { getChannelNamespace } from "$lib/server/environment-handler";
+import { redirect } from "@sveltejs/kit";
+import { getRoomData } from "$lib/server/room-handler";
 
-export const prerender = false;
+export const load = (async ({ cookies, params }) => {
+    const username = getUsername(cookies) || "Player";
+    const namespace = getChannelNamespace();
+    const code = params.code;
 
-export const load = (async ({ fetch, params }) => {
-    let openRooms: string[] = ["123456", "185274", "938588"];
-
-    if (openRooms.includes(params.code)) {
-        const username = (await (await fetch("/api/username")).text()) || "Player";
-        const publicNamespace = CONTEXT == "production" || CONTEXT == "deploy-preview";
-
+    const response = await getRoomData(code, username);
+    if (response.canJoin) {
         return {
-            code: params.code,
             clientId: username,
-            publicNamespace,
+            channelNamespace: namespace,
+            code,
+            serverConnectionId: response.serverConnectionId,
         };
+    } else {
+        throw redirect(307, `/?join_rejection_reason=${response.errorReason}`);
     }
-    throw error(404);
 }) satisfies PageServerLoad;
