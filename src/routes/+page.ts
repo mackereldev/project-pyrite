@@ -13,6 +13,9 @@ export const load = (async ({ data, url }) => {
         case "room_not_found":
             toasts.push(new ToastData("error", "Unable To Join", "Room could not be found."));
             break;
+        case "invalid_request":
+            toasts.push(new ToastData("error", "Invalid Request", "The server rejected your request."));
+            break;
         default:
             break;
     }

@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { PageData } from "./$types";
     import { afterUpdate, onMount } from "svelte";
-    import { beforeNavigate } from "$app/navigation";
+    import { beforeNavigate, goto } from "$app/navigation";
     import type { Types } from "ably/promises";
     import type Client from "$lib/server/classes/Client";
     import { Realtime } from "ably";
@@ -38,10 +38,9 @@
                 if (msg.data.success) {
                     console.log("The server successfully connected the client to the room.");
                 } else {
+                    goto(`/?join_rejection_reason=${msg.data.errorReason}`);
                     console.log("The server was unable to connect the client to the room.");
                 }
-            } else {
-                console.log("The server was unable to connect the client to the room.");
             }
         });
 

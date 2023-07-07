@@ -49,5 +49,4 @@ const getRoom = (code: string) => {
 
 const onCloseRoom = (room: Room) => {
     activeRooms = activeRooms.filter((r) => r != room);
-    console.log(activeRooms);
 };

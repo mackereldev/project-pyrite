@@ -27,7 +27,7 @@ export default class Room {
                 this.joinClient(new Client(msg.clientId, msg.connectionId));
                 this.channel.publish("client/join", { success: true });
             } else {
-                this.channel.publish("client/join", { success: false });
+                this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
             }
         });
 
