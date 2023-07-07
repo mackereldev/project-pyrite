@@ -6,7 +6,6 @@
     "trailingComma": "es5",
     "endOfLine": "crlf",
     "plugins": ["prettier-plugin-svelte", "prettier-plugin-tailwindcss"],
-    "pluginSearchDirs": ["./node_modules"],
     "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
     "svelteAllowShorthand": true
 }
