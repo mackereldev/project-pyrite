@@ -15,6 +15,7 @@ export default class Room {
         return this._serverStartTime;
     }
 
+    private subscriptions: Promise<Types.ChannelStateChange | null>[] = [];
     private onCloseRoom;
 
     get serverConnectionId() {
@@ -27,29 +28,28 @@ export default class Room {
         this.onCloseRoom = onCloseRoomCallback;
         this.channel = this.realtime.channels.get(`${getChannelNamespace()}:${this.code}`);
 
-        this.channel.subscribe("server/join", (msg) => {
-            if (msg.data.clientId == msg.clientId && msg.connectionId) {
-                this.joinClient(new Client(msg.clientId, msg.connectionId));
+        this.subscriptions.push(this.channel.subscribe("server/join", async (msg) => {
+            if (msg.connectionId && await this.joinClient(new Client(msg.clientId, msg.connectionId))) {
                 this.channel.publish("client/join", { success: true });
             } else {
                 this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
             }
-        });
+        }));
 
-        this.channel.subscribe("server/leave", (msg) => {
+        this.subscriptions.push(this.channel.subscribe("server/leave", (msg) => {
             if (msg.data.clientId == msg.clientId && msg.connectionId) {
                 this.leaveClient(msg.clientId);
             }
-        });
+        }));
     }
 
-    private joinClient(client: Client) {
+    private async joinClient(client: Client) {
         if (this.clients.every((c) => c.clientId != client.clientId && c.connectionId != client.connectionId)) {
             if (!this.leader) {
                 this.leader = client;
             }
 
-            this.channel.presence.enterClient(client.clientId);
+            await this.channel.presence.enterClient(client.clientId);
             this.clients.push(client);
             return true;
         } else {
@@ -57,14 +57,14 @@ export default class Room {
         }
     }
 
-    private leaveClient(clientId: string) {
+    private async leaveClient(clientId: string) {
         const client = this.getClient(clientId);
 
         try {
             const replaceLeader = this.leader == client;
 
             this.clients = this.clients.filter((c) => c != client);
-            this.channel.presence.leaveClient(clientId);
+            await this.channel.presence.leaveClient(clientId);
 
             if (this.clients.length == 0) {
                 this.closeRoom();
@@ -87,5 +87,12 @@ export default class Room {
 
     getClient(clientId: string) {
         return this.clients.find((c) => c.clientId == clientId);
+    }
+
+    async whenConnected() {
+        this.subscriptions.forEach(async subscription => {
+            await subscription;
+        });
+        return await this.channel.whenState("attached");
     }
 }

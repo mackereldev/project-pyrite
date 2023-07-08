@@ -7,9 +7,10 @@ const realtime = new Realtime(ABLY_API_KEY_SERVER);
 
 export let activeRooms: Room[] = [];
 
-export const createRoom = () => {
+export const createRoom = async () => {
     const code = getUniqueCode();
     const room = new Room(realtime, code, onCloseRoom);
+    await room.whenConnected();
     activeRooms.push(room);
 
     return code;
