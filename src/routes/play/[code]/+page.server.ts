@@ -15,7 +15,8 @@ export const load = (async ({ cookies, params }) => {
             clientId: username,
             channelNamespace: namespace,
             code,
-            serverConnectionId: response.serverConnectionId,
+            serverStartTime: response.data?.serverStartTime!,
+            serverConnectionId: response.data?.serverConnectionId,
         };
     } else {
         throw redirect(307, `/?join_rejection_reason=${response.errorReason}`);

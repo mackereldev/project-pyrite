@@ -7,6 +7,17 @@
         @apply text-zinc-600;
     }
 
+    ::-webkit-scrollbar {
+        width: 14px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border: 4px solid transparent;
+        background-clip: padding-box;
+        border-radius: 9999px;
+        background-color: #aaaaaa;
+    }
+
     * {
         @apply outline-none;
     }
@@ -36,5 +47,9 @@
 
     .btn-highlight {
         @apply bg-violet-500 font-medium text-zinc-100 ring-0 hover:bg-violet-400 hover:text-zinc-50 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
+    }
+
+    .chat-entry-shadow {
+        @apply shadow-[0px_-5px_10px_rgba(0,0,0,0.1)];
     }
 }

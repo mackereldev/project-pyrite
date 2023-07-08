@@ -18,17 +18,19 @@ export const createRoom = () => {
 export const getRoomData = async (code: string, clientId: string) => {
     await realtime.connection.whenState("connected");
 
-    const room = activeRooms.find((r) => r.code == code);
+    const room = getRoom(code);
 
     if (room) {
-        if (getRoom(code)?.getClient(clientId)) {
-            return { canJoin: false, errorReason: "duplicate_client_id", serverConnectionId: realtime.connection.id };
+        if (room.getClient(clientId)) {
+            return { canJoin: false, errorReason: "duplicate_client_id" };
+        } else if (realtime.connection.id) {
+            return { canJoin: true, data: { serverStartTime: room.serverStartTime, serverConnectionId: room.serverConnectionId } };
         }
-
-        return { canJoin: true, errorReason: "", serverConnectionId: realtime.connection.id };
     } else {
-        return { canJoin: false, errorReason: "room_not_found", serverConnectionId: realtime.connection.id };
+        return { canJoin: false, errorReason: "room_not_found" };
     }
+
+    return { canJoin: false, errorReason: "unknown_error" };
 };
 
 const getUniqueCode = () => {

@@ -10,10 +10,15 @@ export default class Room {
     private clients: Client[] = [];
     private leader?: Client;
 
+    private _serverStartTime = Date.now();
+    get serverStartTime() {
+        return this._serverStartTime;
+    }
+
     private onCloseRoom;
 
     get serverConnectionId() {
-        return this.realtime.connection.id;
+        return this.realtime.connection.id!;
     }
 
     constructor(realtimeInstance: Realtime, code: string, onCloseRoomCallback: (room: Room) => void) {

@@ -29,6 +29,7 @@
     "dependencies": {
         "@netlify/functions": "^1.6.0",
         "ably": "^1.2.41",
+        "dayjs": "^1.11.9",
         "dotenv": "^16.3.1"
     }
 }
