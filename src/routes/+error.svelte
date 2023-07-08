@@ -18,5 +18,5 @@
         <div class="h-12 w-0.5 flex-grow bg-zinc-200" />
         <span class="text-lg">{message}</span>
     </div>
-    <button on:click={() => goto("/")} class="absolute top-[60%] btn">Return Home</button>
+    <button on:click={() => goto("/")} class="btn absolute top-[60%]">Return Home</button>
 </div>

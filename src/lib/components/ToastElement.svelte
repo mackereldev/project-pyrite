@@ -19,7 +19,7 @@
 
     const remove = () => {
         dispatch("remove", { toast });
-    }
+    };
 
     onMount(() => {
         if (toast.expires) {

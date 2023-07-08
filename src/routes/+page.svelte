@@ -17,9 +17,9 @@
 
     afterNavigate((e: AfterNavigate) => {
         toastContainer.addToasts(...toasts.map((t: ToastData) => t.clone()));
-        
+
         if ($page.url.searchParams.size > 0) {
-            $page.url.searchParams.forEach(p => $page.url.searchParams.delete(p));
+            $page.url.searchParams.forEach((p) => $page.url.searchParams.delete(p));
             window.history.replaceState(window.history.state, "", $page.route.id);
         }
     });
@@ -39,9 +39,10 @@
         return joinRoomInput.validity.valid; // Length (range), non-empty (existence)
     };
 
-    const joinRoom = async (code: string) => {
-        await updateUsername();
-        goto(`/play/${code}`);
+    const joinRoom = () => {
+        if (validateJoinRoomValue()) {
+            gotoRoom(joinRoomValue);
+        }
     };
 
     const createRoom = async () => {
@@ -52,7 +53,12 @@
         });
 
         const generatedCode = (await response.json()).code;
-        joinRoom(generatedCode);
+        gotoRoom(generatedCode);
+    };
+
+    const gotoRoom = async (code: string) => {
+        await updateUsername();
+        goto(`/play/${code}`);
     };
 
     const updateUsername = async () => {
@@ -82,7 +88,7 @@
     <div class="flex flex-row gap-8">
         <div class="flex flex-col justify-center gap-2">
             <h2 class="mb-4 text-center text-2xl font-bold">Join</h2>
-            <form on:submit|preventDefault={() => {validateJoinRoomValue() && joinRoom(joinRoomValue)}} class="ring-input flex h-fit w-48 flex-row overflow-clip">
+            <form on:submit|preventDefault={joinRoom} class="ring-input flex h-fit w-48 flex-row overflow-clip">
                 <Input minlength={JOIN_CODE_LENGTH} maxlength={JOIN_CODE_LENGTH} min="0" bind:element={joinRoomInput} bind:value={joinRoomValue} on:input={validateJoinRoomValue} placeholder="Enter Code" required omitRingStyle class="h-9 w-full flex-grow text-center" />
                 <button type="submit" class="group box-content flex w-8 items-center bg-zinc-100 px-0.5 transition-colors hover:bg-violet-500">
                     <svg viewBox="0 0 24 24" class="fill-zinc-400 transition-colors group-hover:fill-zinc-100">

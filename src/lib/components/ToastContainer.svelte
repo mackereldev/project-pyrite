@@ -4,14 +4,13 @@
 
     export let toasts: ToastData[] = [];
 
-
     export const addToasts = (...toastData: ToastData[]) => {
         toasts = [...toasts, ...toastData];
     };
-    
+
     const remove = (event: CustomEvent) => {
-        toasts = toasts.filter(t => t !== event.detail.toast);
-    }
+        toasts = toasts.filter((t) => t !== event.detail.toast);
+    };
 </script>
 
 <div class="fixed bottom-0 right-0 flex flex-col-reverse gap-2 p-2">
