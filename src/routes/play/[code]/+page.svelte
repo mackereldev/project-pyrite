@@ -21,8 +21,9 @@
         if (channel.state == "attaching" || channel.state == "attached") {
             channel.publish("server/leave", { clientId });
         }
-        await channel.detach();
         channel.presence.unsubscribe();
+        await channel.detach();
+        realtime.close();
     });
 
     onMount(async () => {

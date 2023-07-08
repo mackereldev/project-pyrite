@@ -75,6 +75,8 @@ export default class Room {
     }
 
     private closeRoom() {
+        this.channel.detach();
+
         this.onCloseRoom(this);
     }
 
