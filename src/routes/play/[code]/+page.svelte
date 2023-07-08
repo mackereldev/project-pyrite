@@ -54,10 +54,12 @@
             authUrl: "/.netlify/functions/ably-token-request",
             clientId,
         });
+        await realtime.connection.whenState("connected");
 
         channel = realtime.channels.get(`${channelNamespace}:${code}`);
+        await channel.whenState("attached");
 
-        channel.subscribe("client/join", (msg) => {
+        await channel.subscribe("client/join", (msg) => {
             if (isValidServerMessage(msg)) {
                 if (!msg.data.success) {
                     goto(`/?join_rejection_reason=${msg.data.errorReason}`);
@@ -65,11 +67,11 @@
             }
         });
 
-        channel.subscribe("peer/chat", (msg) => {
+        await channel.subscribe("peer/chat", (msg) => {
             messages = messages.concat(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
         });
 
-        channel.presence.subscribe((ctx) => {
+        await channel.presence.subscribe((ctx) => {
             if (ctx.action == "present") {
                 players = [...players, ctx.clientId];
             } else if (ctx.action == "enter") {
@@ -80,7 +82,6 @@
             }
         });
 
-        await channel.whenState("attached");
         channel.publish("server/join", {});
     });
 
