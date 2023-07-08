@@ -73,9 +73,9 @@
 
         await channel.presence.subscribe((ctx) => {
             if (ctx.action == "present") {
-                players = [...players, ctx.clientId];
+                players = players.concat(ctx.clientId);
             } else if (ctx.action == "enter") {
-                players = [...players, ctx.clientId];
+                players = players.concat(ctx.clientId);
             } else if (ctx.action == "leave") {
                 players.splice(players.indexOf(ctx.clientId), 1);
                 players = [...players];
