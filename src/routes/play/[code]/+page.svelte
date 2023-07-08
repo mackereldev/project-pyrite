@@ -32,8 +32,9 @@
 
     beforeNavigate(async () => {
         if (channel.state == "attaching" || channel.state == "attached") {
-            channel.publish("server/leave", { clientId });
+            channel.publish("server/leave", {});
         }
+
         channel.presence.unsubscribe();
         await channel.detach();
         realtime.close();
@@ -80,7 +81,7 @@
         });
 
         await channel.whenState("attached");
-        channel.publish("server/join", { clientId });
+        channel.publish("server/join", {});
     });
 
     const isValidServerMessage = (msg: Types.Message) => {

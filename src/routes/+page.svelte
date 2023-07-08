@@ -24,7 +24,6 @@
         }
     });
 
-    const USERNAME_PLACEHOLDER = "Player";
     const JOIN_CODE_LENGTH = 6;
 
     let createRoomButton: HTMLButtonElement;
@@ -82,7 +81,7 @@
         <h2 class="mb-4 text-center text-2xl font-bold">Preferences</h2>
         <div class="flex flex-col">
             <span class="text-lg font-light">Username</span>
-            <Input bind:value={username} placeholder={USERNAME_PLACEHOLDER} class="text-center" />
+            <Input bind:value={username} placeholder={"Player"} class="text-center" />
         </div>
     </div>
     <div class="flex flex-row gap-8">
