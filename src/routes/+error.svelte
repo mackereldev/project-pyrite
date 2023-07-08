@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Button from "$lib/components/Button.svelte";
     import { page } from "$app/stores";
     import { goto } from "$app/navigation";
 
@@ -16,8 +15,8 @@
 <div class="flex flex-col items-center justify-center gap-12">
     <div class="flex flex-row items-center justify-center gap-4">
         <h1 class="text-5xl font-light">{$page.status}</h1>
-        <div class="h-12 w-px flex-grow bg-zinc-300" />
+        <div class="h-12 w-0.5 flex-grow bg-zinc-200" />
         <span class="text-lg">{message}</span>
     </div>
-    <Button on:click={() => goto("/")} class="absolute top-[60%]">Return Home</Button>
+    <button on:click={() => goto("/")} class="btn absolute top-[60%]">Return Home</button>
 </div>
