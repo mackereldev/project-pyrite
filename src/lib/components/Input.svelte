@@ -7,7 +7,7 @@
     export let required: boolean = false;
     export let omitRingStyle: boolean = false;
     export let disable1Password: boolean = true;
-    export let value: any = "";
+    export let value: string = "";
     export let element: HTMLInputElement | null = null;
 </script>
 
