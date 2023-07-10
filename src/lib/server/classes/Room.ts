@@ -19,7 +19,6 @@ export default class Room {
         return this._serverStartTime;
     }
 
-    private subscriptions: Promise<Types.ChannelStateChange | null>[] = [];
     private onCloseRoom;
 
     get serverConnectionId() {
@@ -31,22 +30,6 @@ export default class Room {
         this._code = code;
         this.onCloseRoom = onCloseRoomCallback;
         this.channel = this.realtime.channels.get(`${getChannelNamespace()}:${this.code}`);
-
-        this.subscriptions.push(
-            this.channel.subscribe("server/join", async (msg) => {
-                if (msg.connectionId && (await this.joinClient(new Client(msg.clientId, msg.connectionId)))) {
-                    this.channel.publish("client/join", { success: true });
-                } else {
-                    this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
-                }
-            })
-        );
-
-        this.subscriptions.push(
-            this.channel.subscribe("server/leave", async (msg) => {
-                await this.leaveClient(msg.clientId);
-            })
-        );
     }
 
     private async joinClient(client: Client) {
@@ -95,10 +78,19 @@ export default class Room {
         return this.clients.find((c) => c.clientId == clientId);
     }
 
-    async whenConnected() {
-        this.subscriptions.forEach(async (subscription) => {
-            await subscription;
+    async initialise() {
+        await this.channel.subscribe("server/join", async (msg) => {
+            if (msg.connectionId && (await this.joinClient(new Client(msg.clientId, msg.connectionId)))) {
+                this.channel.publish("client/join", { success: true });
+            } else {
+                this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
+            }
         });
+
+        await this.channel.subscribe("server/leave", async (msg) => {
+            await this.leaveClient(msg.clientId);
+        });
+
         return await this.channel.whenState("attached");
     }
 }
