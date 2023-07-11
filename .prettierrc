@@ -4,7 +4,7 @@
     "printWidth": 500,
     "bracketSameLine": true,
     "trailingComma": "es5",
-    "endOfLine": "lf",
+    "endOfLine": "crlf",
     "plugins": [
         "prettier-plugin-svelte",
         "prettier-plugin-tailwindcss"
