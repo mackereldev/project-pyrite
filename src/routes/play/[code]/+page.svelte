@@ -57,7 +57,6 @@
         await realtime.connection.whenState("connected");
 
         channel = realtime.channels.get(`${channelNamespace}:${code}`);
-        await channel.whenState("attached");
 
         await channel.subscribe("client/join", (msg) => {
             if (isValidServerMessage(msg)) {
