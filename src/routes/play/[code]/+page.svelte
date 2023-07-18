@@ -65,9 +65,9 @@
         await realtime.connection.whenState("connected");
 
         channel = realtime.channels.get(`${channelNamespace}:${code}`);
-        DevHelper.log(`Attempting to connect to channel ${channelNamespace}:${code}.`);
+        DevHelper.log(`[GET] Attempting to connect to channel ${channelNamespace}:${code}.`);
 
-        DevHelper.log("subscribing: client/join");
+        DevHelper.log("[SUBSCRIBE] client/join");
         await channel.subscribe("client/join", (msg) => {
             if (isValidServerMessage(msg)) {
                 if (!msg.data.success) {
@@ -76,22 +76,22 @@
                     return;
                 }
 
-                DevHelper.log("client/join: joining was successfully validated by the server.");
+                DevHelper.log("[RECEIVE] client/join: joining was successfully validated by the server.");
             } else {
-                DevHelper.log("client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
+                DevHelper.log("[RECEIVE] client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
                 DevHelper.log(msg);
             }
         });
 
-        DevHelper.log("subscribing: peer/chat");
+        DevHelper.log("[SUBSCRIBE] peer/chat");
         await channel.subscribe("peer/chat", (msg) => {
-            DevHelper.log(`peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
+            DevHelper.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
             messages = messages.concat(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
         });
 
-        DevHelper.log("subscribing: presence");
+        DevHelper.log("[PRESENCE_SUBSCRIBE] all");
         await channel.presence.subscribe((ctx) => {
-            DevHelper.log(`Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
+            DevHelper.log(`[PRESENCE_RECEIVE] Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
 
             if (ctx.action == "present") {
                 players = players.concat(ctx.clientId);
@@ -103,9 +103,8 @@
             }
         });
 
-        DevHelper.log("server/join: publishing.");
+        DevHelper.log("[PUBLISH] server/join");
         await channel.publish("server/join", {});
-        DevHelper.log("server/join: published.");
     });
 
     const isValidServerMessage = (msg: Types.Message) => {
