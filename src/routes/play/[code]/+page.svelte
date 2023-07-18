@@ -121,9 +121,8 @@
         const message = messageBox.value.replace(/[^ -~]+/g, "").trim();
         if (message.length > 0) {
             if (connected) {
-                DevHelper.log(`peer/chat: publishing as ${clientId} ('${message}'')`);
-                await channel.publish("peer/chat", { message });
-                DevHelper.log(`peer/chat: published as ${clientId} ('${message}')`);
+                DevHelper.log(`[PUBLISH] peer/chat: sending message as ${clientId} ('${message}')`);
+                channel.publish("peer/chat", { message });
                 messageBox.value = "";
             }
         }
