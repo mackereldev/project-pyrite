@@ -57,7 +57,7 @@ export default class Room {
 
             if (this.clients.length == 0) {
                 this.closeRoom();
-                return;
+                return true;
             } else {
                 if (replaceLeader) {
                     this.leader = this.clients[0];
@@ -66,6 +66,8 @@ export default class Room {
         } catch (error) {
             console.error(error);
         }
+
+        return false;
     }
 
     private closeRoom() {
@@ -80,15 +82,28 @@ export default class Room {
 
     async initialise() {
         await this.channel.subscribe("server/join", async (msg) => {
+            console.log(`received request from client (${msg.clientId}) to join server ${this.code}`);
+            
             if (msg.connectionId && (await this.joinClient(new Client(msg.clientId, msg.connectionId)))) {
-                this.channel.publish("client/join", { success: true });
+                console.log(`request from (${msg.clientId}) to join was successful`);
+                await this.channel.publish("client/join", { success: true });
+                console.log(`msg published...`);
             } else {
-                this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
+                console.log(`request from (${msg.clientId}) to join was unsuccessful`);
+                await this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
+                console.log(`msg published...`);
             }
         });
-
+        
         await this.channel.subscribe("server/leave", async (msg) => {
-            await this.leaveClient(msg.clientId);
+            console.log(`received request from client (${msg.clientId}) to leave server ${this.code}`);
+            const success = await this.leaveClient(msg.clientId);
+
+            if (success) {
+                console.log(`request from (${msg.clientId}) to leave was successful`);
+            } else {
+                console.log(`request from (${msg.clientId}) to leave was unsuccessful`);
+            }
         });
 
         return await this.channel.whenState("attached");

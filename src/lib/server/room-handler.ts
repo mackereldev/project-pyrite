@@ -10,7 +10,9 @@ export let activeRooms: Room[] = [];
 export const createRoom = async () => {
     const code = getUniqueCode();
     const room = new Room(realtime, code, onCloseRoom);
+    console.log(`intialising room ${code}`);
     await room.initialise();
+    console.log(`room ${code} successfully initialised`);
     activeRooms.push(room);
 
     return code;
