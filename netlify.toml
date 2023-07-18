@@ -1,5 +1,5 @@
 [build]
-    command = "CI= pnpm run build:app"
+    command = "pnpm run build:app"
     publish = "build"
 
 [dev]
