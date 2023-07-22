@@ -81,31 +81,31 @@ export default class Room {
     }
 
     async initialise() {
-        await this.channel.subscribe("server/join", async (msg) => {
-            console.log(`received request from client (${msg.clientId}) to join server ${this.code}`);
+        return new Promise(async (resolve, reject) => {
+            await this.channel.subscribe("server/join", async (msg) => {
+                console.log(`received request from client (${msg.clientId}) to join server ${this.code}`);
+                
+                if (msg.connectionId && (await this.joinClient(new Client(msg.clientId, msg.connectionId)))) {
+                    console.log(`request from (${msg.clientId}) to join was successful`);
+                    await this.channel.publish("client/join", { success: true });
+                    console.log(`msg published...`);
+                } else {
+                    console.log(`request from (${msg.clientId}) to join was unsuccessful`);
+                    await this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
+                    console.log(`msg published...`);
+                }
+            });
             
-            if (msg.connectionId && (await this.joinClient(new Client(msg.clientId, msg.connectionId)))) {
-                console.log(`request from (${msg.clientId}) to join was successful`);
-                await this.channel.publish("client/join", { success: true });
-                console.log(`msg published...`);
-            } else {
-                console.log(`request from (${msg.clientId}) to join was unsuccessful`);
-                await this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
-                console.log(`msg published...`);
-            }
-        });
-        
-        await this.channel.subscribe("server/leave", async (msg) => {
-            console.log(`received request from client (${msg.clientId}) to leave server ${this.code}`);
-            const success = await this.leaveClient(msg.clientId);
-
-            if (success) {
-                console.log(`request from (${msg.clientId}) to leave was successful`);
-            } else {
-                console.log(`request from (${msg.clientId}) to leave was unsuccessful`);
-            }
-        });
-
-        return await this.channel.whenState("attached");
+            await this.channel.subscribe("server/leave", async (msg) => {
+                console.log(`received request from client (${msg.clientId}) to leave server ${this.code}`);
+                const success = await this.leaveClient(msg.clientId);
+    
+                if (success) {
+                    console.log(`request from (${msg.clientId}) to leave was successful`);
+                } else {
+                    console.log(`request from (${msg.clientId}) to leave was unsuccessful`);
+                }
+            });
+        })
     }
 }
