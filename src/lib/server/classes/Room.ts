@@ -33,17 +33,12 @@ export default class Room {
     }
 
     private joinClient(client: Client) {
-        if (this.clients.every((c) => !client.similar(c))) {
-            if (!this.leader) {
-                this.leader = client;
-            }
-
-            this.channel.presence.enterClient(client.clientId);
-            this.clients.push(client);
-            return true;
-        } else {
-            return false;
+        if (!this.leader) {
+            this.leader = client;
         }
+
+        this.channel.presence.enterClient(client.clientId);
+        this.clients.push(client);
     }
 
     private leaveClient(clientId: string) {
@@ -83,16 +78,7 @@ export default class Room {
     async initialise() {
         await this.channel.subscribe("server/join", (msg) => {
             console.log(`received request from client (${msg.clientId}) to join server ${this.code}`);
-            
-            if (msg.connectionId && (this.joinClient(new Client(msg.clientId, msg.connectionId)))) {
-                console.log(`request from (${msg.clientId}) to join was successful`);
-                this.channel.publish("client/join", { success: true });
-                console.log(`msg published...`);
-            } else {
-                console.log(`request from (${msg.clientId}) to join was unsuccessful`);
-                this.channel.publish("client/join", { success: false, errorReason: "invalid_request" });
-                console.log(`msg published...`);
-            }
+            this.joinClient(new Client(msg.clientId, msg.connectionId!));
         });
         
         await this.channel.subscribe("server/leave", (msg) => {
