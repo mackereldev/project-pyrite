@@ -12,6 +12,6 @@ export const setUsername = (cookies: Cookies, username: string) => {
     cookies.set(COOKIE_NAMES.USERNAME, username, {
         path: "/",
         sameSite: "strict",
-        httpOnly: true,
+        secure: false,
     });
 };

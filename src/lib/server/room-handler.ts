@@ -1,6 +1,7 @@
 import Room from "./classes/Room";
-import { ABLY_API_KEY_SERVER } from "$env/static/private";
 import { Rest, Realtime } from "ably/promises";
+import { ABLY_API_KEY_SERVER } from "$env/static/private";
+import { getChannelNamespace } from "./environment-handler";
 
 const rest = new Rest(ABLY_API_KEY_SERVER);
 const realtime = new Realtime(ABLY_API_KEY_SERVER);
@@ -9,10 +10,8 @@ export let activeRooms: Room[] = [];
 
 export const createRoom = async () => {
     const code = getUniqueCode();
-    const room = new Room(realtime, code, onCloseRoom);
-    console.log(`intialising room ${code}`);
+    const room = new Room(realtime, getChannelNamespace(), code, onCloseRoom);
     await room.initialise();
-    console.log(`room ${code} successfully initialised`);
     activeRooms.push(room);
 
     return code;
