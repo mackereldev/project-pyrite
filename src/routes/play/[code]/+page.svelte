@@ -7,6 +7,7 @@
     import ChatItem from "$lib/components/ChatItem.svelte";
     import { AutoScrollBehaviour, ChatMessageType } from "$lib/enums";
     import { afterUpdate, onMount } from "svelte";
+    import Debug from "$lib/classes/Debug";
 
     export let data: PageData;
     let { code, clientId, channelNamespace, serverStartTime, serverConnectionId } = data ?? {};
@@ -31,12 +32,19 @@
     let showShadow: boolean;
 
     beforeNavigate(async () => {
-        if (channel.state == "attaching" || channel.state == "attached") {
-            channel.publish("server/leave", {});
+        if (channel) {
+            if (channel.state == "attaching" || channel.state == "attached") {
+                Debug.log("server/leave: publishing.");
+                await channel.publish("server/leave", {});
+                Debug.log("server/leave: published.");
+            } else {
+                Debug.log("Skipping server/leave publish: channel.state is not equal to attaching or attached.");
+            }
+
+            channel.presence.unsubscribe();
+            await channel.detach();
         }
 
-        channel.presence.unsubscribe();
-        await channel.detach();
         realtime.close();
     });
 
@@ -51,27 +59,43 @@
         updateShowShadow();
 
         realtime = new Realtime.Promise({
-            authUrl: "/.netlify/functions/ably-token-request",
+            async authCallback(data, callback) {
+                const tokenRequest = await fetch(`/api/ably-token-request?clientId=${data.clientId}`);
+                callback(null, JSON.parse((await tokenRequest.json()).body));
+            },
             clientId,
         });
         await realtime.connection.whenState("connected");
 
         channel = realtime.channels.get(`${channelNamespace}:${code}`);
-        await channel.whenState("attached");
+        Debug.log(`[GET] Attempting to connect to channel ${channelNamespace}:${code}.`);
 
+        Debug.log("[SUBSCRIBE] client/join");
         await channel.subscribe("client/join", (msg) => {
             if (isValidServerMessage(msg)) {
                 if (!msg.data.success) {
+                    Debug.log(`client/join: joining was unsuccessful (${msg.data.errorReason}).`);
                     goto(`/?join_rejection_reason=${msg.data.errorReason}`);
+                    return;
                 }
+
+                Debug.log("[RECEIVE] client/join: joining was successfully validated by the server.");
+            } else {
+                Debug.log("[RECEIVE] client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
+                Debug.log(msg);
             }
         });
 
+        Debug.log("[SUBSCRIBE] peer/chat");
         await channel.subscribe("peer/chat", (msg) => {
+            Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
             messages = messages.concat(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
         });
 
+        Debug.log("[PRESENCE_SUBSCRIBE] all");
         await channel.presence.subscribe((ctx) => {
+            Debug.log(`[PRESENCE_RECEIVE] Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
+
             if (ctx.action == "present") {
                 players = players.concat(ctx.clientId);
             } else if (ctx.action == "enter") {
@@ -82,7 +106,8 @@
             }
         });
 
-        channel.publish("server/join", {});
+        Debug.log("[PUBLISH] server/join");
+        await channel.publish("server/join", {});
     });
 
     const isValidServerMessage = (msg: Types.Message) => {
@@ -95,10 +120,11 @@
         }
     };
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         const message = messageBox.value.replace(/[^ -~]+/g, "").trim();
         if (message.length > 0) {
             if (connected) {
+                Debug.log(`[PUBLISH] peer/chat: sending message as ${clientId} ('${message}')`);
                 channel.publish("peer/chat", { message });
                 messageBox.value = "";
             }
