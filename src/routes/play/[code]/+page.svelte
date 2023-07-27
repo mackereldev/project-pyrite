@@ -7,7 +7,7 @@
     import ChatItem from "$lib/components/ChatItem.svelte";
     import { AutoScrollBehaviour, ChatMessageType } from "$lib/enums";
     import { afterUpdate, onMount } from "svelte";
-    import DevHelper from "$lib/classes/DevHelper";
+    import Debug from "$lib/classes/Debug";
 
     export let data: PageData;
     let { code, clientId, channelNamespace, serverStartTime, serverConnectionId } = data ?? {};
@@ -34,11 +34,11 @@
     beforeNavigate(async () => {
         if (channel) {
             if (channel.state == "attaching" || channel.state == "attached") {
-                DevHelper.log("server/leave: publishing.");
+                Debug.log("server/leave: publishing.");
                 await channel.publish("server/leave", {});
-                DevHelper.log("server/leave: published.");
+                Debug.log("server/leave: published.");
             } else {
-                DevHelper.log("Skipping server/leave publish: channel.state is not equal to attaching or attached.");
+                Debug.log("Skipping server/leave publish: channel.state is not equal to attaching or attached.");
             }
 
             channel.presence.unsubscribe();
@@ -59,39 +59,42 @@
         updateShowShadow();
 
         realtime = new Realtime.Promise({
-            authUrl: "/.netlify/functions/ably-token-request",
+            async authCallback(data, callback) {
+                const tokenRequest = await fetch(`/api/ably-token-request?clientId=${data.clientId}`);
+                callback(null, JSON.parse((await tokenRequest.json()).body));
+            },
             clientId,
         });
         await realtime.connection.whenState("connected");
 
         channel = realtime.channels.get(`${channelNamespace}:${code}`);
-        DevHelper.log(`[GET] Attempting to connect to channel ${channelNamespace}:${code}.`);
+        Debug.log(`[GET] Attempting to connect to channel ${channelNamespace}:${code}.`);
 
-        DevHelper.log("[SUBSCRIBE] client/join");
+        Debug.log("[SUBSCRIBE] client/join");
         await channel.subscribe("client/join", (msg) => {
             if (isValidServerMessage(msg)) {
                 if (!msg.data.success) {
-                    DevHelper.log(`client/join: joining was unsuccessful (${msg.data.errorReason}).`);
+                    Debug.log(`client/join: joining was unsuccessful (${msg.data.errorReason}).`);
                     goto(`/?join_rejection_reason=${msg.data.errorReason}`);
                     return;
                 }
 
-                DevHelper.log("[RECEIVE] client/join: joining was successfully validated by the server.");
+                Debug.log("[RECEIVE] client/join: joining was successfully validated by the server.");
             } else {
-                DevHelper.log("[RECEIVE] client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
-                DevHelper.log(msg);
+                Debug.log("[RECEIVE] client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
+                Debug.log(msg);
             }
         });
 
-        DevHelper.log("[SUBSCRIBE] peer/chat");
+        Debug.log("[SUBSCRIBE] peer/chat");
         await channel.subscribe("peer/chat", (msg) => {
-            DevHelper.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
+            Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
             messages = messages.concat(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
         });
 
-        DevHelper.log("[PRESENCE_SUBSCRIBE] all");
+        Debug.log("[PRESENCE_SUBSCRIBE] all");
         await channel.presence.subscribe((ctx) => {
-            DevHelper.log(`[PRESENCE_RECEIVE] Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
+            Debug.log(`[PRESENCE_RECEIVE] Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
 
             if (ctx.action == "present") {
                 players = players.concat(ctx.clientId);
@@ -103,7 +106,7 @@
             }
         });
 
-        DevHelper.log("[PUBLISH] server/join");
+        Debug.log("[PUBLISH] server/join");
         await channel.publish("server/join", {});
     });
 
@@ -121,7 +124,7 @@
         const message = messageBox.value.replace(/[^ -~]+/g, "").trim();
         if (message.length > 0) {
             if (connected) {
-                DevHelper.log(`[PUBLISH] peer/chat: sending message as ${clientId} ('${message}')`);
+                Debug.log(`[PUBLISH] peer/chat: sending message as ${clientId} ('${message}')`);
                 channel.publish("peer/chat", { message });
                 messageBox.value = "";
             }

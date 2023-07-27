@@ -1,6 +1,5 @@
 import Client from "./Client";
 import type { Realtime, Types } from "ably/promises";
-import { getChannelNamespace } from "$lib/server/environment-handler";
 
 export default class Room {
     private realtime: Realtime;
@@ -25,11 +24,11 @@ export default class Room {
         return this.realtime.connection.id!;
     }
 
-    constructor(realtimeInstance: Realtime, code: string, onCloseRoomCallback: (room: Room) => void) {
+    constructor(realtimeInstance: Realtime, namespace: string, code: string, onCloseRoomCallback: (room: Room) => void) {
         this.realtime = realtimeInstance;
         this._code = code;
         this.onCloseRoom = onCloseRoomCallback;
-        this.channel = this.realtime.channels.get(`${getChannelNamespace()}:${this.code}`);
+        this.channel = this.realtime.channels.get(`${namespace}:${this.code}`);
     }
 
     private joinClient(client: Client) {
