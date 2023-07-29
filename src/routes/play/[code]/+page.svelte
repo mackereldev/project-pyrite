@@ -36,6 +36,18 @@
 
     let currentChatChannel = chatChannels.social;
 
+    if (import.meta.hot) {
+        import.meta.hot.on("vite:ws:disconnect", async () => {
+            await shutDown();
+        });
+        import.meta.hot.accept(async () => {
+            await shutDown();
+            if (channel) {
+                import.meta.hot?.invalidate();
+            }
+        });
+    }
+
     beforeNavigate(async () => {
         if (channel) {
             if (channel.state == "attaching" || channel.state == "attached") {
@@ -62,58 +74,78 @@
     onMount(async () => {
         updateShowShadow();
 
-        realtime = new Realtime.Promise({
-            async authCallback(data, callback) {
-                const tokenRequest = await fetch(`/api/ably-token-request?clientId=${data.clientId}`);
-                callback(null, JSON.parse((await tokenRequest.json()).body));
-            },
-            clientId,
-        });
-        await realtime.connection.whenState("connected");
+        if (!Debug.isDummy) {
+            realtime = new Realtime.Promise({
+                async authCallback(data, callback) {
+                    const tokenRequest = await fetch(`/api/ably-token-request?clientId=${data.clientId}`);
+                    callback(null, JSON.parse((await tokenRequest.json()).body));
+                },
+                clientId,
+            });
+            await realtime.connection.whenState("connected");
 
-        channel = realtime.channels.get(`${channelNamespace}:${code}`);
-        Debug.log(`[GET] Attempting to connect to channel ${channelNamespace}:${code}.`);
+            channel = realtime.channels.get(`${channelNamespace}:${code}`);
+            Debug.log(`[GET] Attempting to connect to channel ${channelNamespace}:${code}.`);
 
-        Debug.log("[SUBSCRIBE] client/join");
-        await channel.subscribe("client/join", (msg) => {
-            if (isValidServerMessage(msg)) {
-                if (!msg.data.success) {
-                    Debug.log(`client/join: joining was unsuccessful (${msg.data.errorReason}).`);
-                    goto(`/?join_rejection_reason=${msg.data.errorReason}`);
-                    return;
+            Debug.log("[SUBSCRIBE] client/join");
+            await channel.subscribe("client/join", (msg) => {
+                if (isValidServerMessage(msg)) {
+                    if (!msg.data.success) {
+                        Debug.log(`client/join: joining was unsuccessful (${msg.data.errorReason}).`);
+                        goto(`/?join_rejection_reason=${msg.data.errorReason}`);
+                        return;
+                    }
+
+                    Debug.log("[RECEIVE] client/join: joining was successfully validated by the server.");
+                } else {
+                    Debug.log("[RECEIVE] client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
+                    Debug.log(msg);
                 }
+            });
 
-                Debug.log("[RECEIVE] client/join: joining was successfully validated by the server.");
-            } else {
-                Debug.log("[RECEIVE] client/join: joining was unsuccessful (server message failed to validate). Printing msg...");
-                Debug.log(msg);
-            }
-        });
+            Debug.log("[SUBSCRIBE] peer/chat");
+            await channel.subscribe("peer/chat", (msg) => {
+                Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
+                chatChannels.social.messages.push(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
+                redrawChatChannel(chatChannels.social);
+            });
 
-        Debug.log("[SUBSCRIBE] peer/chat");
-        await channel.subscribe("peer/chat", (msg) => {
-            Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
-            chatChannels.social.messages.push(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
-            redrawChatChannel(chatChannels.social);
-        });
+            Debug.log("[PRESENCE_SUBSCRIBE] all");
+            await channel.presence.subscribe((ctx) => {
+                Debug.log(`[PRESENCE_RECEIVE] Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
 
-        Debug.log("[PRESENCE_SUBSCRIBE] all");
-        await channel.presence.subscribe((ctx) => {
-            Debug.log(`[PRESENCE_RECEIVE] Presence event receive (action: ${ctx.action}, clientId: ${ctx.clientId}).`);
+                if (ctx.action == "present") {
+                    players = players.concat(ctx.clientId);
+                } else if (ctx.action == "enter") {
+                    players = players.concat(ctx.clientId);
+                } else if (ctx.action == "leave") {
+                    players.splice(players.indexOf(ctx.clientId), 1);
+                    players = [...players];
+                }
+            });
 
-            if (ctx.action == "present") {
-                players = players.concat(ctx.clientId);
-            } else if (ctx.action == "enter") {
-                players = players.concat(ctx.clientId);
-            } else if (ctx.action == "leave") {
-                players.splice(players.indexOf(ctx.clientId), 1);
-                players = [...players];
-            }
-        });
-
-        Debug.log("[PUBLISH] server/join");
-        await channel.publish("server/join", {});
+            Debug.log("[PUBLISH] server/join");
+            await channel.publish("server/join", {});
+        }
     });
+
+    const shutDown = async () => {
+        if (channel) {
+            if (channel.state == "attaching" || channel.state == "attached") {
+                Debug.log("[PUBLISH] server/leave");
+                await channel.publish("server/leave", {});
+            } else {
+                Debug.log("Skipping server/leave publish: channel state is not attached.");
+            }
+
+            channel.presence.unsubscribe();
+            await channel.detach();
+        }
+
+        if (realtime) {
+            realtime.close();
+        }
+    };
 
     const isValidServerMessage = (msg: Types.Message) => {
         return msg.connectionId == serverConnectionId;
