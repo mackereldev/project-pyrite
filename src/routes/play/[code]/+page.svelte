@@ -8,6 +8,7 @@
     import { AutoScrollBehaviour, ChatMessageType } from "$lib/enums";
     import { afterUpdate, onMount } from "svelte";
     import Debug from "$lib/classes/Debug";
+    import ChatChannel from "$lib/classes/ChatChannel";
 
     export let data: PageData;
     let { code, clientId, channelNamespace, serverStartTime, serverConnectionId } = data ?? {};
@@ -19,26 +20,29 @@
     $: console.log(`STATUS: ${connected ? "Connected to Ably" : "Offline"}`);
 
     let players: string[] = [];
-
-    let messages: ChatMessage[] = [];
+    const chatChannels = {
+        game: new ChatChannel("Game"),
+        social: new ChatChannel("Social"),
+    };
 
     let autoScrollBehaviour = AutoScrollBehaviour.Always;
     let queueAutoScroll = false;
 
     let messageHistory: HTMLDivElement;
-    $: messages, updateScroll();
+    $: currentChatChannel.messages, updateScroll();
     let messageBox: HTMLInputElement;
 
     let showShadow: boolean;
 
+    let currentChatChannel = chatChannels.social;
+
     beforeNavigate(async () => {
         if (channel) {
             if (channel.state == "attaching" || channel.state == "attached") {
-                Debug.log("server/leave: publishing.");
+                Debug.log("[PUBLISH] server/leave");
                 await channel.publish("server/leave", {});
-                Debug.log("server/leave: published.");
             } else {
-                Debug.log("Skipping server/leave publish: channel.state is not equal to attaching or attached.");
+                Debug.log("Skipping server/leave publish: channel state is not attached.");
             }
 
             channel.presence.unsubscribe();
@@ -89,7 +93,8 @@
         Debug.log("[SUBSCRIBE] peer/chat");
         await channel.subscribe("peer/chat", (msg) => {
             Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
-            messages = messages.concat(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
+            chatChannels.social.messages.push(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
+            redrawChatChannel(chatChannels.social);
         });
 
         Debug.log("[PRESENCE_SUBSCRIBE] all");
@@ -114,20 +119,57 @@
         return msg.connectionId == serverConnectionId;
     };
 
+    const changeChatChannel = (channel: ChatChannel) => {
+        currentChatChannel = channel;
+        redrawChatChannel(channel);
+    };
+
+    const redrawChatChannel = (channel?: ChatChannel) => {
+        if (channel) {
+            if (currentChatChannel === channel) {
+                currentChatChannel = currentChatChannel;
+            }
+        } else {
+            currentChatChannel = currentChatChannel;
+        }
+    };
+
     const updateScroll = () => {
         if (messageHistory && autoScrollBehaviour == AutoScrollBehaviour.Always) {
             queueAutoScroll = true;
         }
     };
 
-    const sendMessage = async () => {
+    const sendCommand = () => {
+        const command = messageBox.value;
+        console.log(command);
+        return true;
+    };
+
+    const sendSocialMessage = () => {
         const message = messageBox.value.replace(/[^ -~]+/g, "").trim();
         if (message.length > 0) {
             if (connected) {
                 Debug.log(`[PUBLISH] peer/chat: sending message as ${clientId} ('${message}')`);
                 channel.publish("peer/chat", { message });
-                messageBox.value = "";
+                return true;
             }
+        }
+
+        return false;
+    };
+
+    const submitMessage = async () => {
+        let success;
+
+        if (currentChatChannel === chatChannels.game) {
+            success = sendCommand();
+        } else if (currentChatChannel === chatChannels.social) {
+            success = sendSocialMessage();
+        }
+
+        if (success) {
+            messageBox.value = "";
         }
     };
 
@@ -139,13 +181,22 @@
 <svelte:window on:resize={updateShowShadow} />
 
 <div class="flex h-full w-full gap-4 p-6">
-    <div class="flex flex-1 basis-[36rem] flex-col rounded ring-2 ring-zinc-300">
+    <div class="flex flex-1 basis-[36rem] flex-col overflow-hidden rounded ring-2 ring-zinc-300">
+        <div class="flex border-b-2 border-zinc-300">
+            {#each Object.values(chatChannels) as chatChannel}
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div on:click={() => changeChatChannel(chatChannel)} class="group cursor-pointer border-x first:border-l-0 first:border-l-transparent last:border-r-2">
+                    <div class="px-4 py-1 text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-zinc-200 {currentChatChannel === chatChannel ? 'text-violet-500 shadow-violet-500' : 'text-zinc-400 shadow-transparent group-hover:text-zinc-500'}">{chatChannel.name}</div>
+                </div>
+            {/each}
+        </div>
         <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow flex-col overflow-y-scroll break-all px-3 pt-3 transition-all">
-            {#each messages as message}
+            {#each currentChatChannel.messages as message}
                 <ChatItem {message} />
             {/each}
         </div>
-        <form on:submit|preventDefault={sendMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
+        <form on:submit|preventDefault={submitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
             <input type="text" bind:this={messageBox} class="h-8 w-full rounded px-2 text-sm ring-2 ring-zinc-300" />
         </form>
     </div>
