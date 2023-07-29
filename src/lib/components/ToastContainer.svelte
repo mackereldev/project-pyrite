@@ -5,7 +5,7 @@
     export let toasts: ToastData[] = [];
 
     export const addToasts = (...toastData: ToastData[]) => {
-        toasts = [...toasts, ...toastData];
+        toasts = toasts.concat(toastData);
     };
 
     const remove = (event: CustomEvent) => {

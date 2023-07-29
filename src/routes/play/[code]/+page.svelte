@@ -135,7 +135,7 @@
                     players = players.concat(ctx.clientId);
                 } else if (ctx.action == "leave") {
                     players.splice(players.indexOf(ctx.clientId), 1);
-                    players = [...players];
+                    players = players; // Force redraw
                 }
             });
 

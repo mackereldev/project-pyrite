@@ -3,9 +3,9 @@ import type CommandContext from "./CommandContext";
 
 export default class Game {
     private static commands = {
-        "help": new HelpCommand(),
-        "ping": new PingCommand(),
-    }
+        help: new HelpCommand(),
+        ping: new PingCommand(),
+    };
 
     public runCommand = (commandName: string, ctx: CommandContext, ...args: string[]) => {
         if (Object.hasOwn(Game.commands, commandName)) {
@@ -18,5 +18,5 @@ export default class Game {
         }
 
         return false;
-    }
+    };
 }

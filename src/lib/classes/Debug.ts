@@ -8,15 +8,15 @@ export default class Debug {
         Debug._isDummy = localStorage.getItem("dummy_mode") == "true";
         this.initialised = true;
     }
-    
+
     public static get isLogging() {
         if (!Debug.initialised) {
             Debug.initialise();
         }
-        
+
         return Debug._isLogging;
     }
-    
+
     public static get isDummy() {
         if (!Debug.initialised) {
             Debug.initialise();

@@ -13,7 +13,7 @@ export default class ChatChannel {
     public addMessage = (message: ChatMessage) => {
         this.messages = this.messages.concat(message);
         this.onMessageCallback(this, message);
-    }
+    };
 
     public getMessages() {
         return [...this.messages];

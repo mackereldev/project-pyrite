@@ -1,6 +1,6 @@
 export const clamp = (value: number, min: number, max: number) => {
     return Math.max(Math.min(value, max), min);
-}
+};
 
 // https://www.ronja-tutorials.com/post/047-invlerp_remap/#example-shader
 export const lerp = (start: number, end: number, time: number) => {

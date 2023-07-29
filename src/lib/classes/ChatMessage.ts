@@ -10,7 +10,7 @@ export default class ChatMessage {
 
     public getRelativeTime = (relativeStartTime: number) => {
         return dayjs.utc(this.time - relativeStartTime).format("HH:mm:ss");
-    }
+    };
 
     constructor(author: string | undefined, type: ChatMessageType, text: string) {
         this.author = author;
