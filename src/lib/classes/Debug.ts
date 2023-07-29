@@ -1,17 +1,32 @@
 export default class Debug {
-    static enabled = false;
-    static #initialised = false;
+    private static initialised = false;
+    private static _isLogging = false;
+    private static _isDummy = false;
 
-    static get allowed() {
-        if (!Debug.#initialised) {
-            Debug.enabled = localStorage.getItem("debug_mode") == "true";
+    private static initialise() {
+        Debug._isLogging = localStorage.getItem("debug_mode") == "true";
+        Debug._isDummy = localStorage.getItem("dummy_mode") == "true";
+        this.initialised = true;
+    }
+    
+    public static get isLogging() {
+        if (!Debug.initialised) {
+            Debug.initialise();
+        }
+        
+        return Debug._isLogging;
+    }
+    
+    public static get isDummy() {
+        if (!Debug.initialised) {
+            Debug.initialise();
         }
 
-        return Debug.enabled;
+        return Debug._isDummy;
     }
 
-    static log(message?: any, ...optionalParams: any[]) {
-        if (!Debug.allowed) return;
+    public static log(message?: any, ...optionalParams: any[]) {
+        if (!Debug.isLogging) return;
 
         console.log(message, ...optionalParams);
     }
