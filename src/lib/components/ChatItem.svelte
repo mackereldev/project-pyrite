@@ -3,6 +3,7 @@
     import { ChatMessageType } from "$lib/enums";
 
     export let message: ChatMessage;
+    export let relativeStartTime: number;
 
     let colour = "text-zinc-500";
     let author = "invalid";
@@ -19,7 +20,7 @@
 </script>
 
 <div class="font-mono">
-    <span class="text-zinc-400">{message.formattedTime}</span>
+    <span class="text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class={colour}>[{author}]</span>
     <span>{message.text}</span>
 </div>

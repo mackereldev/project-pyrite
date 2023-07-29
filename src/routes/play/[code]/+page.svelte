@@ -21,15 +21,14 @@
 
     let players: string[] = [];
     const chatChannels = {
-        game: new ChatChannel("Game"),
-        social: new ChatChannel("Social"),
+        game: new ChatChannel("Game", (chatChannel: ChatChannel, message: ChatMessage) => onMessage(chatChannel, message)),
+        social: new ChatChannel("Social", (chatChannel: ChatChannel, message: ChatMessage) => onMessage(chatChannel, message)),
     };
 
     let autoScrollBehaviour = AutoScrollBehaviour.Always;
     let queueAutoScroll = false;
 
     let messageHistory: HTMLDivElement;
-    $: currentChatChannel.messages, updateScroll();
     let messageBox: HTMLInputElement;
 
     let showShadow: boolean;
@@ -106,8 +105,7 @@
             Debug.log("[SUBSCRIBE] peer/chat");
             await channel.subscribe("peer/chat", (msg) => {
                 Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
-                chatChannels.social.messages.push(new ChatMessage(msg.timestamp - serverStartTime, msg.clientId, ChatMessageType.Player, msg.data.message));
-                redrawChatChannel(chatChannels.social);
+                chatChannels.social.addMessage(new ChatMessage(msg.clientId, ChatMessageType.Player, msg.data.message));
             });
 
             Debug.log("[PRESENCE_SUBSCRIBE] all");
@@ -153,20 +151,13 @@
 
     const changeChatChannel = (channel: ChatChannel) => {
         currentChatChannel = channel;
-        redrawChatChannel(channel);
+        currentChatChannel = currentChatChannel; // Force redraw
     };
 
-    const redrawChatChannel = (channel?: ChatChannel) => {
-        if (channel) {
-            if (currentChatChannel === channel) {
-                currentChatChannel = currentChatChannel;
-            }
-        } else {
-            currentChatChannel = currentChatChannel;
-        }
-    };
+    const onMessage = (chatChannel: ChatChannel, message: ChatMessage) => {
+        currentChatChannel = currentChatChannel; // Force redraw
 
-    const updateScroll = () => {
+        // Auto scroll
         if (messageHistory && autoScrollBehaviour == AutoScrollBehaviour.Always) {
             queueAutoScroll = true;
         }
@@ -224,8 +215,8 @@
             {/each}
         </div>
         <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow flex-col overflow-y-scroll break-all px-3 pt-3 transition-all">
-            {#each currentChatChannel.messages as message}
-                <ChatItem {message} />
+            {#each currentChatChannel.getMessages() as message (message)}
+                <ChatItem {message} relativeStartTime={serverStartTime} />
             {/each}
         </div>
         <form on:submit|preventDefault={submitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>

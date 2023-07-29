@@ -3,24 +3,20 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
 export default class ChatMessage {
-    time;
-    author;
-    text;
-    type;
+    public author;
+    public type;
+    public text;
+    private time;
 
-    get empty() {
-        return this.text == null || this.text.length == 0;
+    public getRelativeTime = (relativeStartTime: number) => {
+        return dayjs.utc(this.time - relativeStartTime).format("HH:mm:ss");
     }
 
-    get formattedTime() {
-        return dayjs.utc(this.time).format("HH:mm:ss");
-    }
-
-    constructor(time: number, author: string | undefined, type: ChatMessageType, text: string) {
-        this.time = time;
+    constructor(author: string | undefined, type: ChatMessageType, text: string) {
         this.author = author;
-        this.text = text;
         this.type = type;
+        this.text = text;
+        this.time = Date.now();
 
         dayjs.extend(utc);
     }

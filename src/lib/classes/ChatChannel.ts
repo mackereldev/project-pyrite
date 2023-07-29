@@ -1,10 +1,21 @@
 import type ChatMessage from "./ChatMessage";
 
 export default class ChatChannel {
-    name: string;
-    messages: ChatMessage[] = [];
+    public name: string;
+    private messages: ChatMessage[] = [];
+    private onMessageCallback;
 
-    constructor(name: string) {
+    constructor(name: string, onMessageCallback: (chatChannel: ChatChannel, message: ChatMessage) => void) {
         this.name = name;
+        this.onMessageCallback = onMessageCallback;
+    }
+
+    public addMessage = (message: ChatMessage) => {
+        this.messages = this.messages.concat(message);
+        this.onMessageCallback(this, message);
+    }
+
+    public getMessages() {
+        return [...this.messages];
     }
 }
