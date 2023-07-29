@@ -1,17 +1,20 @@
 <script lang="ts">
     import type { PageData } from "./$types";
     import { beforeNavigate, goto } from "$app/navigation";
-    import type { Types } from "ably/promises";
-    import { Realtime } from "ably";
+    import { Realtime, type Types } from "ably/promises";
     import ChatMessage from "$lib/classes/ChatMessage";
     import ChatItem from "$lib/components/ChatItem.svelte";
     import { AutoScrollBehaviour, ChatMessageType } from "$lib/enums";
     import { afterUpdate, onMount } from "svelte";
     import Debug from "$lib/classes/Debug";
     import ChatChannel from "$lib/classes/ChatChannel";
+    import Game from "$lib/classes/Game";
+    import CommandContext from "$lib/classes/CommandContext";
 
     export let data: PageData;
     let { code, clientId, channelNamespace, serverStartTime, serverConnectionId } = data ?? {};
+
+    let game = new Game();
 
     let realtime: Types.RealtimePromise;
     let channel: Types.RealtimeChannelPromise;
@@ -33,7 +36,7 @@
 
     let showShadow: boolean;
 
-    let currentChatChannel = chatChannels.social;
+    let currentChatChannel = chatChannels.game;
 
     if (import.meta.hot) {
         import.meta.hot.on("vite:ws:disconnect", async () => {
@@ -102,6 +105,16 @@
                 }
             });
 
+            Debug.log("[SUBSCRIBE] client/ping");
+            await channel.subscribe("client/ping", (msg) => {
+                if (isValidServerMessage(msg)) {
+                    const sender = msg.data.sender;
+
+                    Debug.log(`[RECEIVE] client/ping: client '${sender}' pinged all clients.`);
+                    chatChannels.game.addMessage(new ChatMessage(undefined, ChatMessageType.System, `Client '${sender}' pinged all clients.`));
+                }
+            });
+
             Debug.log("[SUBSCRIBE] peer/chat");
             await channel.subscribe("peer/chat", (msg) => {
                 Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
@@ -154,6 +167,13 @@
         currentChatChannel = currentChatChannel; // Force redraw
     };
 
+    const sendCommand = () => {
+        const command = messageBox.value.replace(/ +(?= )/g, "").split(" ");
+        const commandName = command[0];
+        const args = command.slice(1);
+        game.runCommand(commandName, getCommandContext(), ...args);
+    };
+
     const onMessage = (chatChannel: ChatChannel, message: ChatMessage) => {
         currentChatChannel = currentChatChannel; // Force redraw
 
@@ -161,12 +181,6 @@
         if (messageHistory && autoScrollBehaviour == AutoScrollBehaviour.Always) {
             queueAutoScroll = true;
         }
-    };
-
-    const sendCommand = () => {
-        const command = messageBox.value;
-        console.log(command);
-        return true;
     };
 
     const sendSocialMessage = () => {
@@ -183,21 +197,25 @@
     };
 
     const submitMessage = async () => {
-        let success;
+        let clearInput = true;
 
         if (currentChatChannel === chatChannels.game) {
-            success = sendCommand();
+            sendCommand();
         } else if (currentChatChannel === chatChannels.social) {
-            success = sendSocialMessage();
+            clearInput = sendSocialMessage();
         }
 
-        if (success) {
+        if (clearInput) {
             messageBox.value = "";
         }
     };
 
     const updateShowShadow = () => {
         showShadow = messageHistory.scrollHeight - messageHistory.scrollTop > messageHistory.clientHeight;
+    };
+
+    const getCommandContext = () => {
+        return new CommandContext(channel, chatChannels.game);
     };
 </script>
 

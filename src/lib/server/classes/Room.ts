@@ -1,5 +1,6 @@
 import Client from "./Client";
 import type { Realtime, Types } from "ably/promises";
+import * as MathMore from "$lib/classes/MathMore";
 
 export default class Room {
     private realtime: Realtime;
@@ -79,7 +80,7 @@ export default class Room {
             console.log(`received request from client (${msg.clientId}) to join server ${this.code}`);
             this.joinClient(new Client(msg.clientId, msg.connectionId!));
         });
-        
+
         await this.channel.subscribe("server/leave", (msg) => {
             console.log(`received request from client (${msg.clientId}) to leave server ${this.code}`);
             const success = this.leaveClient(msg.clientId);
@@ -89,6 +90,17 @@ export default class Room {
             } else {
                 console.log(`request from (${msg.clientId}) to leave was unsuccessful`);
             }
+        });
+
+        await this.channel.subscribe("server/ping", (msg) => {
+            let delay = msg.data.delay;
+            if (Number.isFinite(delay)) {
+                delay = MathMore.clamp(delay, 0, 10000);
+            }
+
+            setTimeout(() => {
+                this.channel.publish("client/ping", { sender: msg.clientId });
+            }, delay);
         });
 
         return await this.channel.whenState("attached");
