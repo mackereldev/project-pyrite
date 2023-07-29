@@ -16,16 +16,18 @@ export class HelpCommand extends Command {
 
 export class PingCommand extends Command {
     public execute(ctx: CommandContext, ...args: string[]): boolean {
+        const [delay] = args;
+
         if (ctx.channel) {
-            let delay = 0;
-            if (args[0]) {
-                delay = parseFloat(args[0]);
-                if (Number.isFinite(delay)) {
-                    delay = MathMore.clamp(delay, 0, 10000);
+            let ms = 0;
+            if (delay) {
+                ms = parseFloat(delay);
+                if (Number.isFinite(ms)) {
+                    ms = MathMore.clamp(ms, 0, 10000);
                 }
             }
 
-            ctx.channel.publish("server/ping", { delay });
+            ctx.channel.publish("server/ping", { delay: ms });
             return true;
         }
 

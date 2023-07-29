@@ -93,7 +93,8 @@ export default class Room {
         });
 
         await this.channel.subscribe("server/ping", (msg) => {
-            let delay = msg.data.delay;
+            let { delay } = msg.data;
+            
             if (Number.isFinite(delay)) {
                 delay = MathMore.clamp(delay, 0, 10000);
             }

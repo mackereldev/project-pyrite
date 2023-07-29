@@ -91,10 +91,12 @@
 
             Debug.log("[SUBSCRIBE] client/join");
             await channel.subscribe("client/join", (msg) => {
+                const { success, errorReason } = msg.data;
+
                 if (isValidServerMessage(msg)) {
-                    if (!msg.data.success) {
-                        Debug.log(`client/join: joining was unsuccessful (${msg.data.errorReason}).`);
-                        goto(`/?join_rejection_reason=${msg.data.errorReason}`);
+                    if (!success) {
+                        Debug.log(`client/join: joining was unsuccessful (${errorReason}).`);
+                        goto(`/?join_rejection_reason=${errorReason}`);
                         return;
                     }
 
@@ -117,8 +119,10 @@
 
             Debug.log("[SUBSCRIBE] peer/chat");
             await channel.subscribe("peer/chat", (msg) => {
-                Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${msg.data.message}'.`);
-                chatChannels.social.addMessage(new ChatMessage(msg.clientId, ChatMessageType.Player, msg.data.message));
+                const { message } = msg.data;
+
+                Debug.log(`[RECEIVE] peer/chat: chat message received by client: '${msg.clientId}' says '${message}'.`);
+                chatChannels.social.addMessage(new ChatMessage(msg.clientId, ChatMessageType.Player, message));
             });
 
             Debug.log("[PRESENCE_SUBSCRIBE] all");
