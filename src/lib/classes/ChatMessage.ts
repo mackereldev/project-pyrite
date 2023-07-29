@@ -16,7 +16,7 @@ export default class ChatMessage {
         return dayjs.utc(this.time).format("HH:mm:ss");
     }
 
-    constructor(time: number, author: string, type: ChatMessageType, text: string) {
+    constructor(time: number, author: string | undefined, type: ChatMessageType, text: string) {
         this.time = time;
         this.author = author;
         this.text = text;
