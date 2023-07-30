@@ -1,5 +1,4 @@
 import { HelpCommand, PingCommand } from "./Command";
-import type CommandContext from "./CommandContext";
 
 export default class Game {
     private static commands = {
@@ -7,12 +6,12 @@ export default class Game {
         ping: new PingCommand(),
     };
 
-    public runCommand = (commandName: string, ctx: CommandContext, ...args: string[]) => {
+    public runCommand = (commandName: string, ...args: string[]) => {
         if (Object.hasOwn(Game.commands, commandName)) {
             const name = commandName as keyof typeof Game.commands;
             const command = Game.commands[name];
 
-            if (command.execute(ctx, ...args)) {
+            if (command.execute(...args)) {
                 return true;
             }
         }

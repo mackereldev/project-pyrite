@@ -1,24 +1,28 @@
-import type CommandContext from "./CommandContext";
 import * as MathMore from "./MathMore";
 import ChatMessage from "./ChatMessage";
 import { ChatMessageType } from "$lib/enums";
+import { get } from "svelte/store";
+import { channelStore, gameChatStore } from "./Stores";
 
 abstract class Command {
-    public abstract execute(ctx: CommandContext, ...args: string[]): boolean;
+    public abstract execute(...args: string[]): boolean;
 }
 
 export class HelpCommand extends Command {
-    public execute(ctx: CommandContext, ...args: string[]): boolean {
-        ctx.gameChat.addMessage(new ChatMessage(undefined, ChatMessageType.System, "<Insert help here...>"));
+    public execute(...args: string[]): boolean {
+        const gameChat = get(gameChatStore);
+
+        gameChat.addMessage(new ChatMessage(undefined, ChatMessageType.System, "<Insert help here...>"));
         return true;
     }
 }
 
 export class PingCommand extends Command {
-    public execute(ctx: CommandContext, ...args: string[]): boolean {
+    public execute(...args: string[]): boolean {
+        const channel = get(channelStore);
         const [delay] = args;
 
-        if (ctx.channel) {
+        if (channel) {
             let ms = 0;
             if (delay) {
                 ms = parseFloat(delay);
@@ -27,7 +31,7 @@ export class PingCommand extends Command {
                 }
             }
 
-            ctx.channel.publish("server/ping", { delay: ms });
+            channel.publish("server/ping", { delay: ms });
             return true;
         }
 

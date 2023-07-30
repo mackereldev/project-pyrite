@@ -9,7 +9,7 @@
     import Debug from "$lib/classes/Debug";
     import ChatChannel from "$lib/classes/ChatChannel";
     import Game from "$lib/classes/Game";
-    import CommandContext from "$lib/classes/CommandContext";
+    import { channelStore, gameChatStore } from "$lib/classes/Stores";
 
     export let data: PageData;
     let { code, clientId, channelNamespace, serverStartTime, serverConnectionId } = data ?? {};
@@ -18,6 +18,7 @@
 
     let realtime: Types.RealtimePromise;
     let channel: Types.RealtimeChannelPromise;
+    $: channel, channelStore.set(channel);
 
     $: connected = !!channel;
     $: console.log(`STATUS: ${connected ? "Connected to Ably" : "Offline"}`);
@@ -27,6 +28,7 @@
         game: new ChatChannel("Game", (chatChannel: ChatChannel, message: ChatMessage) => onMessage(chatChannel, message)),
         social: new ChatChannel("Social", (chatChannel: ChatChannel, message: ChatMessage) => onMessage(chatChannel, message)),
     };
+    $: chatChannels.game, gameChatStore.set(chatChannels.game);
 
     let autoScrollBehaviour = AutoScrollBehaviour.Always;
     let queueAutoScroll = false;
@@ -175,7 +177,7 @@
         const command = messageBox.value.replace(/ +(?= )/g, "").split(" ");
         const commandName = command[0];
         const args = command.slice(1);
-        game.runCommand(commandName, getCommandContext(), ...args);
+        game.runCommand(commandName, ...args);
     };
 
     const onMessage = (chatChannel: ChatChannel, message: ChatMessage) => {
@@ -216,10 +218,6 @@
 
     const updateShowShadow = () => {
         showShadow = messageHistory.scrollHeight - messageHistory.scrollTop > messageHistory.clientHeight;
-    };
-
-    const getCommandContext = () => {
-        return new CommandContext(channel, chatChannels.game);
     };
 </script>
 
