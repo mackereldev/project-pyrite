@@ -8,13 +8,13 @@
     import { afterUpdate, onMount } from "svelte";
     import Debug from "$lib/classes/Debug";
     import ChatChannel from "$lib/classes/ChatChannel";
-    import Game from "$lib/classes/Game";
+    import CommandHandler from "$lib/classes/CommandHandler";
     import { channelStore, gameChatStore } from "$lib/classes/Stores";
 
     export let data: PageData;
     let { code, clientId, channelNamespace, serverStartTime, serverConnectionId } = data ?? {};
 
-    let game = new Game();
+    let commandHandler = new CommandHandler();
 
     let realtime: Types.RealtimePromise;
     let channel: Types.RealtimeChannelPromise;
@@ -177,7 +177,7 @@
         const command = messageBox.value.replace(/ +(?= )/g, "").split(" ");
         const commandName = command[0];
         const args = command.slice(1);
-        game.runCommand(commandName, ...args);
+        commandHandler.runCommand(commandName, ...args);
     };
 
     const onMessage = (chatChannel: ChatChannel, message: ChatMessage) => {
