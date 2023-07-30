@@ -4,7 +4,7 @@ import { ChatMessageType } from "$lib/enums";
 import { get } from "svelte/store";
 import { channelStore, gameChatStore } from "./Stores";
 
-abstract class Command {
+export abstract class Command {
     public abstract execute(...args: string[]): boolean;
 }
 
