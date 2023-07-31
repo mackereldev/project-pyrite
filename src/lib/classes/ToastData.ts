@@ -9,10 +9,12 @@ export default class ToastData {
     severity;
     message: string;
     detail: string;
-    #duration;
+    
+    private _duration;
     get duration() {
-        return this.#duration == "disabled" ? -1 : this.#duration == "auto" ? this.#evaluateAutoDuration() : this.#duration;
+        return this._duration == "disabled" ? -1 : this._duration == "auto" ? this.evaluateAutoDuration() : this._duration;
     }
+
     get expires() {
         // Checkes against getter in case this.#evaluateAutoDuration evaluates to non-positive number
         return this.duration >= 0;
@@ -22,14 +24,14 @@ export default class ToastData {
         this.severity = severity;
         this.message = message;
         this.detail = detail;
-        this.#duration = duration;
+        this._duration = duration;
     }
 
-    #evaluateAutoDuration() {
+    private evaluateAutoDuration = () => {
         return ToastData.DEFAULT_DURATIONS[this.severity];
     }
 
-    clone() {
-        return new ToastData(this.severity, this.message, this.detail, this.#duration);
+    clone = () => {
+        return new ToastData(this.severity, this.message, this.detail, this._duration);
     }
 }

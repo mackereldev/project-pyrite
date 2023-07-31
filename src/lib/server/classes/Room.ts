@@ -32,7 +32,7 @@ export default class Room {
         this.channel = this.realtime.channels.get(`${namespace}:${this.code}`);
     }
 
-    private async joinClient(client: Client) {
+    private joinClient = async (client: Client) => {
         if (!this.leader) {
             this.leader = client;
         }
@@ -41,7 +41,7 @@ export default class Room {
         this.clients.push(client);
     }
 
-    private async leaveClient(clientId: string) {
+    private leaveClient = async (clientId: string) => {
         const client = this.getClient(clientId);
 
         try {
@@ -66,17 +66,17 @@ export default class Room {
         return false;
     }
 
-    private async closeRoom() {
+    private closeRoom = async () => {
         await this.channel.detach();
 
         this.onCloseRoom(this);
     }
 
-    getClient(clientId: string) {
+    getClient = (clientId: string) => {
         return this.clients.find((c) => c.clientId == clientId);
     }
 
-    async initialise() {
+    initialise = async () => {
         await this.channel.subscribe("server/join", (msg) => {
             console.log(`received request from client (${msg.clientId}) to join server ${this.code}`);
             this.joinClient(new Client(msg.clientId, msg.connectionId!));

@@ -15,7 +15,7 @@ export default class ChatChannel {
         this.onMessageCallback(this, message);
     };
 
-    public getMessages() {
+    public getMessages = () => {
         return [...this.messages];
     }
 }
