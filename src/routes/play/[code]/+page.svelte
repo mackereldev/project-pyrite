@@ -141,6 +141,8 @@
                 }
             });
 
+            await channel.whenState("attached");
+
             Debug.log("[PUBLISH] server/join");
             await channel.publish("server/join", {});
         }

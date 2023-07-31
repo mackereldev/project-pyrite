@@ -32,32 +32,33 @@ export default class Room {
         this.channel = this.realtime.channels.get(`${namespace}:${this.code}`);
     }
 
-    private joinClient(client: Client) {
+    private async joinClient(client: Client) {
         if (!this.leader) {
             this.leader = client;
         }
 
-        this.channel.presence.enterClient(client.clientId);
+        await this.channel.presence.enterClient(client.clientId);
         this.clients.push(client);
     }
 
-    private leaveClient(clientId: string) {
+    private async leaveClient(clientId: string) {
         const client = this.getClient(clientId);
 
         try {
             const replaceLeader = this.leader == client;
 
             this.clients = this.clients.filter((c) => c != client);
-            this.channel.presence.leaveClient(clientId);
+            await this.channel.presence.leaveClient(clientId);
 
             if (this.clients.length == 0) {
-                this.closeRoom();
-                return true;
+                await this.closeRoom();
             } else {
                 if (replaceLeader) {
                     this.leader = this.clients[0];
                 }
             }
+
+            return true;
         } catch (error) {
             console.error(error);
         }
@@ -65,8 +66,8 @@ export default class Room {
         return false;
     }
 
-    private closeRoom() {
-        this.channel.detach();
+    private async closeRoom() {
+        await this.channel.detach();
 
         this.onCloseRoom(this);
     }
@@ -81,9 +82,9 @@ export default class Room {
             this.joinClient(new Client(msg.clientId, msg.connectionId!));
         });
 
-        await this.channel.subscribe("server/leave", (msg) => {
+        await this.channel.subscribe("server/leave", async (msg) => {
             console.log(`received request from client (${msg.clientId}) to leave server ${this.code}`);
-            const success = this.leaveClient(msg.clientId);
+            const success = await this.leaveClient(msg.clientId);
 
             if (success) {
                 console.log(`request from (${msg.clientId}) to leave was successful`);
