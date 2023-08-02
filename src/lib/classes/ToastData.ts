@@ -2,8 +2,8 @@ export default class ToastData {
     static readonly DEFAULT_DURATIONS = {
         success: 5000,
         info: 5000,
-        warning: 5000,
-        error: 5000,
+        warning: 8000,
+        error: 12000,
     };
 
     severity;
