@@ -9,6 +9,16 @@
         %sveltekit.head%
     </head>
     <body data-sveltekit-preload-data="hover">
+        <script type="module">
+            const prefs = localStorage.getItem("preferences");
+
+            if (prefs) {
+                const obj = JSON.parse(prefs);
+                if (obj._darkMode) {
+                    document.documentElement.classList.add("dark");
+                }
+            }
+        </script>
         <div style="display: contents">%sveltekit.body%</div>
     </body>
 </html>
