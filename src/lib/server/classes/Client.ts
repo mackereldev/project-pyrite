@@ -9,9 +9,9 @@ export default class Client {
 
     similar = (other: Client) => {
         return this.clientId == other.clientId || this.connectionId == other.connectionId;
-    }
+    };
 
     equals = (other: Client) => {
         return this.clientId == other.clientId && this.connectionId == other.connectionId;
-    }
+    };
 }

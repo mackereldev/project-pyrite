@@ -1,4 +1,4 @@
-import type ChatMessage from "./ChatMessage";
+import ChatMessage from "./ChatMessage";
 
 export default class ChatChannel {
     public name: string;
@@ -17,5 +17,5 @@ export default class ChatChannel {
 
     public getMessages = () => {
         return [...this.messages];
-    }
+    };
 }

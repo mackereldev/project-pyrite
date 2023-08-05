@@ -1,7 +1,7 @@
-import * as MathMore from "./MathMore";
-import ChatMessage from "./ChatMessage";
 import { ChatMessageType } from "$lib/enums";
 import { get } from "svelte/store";
+import ChatMessage from "./ChatMessage";
+import * as MathMore from "./MathMore";
 import { channelStore, gameChatStore } from "./Stores";
 
 export abstract class Command {
@@ -14,7 +14,7 @@ export class HelpCommand extends Command {
 
         gameChat.addMessage(new ChatMessage(undefined, ChatMessageType.System, "<Insert help here...>"));
         return true;
-    }
+    };
 }
 
 export class PingCommand extends Command {
@@ -36,5 +36,5 @@ export class PingCommand extends Command {
         }
 
         return false;
-    }
+    };
 }

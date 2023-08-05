@@ -1,6 +1,6 @@
-import Room from "./classes/Room";
-import { Rest, Realtime } from "ably/promises";
 import { ABLY_API_KEY_SERVER } from "$env/static/private";
+import { Realtime, Rest } from "ably/promises";
+import Room from "./classes/Room";
 import { getChannelNamespace } from "./environment-handler";
 
 const rest = new Rest(ABLY_API_KEY_SERVER);

@@ -1,4 +1,4 @@
-import type { Cookies } from "@sveltejs/kit";
+import { Cookies } from "@sveltejs/kit";
 
 const COOKIE_NAMES = {
     USERNAME: "username",

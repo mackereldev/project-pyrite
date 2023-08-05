@@ -1,6 +1,6 @@
-import { json, type RequestHandler } from "@sveltejs/kit";
-import { Rest } from "ably/promises";
 import { ABLY_API_KEY_CLIENT } from "$env/static/private";
+import { json, RequestHandler } from "@sveltejs/kit";
+import { Rest } from "ably/promises";
 
 export const GET = (async ({ url }) => {
     if (!ABLY_API_KEY_CLIENT) {

@@ -1,6 +1,6 @@
-import Client from "./Client";
-import type { Realtime, Types } from "ably/promises";
 import * as MathMore from "$lib/classes/MathMore";
+import { Realtime, Types } from "ably/promises";
+import Client from "./Client";
 
 export default class Room {
     private realtime: Realtime;
@@ -39,7 +39,7 @@ export default class Room {
 
         await this.channel.presence.enterClient(client.clientId);
         this.clients.push(client);
-    }
+    };
 
     private leaveClient = async (clientId: string) => {
         const client = this.getClient(clientId);
@@ -64,17 +64,17 @@ export default class Room {
         }
 
         return false;
-    }
+    };
 
     private closeRoom = async () => {
         await this.channel.detach();
 
         this.onCloseRoom(this);
-    }
+    };
 
     getClient = (clientId: string) => {
         return this.clients.find((c) => c.clientId == clientId);
-    }
+    };
 
     initialise = async () => {
         await this.channel.subscribe("server/join", (msg) => {
@@ -106,5 +106,5 @@ export default class Room {
         });
 
         return await this.channel.whenState("attached");
-    }
+    };
 }

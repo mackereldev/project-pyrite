@@ -1,5 +1,5 @@
 import ToastData from "$lib/classes/ToastData";
-import type { PageLoad } from "./$types";
+import { PageLoad } from "./$types";
 
 export const load = (async ({ data, url }) => {
     const joinRejectionReason = url.searchParams.get("join_rejection_reason");
