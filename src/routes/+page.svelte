@@ -77,7 +77,6 @@
 <ToastContainer bind:this={toastContainer} />
 
 <div class="flex flex-col gap-12">
-    <button>Test</button>
     <div class="flex flex-col items-center rounded-lg p-6 ring-2 ring-zinc-300">
         <h2 class="mb-4 text-center text-2xl font-bold">Preferences</h2>
         <div class="flex flex-col">
