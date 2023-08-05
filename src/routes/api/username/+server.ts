@@ -1,5 +1,5 @@
 import { getUsername, setUsername } from "$lib/server/user-handler";
-import { json, RequestHandler } from "@sveltejs/kit";
+import { json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET = (({ cookies }) => {
     return json({ username: getUsername(cookies) });

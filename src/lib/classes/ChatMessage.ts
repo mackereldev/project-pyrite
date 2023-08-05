@@ -1,4 +1,4 @@
-import { ChatMessageType } from "$lib/enums";
+import type { ChatMessageType } from "$lib/enums";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 

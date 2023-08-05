@@ -2,7 +2,7 @@ import { getChannelNamespace } from "$lib/server/environment-handler";
 import { getRoomData } from "$lib/server/room-handler";
 import { getUsername } from "$lib/server/user-handler";
 import { redirect } from "@sveltejs/kit";
-import { PageServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ cookies, params }) => {
     const username = getUsername(cookies) || "Player";

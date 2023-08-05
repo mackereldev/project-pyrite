@@ -1,5 +1,5 @@
 import * as MathMore from "$lib/classes/MathMore";
-import { Realtime, Types } from "ably/promises";
+import type { Realtime, Types } from "ably/promises";
 import Client from "./Client";
 
 export default class Room {

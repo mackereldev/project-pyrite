@@ -1,4 +1,4 @@
-import ChatMessage from "./ChatMessage";
+import type ChatMessage from "./ChatMessage";
 
 export default class ChatChannel {
     public name: string;
