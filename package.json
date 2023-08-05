@@ -7,7 +7,7 @@
         "dev": "vite dev",
         "build": "vite build",
         "preview": "vite preview",
-        "format": "prettier --write --plugin-search-dir=. **/*.{js,ts,svelte}",
+        "format": "dprint fmt",
         "check": "svelte-check"
     },
     "devDependencies": {
@@ -16,6 +16,7 @@
         "@sveltejs/kit": "^1.22.3",
         "@types/express": "^4.17.17",
         "autoprefixer": "^10.4.14",
+        "dprint": "^0.40.2",
         "postcss": "^8.4.27",
         "prettier": "^2.8.8",
         "prettier-plugin-multiline-arrays": "^2.0.0",
