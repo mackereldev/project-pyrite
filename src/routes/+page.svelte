@@ -24,7 +24,7 @@
         }
     });
 
-    const JOIN_CODE_LENGTH = 6;
+    const JOIN_CODE_LENGTH = 4;
 
     let createRoomButton: HTMLButtonElement;
 
@@ -34,7 +34,7 @@
     let maxClients = 4;
 
     const validateJoinRoomValue = () => {
-        joinRoomValue = joinRoomValue.replace(/\D/g, ""); // Numeric (type)
+        joinRoomValue = joinRoomValue.replace(/^[A-Z]+$/, ""); // Alpha capital (type)
         return joinRoomInput.validity.valid; // Length (range), non-empty (existence)
     };
 
@@ -45,14 +45,9 @@
     };
 
     const createRoom = async () => {
-        createRoomButton.disabled = true;
+        // createRoomButton.disabled = true;
 
-        const response = await fetch("/api/create-room", {
-            method: "PATCH",
-        });
-
-        const generatedCode = (await response.json()).code;
-        gotoRoom(generatedCode);
+        // const generatedCode = (await response.json()).code;
     };
 
     const gotoRoom = async (code: string) => {

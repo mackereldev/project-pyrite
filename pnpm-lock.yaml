@@ -8,6 +8,9 @@ dependencies:
   ably:
     specifier: ^1.2.42
     version: 1.2.42
+  colyseus.js:
+    specifier: ^0.15.11
+    version: 0.15.11
   dayjs:
     specifier: ^1.11.9
     version: 1.11.9
@@ -103,6 +106,11 @@ packages:
     dependencies:
       type-fest: 4.0.0
     dev: true
+
+  /@colyseus/schema@2.0.11:
+    resolution: {integrity: sha512-wSArJPac1PUDipLS/hvusvXrisTs+IOOAGyPYODcwLRQFLFMd0sgJAh78WdpJuIFf3TLRRoloJlWwbQlu67oPg==}
+    hasBin: true
+    dev: false
 
   /@dprint/darwin-arm64@0.40.2:
     resolution: {integrity: sha512-qharMFhxpNq9brgvHLbqzzAgVgPWSHLfzNLwWWhKcGOUUDUIilfAo3SlvOz6w4nQiIifLpYZOvZqK7Lpf9mSSw==}
@@ -920,6 +928,16 @@ packages:
       periscopic: 3.1.0
     dev: true
 
+  /colyseus.js@0.15.11:
+    resolution: {integrity: sha512-8HSi7t+9dtlZN4DuXZx3s7dt4QvhjmZm7LDYMF531eG16DoEkWF8k48E1fCz/6wBCbwCKxxOwt16+EDAhPdRxw==}
+    engines: {node: '>= 12.x'}
+    dependencies:
+      '@colyseus/schema': 2.0.11
+      httpie: 2.0.0-next.13
+      nanoevents: 5.1.13
+      tslib: 2.6.1
+    dev: false
+
   /commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
@@ -1372,6 +1390,11 @@ packages:
       resolve-alpn: 1.2.1
     dev: false
 
+  /httpie@2.0.0-next.13:
+    resolution: {integrity: sha512-KbKOnq8wt0hVEfteYCSnEsPgzaWxcVc4qZ4OaDU9mVOYLRo3XChjWs3MiuRgFu5y+4JDo7sDKdKzkAn1ljQYFA==}
+    engines: {node: '>=10'}
+    dev: false
+
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
@@ -1634,6 +1657,11 @@ packages:
       object-assign: 4.1.1
       thenify-all: 1.6.0
     dev: true
+
+  /nanoevents@5.1.13:
+    resolution: {integrity: sha512-JFAeG9fp0QZnRoESHjkbVFbZ9BkOXkkagUVwZVo/pkSX+Fq1VKlY+5og/8X9CYc6C7vje/CV+bwJ5M2X0+IY9Q==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /nanoid@3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
@@ -2319,7 +2347,6 @@ packages:
 
   /tslib@2.6.1:
     resolution: {integrity: sha512-t0hLfiEKfMUoqhG+U1oid7Pva4bbDPHYfJNiB7BiIjRkj1pyC++4N3huJfqY6aRH6VTB0rvtzQwjM4K6qpfOig==}
-    dev: true
 
   /type-fest@3.13.1:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
