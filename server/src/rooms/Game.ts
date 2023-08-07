@@ -1,5 +1,6 @@
 import { Client, Room } from "@colyseus/core";
 import { GameState } from "./schema/GameState";
+import * as MathMore from "../../../src/lib/classes/MathMore";
 
 const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
@@ -40,7 +41,7 @@ export class Game extends Room<GameState> {
     async onCreate(options: any) {
         const { maxClients }: { maxClients: number } = options;
 
-        this.setState(new GameState());
+        this.setState(new GameState(Date.now()));
         this.roomId = await this.generateRoomId();
 
         if ([2, 4, 8, 16].includes(maxClients)) {
@@ -52,6 +53,18 @@ export class Game extends Room<GameState> {
         this.onMessage("chat", (client, message) => {
             const { msg }: { msg: string } = message;
             this.broadcast("chat", { msg, author: { sessionId: client.id, clientId: client.userData.clientId } });
+        });
+
+        this.onMessage("ping", (client, message) => {
+            let { delay }: { delay: number } = message;
+
+            if (Number.isFinite(delay)) {
+                delay = MathMore.clamp(delay, 0, 10000);
+            }
+
+            this.clock.setTimeout(() => {
+                this.broadcast("ping", { sender: { sessionId: client.id, clientId: client.userData.clientId } });
+            }, delay);
         });
     }
 

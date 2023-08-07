@@ -6,7 +6,7 @@ export default class CommandHandler {
         ping: new PingCommand(),
     };
 
-    public runCommand = (commandName: string, ...args: string[]) => {
+    public static runCommand = (commandName: string, ...args: string[]) => {
         if (Object.hasOwn(CommandHandler.commands, commandName)) {
             const name = commandName as keyof typeof CommandHandler.commands;
             const command = CommandHandler.commands[name];

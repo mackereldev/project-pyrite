@@ -1,7 +1,7 @@
 import { browser } from "$app/environment"
 
 export default class Preferences {
-    public nickname: string = "";
+    public characterName: string = "";
     private _darkMode: boolean = false;
 
     public get darkMode() {
@@ -28,7 +28,7 @@ export default class Preferences {
             if (storage) {
                 const obj = JSON.parse(storage);
 
-                prefs.nickname = obj.nickname;
+                prefs.characterName = obj.characterName;
                 prefs.darkMode = obj._darkMode;
 
             }
