@@ -8,12 +8,14 @@
     import type { AfterNavigate } from "@sveltejs/kit";
     import type ToastData from "$lib/classes/ToastData";
     import { page } from "$app/stores";
+    import PreferencesModal from "$lib/components/Modal/PreferencesModal.svelte";
 
     export let data: PageData;
     $: ({ toasts } = data ?? {}); // Stay updated
     let { username } = data ?? {}; // Only set once
 
     let toastContainer: ToastContainer;
+    let preferencesModal: PreferencesModal;
 
     afterNavigate((e: AfterNavigate) => {
         toastContainer.addToasts(...toasts.map((t: ToastData) => t.clone()));
@@ -70,6 +72,7 @@
 </script>
 
 <ToastContainer bind:this={toastContainer} />
+<PreferencesModal bind:this={preferencesModal} />
 
 <div class="flex flex-col gap-12">
     <div class="flex flex-col items-center rounded-lg p-6 ring-2 ring-zinc-300">
