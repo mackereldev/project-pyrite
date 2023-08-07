@@ -1,7 +1,7 @@
 import { Client, Room } from "@colyseus/core";
 import { GameState } from "./schema/GameState";
 
-const LETTERS = "BCDFGHJKLMNPQRSTVWXYZ";
+const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
 export class Game extends Room<GameState> {
     GAME_CHANNEL = "game:rooms";
@@ -9,7 +9,7 @@ export class Game extends Room<GameState> {
     generateRoomIdSingle(): string {
         let result = "";
         for (let i = 0; i < 4; i++) {
-            result += LETTERS.charAt(Math.floor(Math.random() * LETTERS.length));
+            result += CONSONANTS.charAt(Math.floor(Math.random() * CONSONANTS.length));
         }
         return result;
     }
@@ -28,7 +28,7 @@ export class Game extends Room<GameState> {
     claimClientId(client: Client, clientId: string): boolean {
         if (this.clients.find((c) => c !== client && c.userData && c.userData.clientId === clientId)) {
             console.log(`clientId '${clientId}' is taken`);
-            client.leave(4001, `clientId '${clientId}' is taken`);
+            client.leave(4101, `clientId '${clientId}' is taken`);
             return false;
         } else {
             console.log(client.sessionId, "joined!");

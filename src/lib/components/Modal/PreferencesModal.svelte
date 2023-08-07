@@ -1,7 +1,6 @@
 <script lang="ts">
     import Modal from "../Modal.svelte";
     import { preferencesStore } from "$lib/classes/Stores";
-    import Preferences from "$lib/classes/Preferences";
     import { get } from "svelte/store";
     import { onMount } from "svelte";
     
@@ -17,7 +16,7 @@
 
     const savePrefs = () => {
         if (mounted) {
-            preferencesStore.set(new Preferences(darkModeInput));
+            $preferencesStore.darkMode = darkModeInput;
         }
     }
 

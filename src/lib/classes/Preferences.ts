@@ -1,6 +1,7 @@
 import { browser } from "$app/environment"
 
 export default class Preferences {
+    public nickname: string = "";
     private _darkMode: boolean = false;
 
     public get darkMode() {
@@ -20,18 +21,18 @@ export default class Preferences {
         }
     }
 
-    constructor(darkMode: boolean) {
-        this.darkMode = darkMode;
-    }
-
     public static loadPrefs = () => {
         if (browser) {
+            const prefs = new Preferences();
             const storage = localStorage.getItem("preferences");
             if (storage) {
                 const obj = JSON.parse(storage);
-                const prefs = new Preferences(obj._darkMode);
-                return prefs;
+
+                prefs.nickname = obj.nickname;
+                prefs.darkMode = obj._darkMode;
+
             }
+            return prefs;
         }
     }
     
