@@ -120,13 +120,16 @@
         }
     };
 
-    const sendCommand = () => {
+    const sendCommand = async () => {
         const command = messageValue.replace(/ +(?= )/g, "").split(" ");
         const commandName = command[0];
         const args = command.slice(1);
 
-        console.debug("COMMAND:", command);
-        CommandHandler.runCommand(commandName, ...args);
+        console.debug("COMMAND:", commandName);
+        const response = await CommandHandler.executeCommand(commandName, ...args);
+        if (response) {
+            chatChannels.game.addMessage(response);
+        }
     };
 
     const onChatMessage = (chatChannel: ChatChannel, message: ChatMessage) => {
