@@ -58,6 +58,8 @@ export class Game extends Room<GameState> {
         this.onMessage("ping", (client, message) => {
             let { delay }: { delay: number } = message;
 
+            delay = MathMore.clamp(delay, 0, 10000);
+
             if (Number.isFinite(delay)) {
                 delay = MathMore.clamp(delay, 0, 10000);
             }
