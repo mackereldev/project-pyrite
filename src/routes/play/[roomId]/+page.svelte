@@ -166,7 +166,7 @@
                 </div>
             {/each}
         </div>
-        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow flex-col overflow-y-scroll break-all px-3 pt-3 transition-all">
+        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow flex-col overflow-y-scroll break-words px-3 pt-3 transition-all">
             {#each currentChatChannel.getMessages() as message (message)}
                 <ChatItem {message} relativeStartTime={$room.state.serverStartTime} />
             {/each}
