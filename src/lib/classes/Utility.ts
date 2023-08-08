@@ -9,5 +9,13 @@ export const subscribeStoreDefer = <T>(store: Readable<T>, fn: (state: T) => voi
         } else {
             fn(state);
         }
-    })
-}
+    });
+};
+
+export const isNumber = (number: string) => {
+    if (number) {
+        return !!number.match(/^\d+$/);
+    }
+
+    return false;
+};

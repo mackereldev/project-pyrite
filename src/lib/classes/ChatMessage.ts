@@ -6,12 +6,14 @@ export default class ChatMessage {
     public author;
     public type;
     public text;
+    public isError;
     private time;
 
-    constructor(author: string | undefined, type: ChatMessageType, text: string) {
+    constructor(author: string | undefined, type: ChatMessageType, text: string, isError: boolean = false) {
         this.author = author;
         this.type = type;
         this.text = text;
+        this.isError = isError;
         this.time = Date.now();
 
         dayjs.extend(utc);

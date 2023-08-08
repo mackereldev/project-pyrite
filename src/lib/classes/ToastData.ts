@@ -9,7 +9,7 @@ export default class ToastData {
     severity;
     message: string;
     detail: string;
-    
+
     private _duration;
     get duration() {
         return this._duration == "disabled" ? -1 : this._duration == "auto" ? this.evaluateAutoDuration() : this._duration;
@@ -29,9 +29,9 @@ export default class ToastData {
 
     private evaluateAutoDuration = () => {
         return ToastData.DEFAULT_DURATIONS[this.severity];
-    }
+    };
 
     clone = () => {
         return new ToastData(this.severity, this.message, this.detail, this._duration);
-    }
+    };
 }

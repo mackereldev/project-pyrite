@@ -17,5 +17,5 @@ export default class ChatChannel {
 
     public getMessages = () => {
         return [...this.messages];
-    }
+    };
 }

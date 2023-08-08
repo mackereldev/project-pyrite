@@ -1,27 +1,11 @@
-import ToastData from "$lib/classes/ToastData";
 import type { PageLoad } from "./$types";
 
-export const load = (async ({ data, url }) => {
-    const joinRejectionReason = url.searchParams.get("join_rejection_reason");
+export const load = (({ url }) => {
+    const errorParam = url.searchParams.get("error");
 
-    let toasts: ToastData[] = [];
-
-    switch (joinRejectionReason) {
-        case "duplicate_client_id":
-            toasts.push(new ToastData("error", "Unable To Join", "Duplicate name."));
-            break;
-        case "room_not_found":
-            toasts.push(new ToastData("error", "Unable To Join", "Room could not be found."));
-            break;
-        case "invalid_request":
-            toasts.push(new ToastData("error", "Invalid Request", "The server rejected your request."));
-            break;
-        default:
-            break;
-    }
+    let errorReason = errorParam && parseInt(errorParam) || -1;
 
     return {
-        ...data,
-        toasts,
+        errorReason,
     };
 }) satisfies PageLoad;
