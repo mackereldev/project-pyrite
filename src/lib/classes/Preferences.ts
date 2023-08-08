@@ -1,4 +1,4 @@
-import { browser } from "$app/environment"
+import { browser } from "$app/environment";
 
 export default class Preferences {
     public characterName: string = "";
@@ -30,15 +30,14 @@ export default class Preferences {
 
                 prefs.characterName = obj.characterName;
                 prefs.darkMode = obj._darkMode;
-
             }
             return prefs;
         }
-    }
-    
+    };
+
     public static savePrefs = (prefs: Preferences) => {
         if (browser) {
             localStorage.setItem("preferences", JSON.stringify(prefs));
         }
-    }
+    };
 }

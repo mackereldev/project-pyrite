@@ -5,5 +5,5 @@ export const load = (({ params }) => {
 
     return {
         roomId,
-    }
+    };
 }) satisfies PageLoad;

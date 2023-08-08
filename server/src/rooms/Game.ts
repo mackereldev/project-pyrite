@@ -1,6 +1,6 @@
 import { Client, Room } from "@colyseus/core";
-import { GameState } from "./schema/GameState";
 import * as MathMore from "../../../src/lib/classes/MathMore";
+import { GameState } from "./schema/GameState";
 
 const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 

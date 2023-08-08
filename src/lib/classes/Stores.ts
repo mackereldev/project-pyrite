@@ -1,7 +1,7 @@
-import { writable } from "svelte/store";
-import type ChatChannel from "./ChatChannel";
 import * as Colyseus from "colyseus.js";
+import { writable } from "svelte/store";
 import type { GameState } from "../../../server/src/rooms/schema/GameState";
+import type ChatChannel from "./ChatChannel";
 import Preferences from "./Preferences";
 import { subscribeStoreDefer } from "./Utility";
 

@@ -1,9 +1,9 @@
+import { ChatMessageType } from "$lib/enums";
 import { get } from "svelte/store";
 import ChatMessage from "./ChatMessage";
 import * as MathMore from "./MathMore";
 import { room } from "./Stores";
 import { isNumber } from "./Utility";
-import { ChatMessageType } from "$lib/enums";
 
 export abstract class Cmd {
     protected validate(): boolean {
@@ -76,5 +76,5 @@ export class PingCmd extends Cmd {
         }
 
         return;
-    };
+    }
 }

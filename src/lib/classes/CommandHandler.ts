@@ -1,6 +1,6 @@
 import { ChatMessageType } from "$lib/enums";
 import ChatMessage from "./ChatMessage";
-import { CmdError, InpsectCmd, HelpCmd, PingCmd } from "./Command";
+import { CmdError, HelpCmd, InpsectCmd, PingCmd } from "./Command";
 
 export default class CommandHandler {
     public static executeCommand = async (commandName: string, ...args: string[]): Promise<ChatMessage | undefined> => {
@@ -12,12 +12,12 @@ export default class CommandHandler {
                     return new ChatMessage(undefined, ChatMessageType.System, message, false);
                 }
             }
-        }
-        
+        };
+
         const err = (message: string) => {
             return new ChatMessage(undefined, ChatMessageType.System, message, true);
-        }
-        
+        };
+
         try {
             switch (commandName) {
                 case "inspect":
@@ -37,8 +37,8 @@ export default class CommandHandler {
             } else {
                 console.error(error);
             }
-            
+
             return err("An unknown error occurred.");
         }
-    }
+    };
 }

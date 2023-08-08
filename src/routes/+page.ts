@@ -7,5 +7,5 @@ export const load = (({ url }) => {
 
     return {
         errorReason,
-    }
+    };
 }) satisfies PageLoad;
