@@ -22,5 +22,5 @@
 <div class="font-mono">
     <span class="text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class={colour}>[{author}]</span>
-    <span class={message.isError ? "text-red-400" : ""}>{message.text}</span>
+    <span class={`whitespace-pre-line${message.isError ? " text-red-400" : ""}`}>{message.text}</span>
 </div>
