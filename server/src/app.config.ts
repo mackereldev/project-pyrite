@@ -2,7 +2,7 @@ import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
 import config from "@colyseus/tools";
 
-import { Game } from "./rooms/Game";
+import { Game } from "./room/Game";
 
 export default config({
     initializeGameServer: (gameServer) => {

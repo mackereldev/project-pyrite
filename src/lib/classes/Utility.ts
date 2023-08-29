@@ -12,10 +12,18 @@ export const subscribeStoreDefer = <T>(store: Readable<T>, fn: (state: T) => voi
     });
 };
 
-export const isNumber = (number: string) => {
+export const isNatural = (number: string): boolean => {
     if (number) {
         return !!number.match(/^\d+$/);
     }
 
     return false;
 };
+
+export const isInteger = (number: string): boolean => {
+    if (number) {
+        return !!number.match(/^-?\d+$/);
+    }
+
+    return false;
+}

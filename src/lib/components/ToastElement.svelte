@@ -36,13 +36,13 @@
     });
 
     let colour = "bg-zinc-200";
-    if (toast.severity == "success") {
+    if (toast.severity === "success") {
         colour = "bg-emerald-200";
-    } else if (toast.severity == "info") {
+    } else if (toast.severity === "info") {
         colour = "bg-sky-200";
-    } else if (toast.severity == "warning") {
+    } else if (toast.severity === "warning") {
         colour = "bg-yellow-200";
-    } else if (toast.severity == "error") {
+    } else if (toast.severity === "error") {
         colour = "bg-red-200";
     }
 
@@ -51,13 +51,13 @@
 
 <div in:fly={{ x: 100, duration: 500, opacity: 1, easing: quintOut }} out:fade={{ duration: 200, easing: circOut }} class="flex h-20 w-96">
     <button on:click={remove} class="relative flex flex-grow items-center gap-3 truncate rounded-lg px-4 {colour}">
-        {#if toast.severity == "success"}
+        {#if toast.severity === "success"}
             <Success class="h-8 w-8" />
-        {:else if toast.severity == "info"}
+        {:else if toast.severity === "info"}
             <Info class="h-8 w-8" />
-        {:else if toast.severity == "warning"}
+        {:else if toast.severity === "warning"}
             <Warning class="h-8 w-8" />
-        {:else if toast.severity == "error"}
+        {:else if toast.severity === "error"}
             <Error class="h-8 w-8" />
         {/if}
         <div class="flex flex-grow flex-col items-start">

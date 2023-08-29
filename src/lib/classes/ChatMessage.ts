@@ -1,10 +1,11 @@
-import type { ChatMessageType } from "$lib/enums";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
-export default class ChatMessage {
-    public author;
-    public type;
+export type ChatMessageType = "player" | "game" | "system";
+
+export class ChatMessage {
+    public author: string | undefined;
+    public type: ChatMessageType;
     public text;
     public isError;
     private time;
@@ -22,4 +23,16 @@ export default class ChatMessage {
     public getRelativeTime = (relativeStartTime: number) => {
         return dayjs.utc(this.time - relativeStartTime).format("HH:mm:ss");
     };
+
+    public serialize(): string {
+        return ChatMessage.serialize(this);
+    }
+
+    public static serialize(chatMessage: ChatMessage): string {
+        return JSON.stringify(chatMessage);
+    }
+
+    public static deserialize(serializedMessage: string): void {
+        const obj = JSON.parse(serializedMessage);
+    }
 }

@@ -2,7 +2,7 @@
     let dialog: HTMLDialogElement;
 
     const onClick = (e: MouseEvent) => {
-        if (e.target == dialog) {
+        if (e.target === dialog) {
             dialog.close();
         }
     };

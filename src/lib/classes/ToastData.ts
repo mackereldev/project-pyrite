@@ -12,7 +12,7 @@ export default class ToastData {
 
     private _duration;
     get duration() {
-        return this._duration == "disabled" ? -1 : this._duration == "auto" ? this.evaluateAutoDuration() : this._duration;
+        return this._duration === "disabled" ? -1 : this._duration === "auto" ? this.evaluateAutoDuration() : this._duration;
     }
 
     get expires() {

@@ -1,11 +1,11 @@
 <script lang="ts">
-    import type { GameState } from "../../server/src/rooms/schema/GameState";
+    import type { GameState} from "../../server/src/schema/GameState";
     import Input from "$lib/components/Input.svelte";
     import { page } from "$app/stores";
     import { onMount } from "svelte";
     import ToastContainer from "$lib/components/ToastContainer.svelte";
     import ToastData from "$lib/classes/ToastData";
-    import { client, room, preferencesStore } from "$lib/classes/Stores";
+    import { clientStore, roomStore, preferencesStore } from "$lib/classes/Stores";
     import { goto } from "$app/navigation";
     import type { PageData } from "./$types";
     import PreferencesModal from "$lib/components/Modal/PreferencesModal.svelte";
@@ -32,25 +32,27 @@
         if (errorReason != -1) {
             handleError(errorReason);
         }
+
+        createRoom();
     });
 
     const createRoom = async () => {
         try {
-            $room = await $client.create<GameState>("game", { clientId: characterNameValue, maxClients: maxClientsValue });
+            $roomStore = await $clientStore.create<GameState>("game", { clientId: characterNameValue, maxClients: maxClientsValue });
 
-            goto(`/play/${$room.id}`);
+            goto(`/play/${$roomStore.id}`);
         } catch (error) {
-            throw error;
+            console.trace(error);
         }
     };
 
     const joinRoom = async (roomId: string) => {
         console.debug(`attempting to join room '${roomId}'`);
 
-        $client
+        $clientStore
             .joinById<GameState>(roomId, { clientId: characterNameValue })
             .then((r) => {
-                $room = r;
+                $roomStore = r;
                 goto(`/play/${roomId}`);
             })
             .catch((err) => {

@@ -1,19 +1,18 @@
 <script lang="ts">
-    import type ChatMessage from "$lib/classes/ChatMessage";
-    import { ChatMessageType } from "$lib/enums";
+    import type { ChatMessage } from "$lib/classes/ChatMessage";
 
     export let message: ChatMessage;
     export let relativeStartTime: number;
 
     let colour = "text-zinc-500";
     let author = "invalid";
-    if (message.type == ChatMessageType.Player) {
+    if (message.type === "player") {
         colour = "text-violet-500";
         author = message.author || "invalid";
-    } else if (message.type == ChatMessageType.Game) {
+    } else if (message.type === "game") {
         colour = "text-sky-500";
         author = "GAME";
-    } else if (message.type == ChatMessageType.System) {
+    } else if (message.type === "system") {
         colour = "text-green-500";
         author = "SYSTEM";
     }
@@ -22,5 +21,5 @@
 <div class="font-mono">
     <span class="text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class={colour}>[{author}]</span>
-    <span class={`whitespace-pre-line${message.isError ? " text-red-400" : ""}`}>{message.text}</span>
+    <span class={`whitespace-pre-wrap${message.isError ? " text-red-400" : ""}`}>{message.text}</span>
 </div>

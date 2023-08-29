@@ -7,13 +7,3 @@ export const enum AutoScrollBehaviour {
     /** Never automatically scroll. */
     Never,
 }
-
-/** The type of sender of a chat message (decides appearance). */
-export const enum ChatMessageType {
-    /** A message sent by a client. */
-    Player,
-    /** A message representing an action in the game world. */
-    Game,
-    /** A message sent by the server. */
-    System,
-}
