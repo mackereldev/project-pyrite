@@ -12,8 +12,5 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "useDefineForClassFields": false
-    },
-    "include": [
-        "src"
-    ]
+    }
 }

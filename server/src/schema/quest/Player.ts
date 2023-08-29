@@ -4,10 +4,10 @@ import { Item, StackableItem, equipmentRefs, itemRefs } from "./Item";
 
 export class Player extends Entity {
     @type("string")
-    public clientId: string;
+    clientId: string;
 
     @type([Item])
-    public inventory: ArraySchema<Item> = new ArraySchema<Item>();
+    inventory: ArraySchema<Item> = new ArraySchema<Item>();
 
     constructor(clientId: string, isDead: boolean) {
         super("~PLAYER", 50, undefined, ["weapon", "weapon", "ring", "ring"]);
@@ -17,7 +17,7 @@ export class Player extends Entity {
         this.isDead = isDead;
     }
 
-    public addItem = (...items: Item[]) => {
+    addItem = (...items: Item[]) => {
         items.forEach((item) => {
             if (item instanceof StackableItem) {
                 const match = this.inventory.find((i) => i instanceof StackableItem && i.name === item.name) as StackableItem;
@@ -31,7 +31,7 @@ export class Player extends Entity {
         });
     };
 
-    public removeItem = (...items: Item[]) => {
+    removeItem = (...items: Item[]) => {
         items.forEach((item) => {
             if (item instanceof StackableItem) {
                 const matchIdx = this.inventory.findIndex((i) => i instanceof StackableItem && i.name === item.name);

@@ -4,10 +4,10 @@ import utc from "dayjs/plugin/utc";
 export type ChatMessageType = "player" | "game" | "system";
 
 export class ChatMessage {
-    public author: string | undefined;
-    public type: ChatMessageType;
-    public text;
-    public isError;
+    author: string | undefined;
+    type: ChatMessageType;
+    text;
+    isError;
     private time;
 
     constructor(author: string | undefined, type: ChatMessageType, text: string, isError: boolean = false) {
@@ -20,19 +20,15 @@ export class ChatMessage {
         dayjs.extend(utc);
     }
 
-    public getRelativeTime = (relativeStartTime: number) => {
+    getRelativeTime = (relativeStartTime: number) => {
         return dayjs.utc(this.time - relativeStartTime).format("HH:mm:ss");
     };
 
-    public serialize(): string {
+    serialize(): string {
         return ChatMessage.serialize(this);
     }
 
-    public static serialize(chatMessage: ChatMessage): string {
+    static serialize(chatMessage: ChatMessage): string {
         return JSON.stringify(chatMessage);
-    }
-
-    public static deserialize(serializedMessage: string): void {
-        const obj = JSON.parse(serializedMessage);
     }
 }

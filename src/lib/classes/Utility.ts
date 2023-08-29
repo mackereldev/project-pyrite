@@ -26,4 +26,4 @@ export const isInteger = (number: string): boolean => {
     }
 
     return false;
-}
+};

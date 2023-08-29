@@ -1,12 +1,12 @@
-import { BattleRoom, BossRoom, MarketRoom, QuestRoom } from "./QuestRoom";
+import { BattleRoom, BossRoom, MarketRoom } from "./QuestRoom";
 
 export class Quest {
     private configuration;
 
-    public name;
-    public battleRoom: () => BattleRoom
-    public marketRoom: () => MarketRoom;
-    public bossRoom: () => BossRoom;
+    name;
+    battleRoom: () => BattleRoom;
+    marketRoom: () => MarketRoom;
+    bossRoom: () => BossRoom;
 
     constructor(name: string, battleRoom: () => BattleRoom, marketRoom: () => MarketRoom, bossRoom: () => BossRoom) {
         this.name = name;
@@ -25,14 +25,14 @@ export class Quest {
             battleRoom,
             marketRoom,
             bossRoom,
-        ]
+        ];
     }
 
-    public generateRoomByIndex = (idx: number) => {
+    generateRoomByIndex = (idx: number) => {
         const roomType = this.configuration[Math.floor(idx)];
         const callback = [this.battleRoom, this.marketRoom, this.bossRoom].find((t) => t === roomType);
 
-        let room = callback();
+        const room = callback();
         room.generate();
 
         return room;

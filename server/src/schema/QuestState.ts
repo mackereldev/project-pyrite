@@ -5,23 +5,23 @@ import { Entity } from "./quest/Entity";
 
 export class QuestState extends Schema {
     @type("string")
-    public name: string;
+    name: string;
 
     @type("boolean")
-    public active: boolean = false;
+    active: boolean = false;
 
     @type(Entity)
-    public currentTurn: Entity;
+    currentTurn: Entity;
 
     @type([Entity])
-    public turnCycle: Entity[] = [];
+    turnCycle: Entity[] = [];
 
     @type("number")
-    public roomIndex: number = -1;
+    roomIndex: number = -1;
 
     @type(QuestRoom)
-    public room: QuestRoom;
+    room: QuestRoom;
 
     @type([Player])
-    public players: ArraySchema<Player> = new ArraySchema<Player>();
+    players: ArraySchema<Player> = new ArraySchema<Player>();
 }

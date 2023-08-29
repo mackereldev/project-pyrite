@@ -14,7 +14,7 @@ export class CommandReceiver {
         this.game = game;
     }
 
-    public register() {
+    register() {
         /* TODO
         Most of the validation here should be done on the client side (bar requisite checking).
         Remove ServerChat all together, since only cheaters will be receiving those messages.
@@ -96,13 +96,13 @@ export class CommandReceiver {
                 const ability = player.abilities[targetAbility - 1];
                 const battleRoom = this.game.state.questState.room as BattleRoom;
                 const enemy = battleRoom.enemies[targetEnemy - 1];
-    
+
                 const enemyString = `'${enemy.name}' (Enemy ${targetEnemy})`;
                 const totalDamage = ability.damage * player.evaluateEquipmentModifier("DMG");
                 const messages = [
                     `'${player.clientId}' uses '${ability.name}' on ${enemyString}, dealing ${totalDamage} damage.`,
-                ]
-    
+                ];
+
                 if (enemy.dealDamage(totalDamage)) {
                     battleRoom.enemies.deleteAt(targetEnemy - 1);
                     messages.push(`${enemyString} dies.`);
@@ -111,10 +111,10 @@ export class CommandReceiver {
                 }
 
                 this.game.questHandler.nextTurn();
-    
+
                 this.game.broadcast("server-chat", messages.map((text) => new ServerChat("game", text).serialize()));
             } catch (error) {
-                throw error;
+                console.trace(error);
             }
         });
 
@@ -138,28 +138,28 @@ export class CommandReceiver {
 
                 player.removeItem(equipment);
             } catch (error) {
-                throw error;
+                console.trace(error);
             }
         });
 
         this.game.onMessage("cmd-unequip", (client, message) => {
             const { equipmentType, targetSlot }: { equipmentType: EquipmentType, targetSlot: number } = message;
-            
+
             try {
                 const player = this.game.state.questState.players.find((p) => p.clientId === client.userData.clientId);
                 const slot: EquipmentSlot = player.equipmentSlots.filter((s) => s.typeRestriction === equipmentType)[targetSlot - 1];
-                
+
                 const removedEquipment = player.removeEquipment(slot);
                 if (removedEquipment) {
                     player.addItem(removedEquipment);
                 }
             } catch (error) {
-                throw error;
+                console.trace(error);
             }
         });
     }
 
-    public isLeader(client: Client): boolean {
+    isLeader(client: Client): boolean {
         return this.game.state.leader === client.userData.clientId;
     }
 }

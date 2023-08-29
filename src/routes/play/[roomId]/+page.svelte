@@ -11,8 +11,6 @@
     import CommandDispatcher from "$lib/classes/CommandDispatcher";
     import { generateUpcomingTurns } from "$lib/classes/GameClient";
     import type { Player } from "../../../../server/src/schema/quest/Player";
-    import { slide } from "svelte/transition";
-    import type { BattleRoom } from "../../../../server/src/schema/quest/QuestRoom";
 
     export let data: PageData;
     $: ({ roomId, clientId } = data ?? {});
@@ -22,8 +20,8 @@
 
     let peers: { clientId: string; isLeader: boolean }[] = [];
     const chatChannels = {
-        game: new ChatChannel("Game", (chatChannel: ChatChannel, message: ChatMessage) => onChatMessage(chatChannel, message)),
-        social: new ChatChannel("Social", (chatChannel: ChatChannel, message: ChatMessage) => onChatMessage(chatChannel, message)),
+        game: new ChatChannel("Game", (chatChannel, message) => onChatMessage(chatChannel, message)),
+        social: new ChatChannel("Social", (chatChannel, message) => onChatMessage(chatChannel, message)),
     };
     let currentChatChannel = chatChannels.game;
     $gameChat = chatChannels.game;
@@ -177,12 +175,15 @@
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onChatMessage = (chatChannel: ChatChannel, message: ChatMessage) => {
-        currentChatChannel = currentChatChannel; // Force redraw
+        if (chatChannel === currentChatChannel) {
+            currentChatChannel = currentChatChannel; // Force redraw
 
-        // Auto scroll
-        if (messageHistory && autoScrollBehaviour == AutoScrollBehaviour.Always) {
-            queueAutoScroll = true;
+            // Auto scroll
+            if (messageHistory && autoScrollBehaviour === AutoScrollBehaviour.Always) {
+                queueAutoScroll = true;
+            }
         }
     };
 
@@ -202,7 +203,7 @@
 
     const updatePlayerList = () => {
         const clientData = $roomStore.state.clientData.toArray();
-        peers = clientData.map((client: any) => {
+        peers = clientData.map((client) => {
             return { clientId: client.clientId, isLeader: $roomStore.state.leader === client.clientId };
         });
     };
@@ -217,7 +218,7 @@
     const updateTurnsList = () => {
         try {
             if ($roomStore.state.questState.currentTurn) {
-                turns = generateUpcomingTurns(6).map((entity, index) => {
+                turns = generateUpcomingTurns(6).map((entity) => {
                     return { type: (entity as Player)?.clientId ? "player" : "enemy", name: (entity as Player)?.clientId || entity?.name || "INVALID_ENTITY" };
                 });
             }
@@ -228,7 +229,7 @@
 
     const logState = () => {
         console.log($roomStore.state.questState.room.type);
-    }
+    };
 </script>
 
 <svelte:window on:resize={updateShowShadow} />
@@ -278,7 +279,7 @@
                     <div class="flex flex-col overflow-y-scroll">
                         {#each turns as turn, index}
                             <div class="flex p-2 items-center {index === 0 && "ring-2"} ring-inset rounded-md ring-zinc-300">
-                                <div class={`mr-2 ${index === 0 ? "h-3 w-3" : "h-2 w-2"} rounded-full ${turn.type === "player" ? "bg-emerald-400" : "enemy" ? "bg-red-400" : "bg-neutral-400"}`} />
+                                <div class={`mr-2 ${index === 0 ? "h-3 w-3" : "h-2 w-2"} rounded-full ${turn.type === "player" ? "bg-emerald-400" : "bg-red-400"}`} />
                                 <span class={`${index === 0 ? "font-bold" : ""}`}>{turn.name}</span>
                             </div>
                         {/each}

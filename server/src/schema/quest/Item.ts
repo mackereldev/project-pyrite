@@ -5,7 +5,7 @@ export type EquipmentType = "weapon" | "ring";
 
 export abstract class Item extends Schema {
     @type("string")
-    public name: string;
+    name: string;
 
     constructor(name: string) {
         super();
@@ -15,7 +15,7 @@ export abstract class Item extends Schema {
 
 export class StackableItem extends Item {
     @type("uint16")
-    public quantity: number;
+    quantity: number;
     
     constructor(name: string, quantity: number = 1) {
         super(name);
@@ -25,16 +25,16 @@ export class StackableItem extends Item {
 
 export class Equipment extends Item {
     @type("string")
-    public type: EquipmentType;
+    type: EquipmentType;
 
     @type([Ability])
-    public abilities: ArraySchema<Ability>;
+    abilities: ArraySchema<Ability>;
 
     @type("number")
-    public healthModifier: number;
+    healthModifier: number;
 
     @type("number")
-    public damageModifier: number;
+    damageModifier: number;
 
     constructor(name: string, type: EquipmentType, abilities: Ability[], healthMultiplier: number, damageMultiplier: number) {
         super(name);
@@ -52,4 +52,4 @@ export const itemRefs = {
 export const equipmentRefs = {
     training_sword: () => new Equipment("Training Sword", "weapon", [new Ability("Sword Thrust", 8)], 0, 0),
     steel_sword: () => new Equipment("Steel Sword", "weapon", [new Ability("Valiant Strike", 25)], 0.25, 0.5),
-}
+};

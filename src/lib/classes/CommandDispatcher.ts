@@ -2,7 +2,7 @@ import { ChatMessage } from "./ChatMessage";
 import { CmdError, PingCmd, QuestCmd, AdvanceCmd, InspectCmd, AttackCmd, EquipCmd, UnequipCmd } from "./Command";
 
 export default class CommandDispatcher {
-    public static executeCommand = async (commandName: string, ...args: string[]): Promise<ChatMessage | undefined> => {
+    static executeCommand = async (commandName: string, ...args: string[]): Promise<ChatMessage | undefined> => {
         const err = (message: string) => {
             return new ChatMessage(undefined, "system", message, true);
         };
@@ -30,7 +30,7 @@ export default class CommandDispatcher {
                         const cmd = entry[1];
                         const help = cmd.help();
                         if (help) {
-                            helpStrings.push(help);
+                            helpStrings.push(`${name}\n  ${help}`);
                         }
                     });
                     return new ChatMessage(undefined, "system", helpStrings.join("\n"));

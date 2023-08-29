@@ -1,9 +1,9 @@
 export type ServerChatType = "game" | "system";
 
 export class ServerChat {
-    public type: ServerChatType;
-    public text;
-    public isError;
+    type: ServerChatType;
+    text;
+    isError;
 
     constructor(type: ServerChatType, text: string, isError: boolean = false) {
         this.type = type;
@@ -11,7 +11,7 @@ export class ServerChat {
         this.isError = isError;
     }
 
-    public serialize(channel: "game" | "social" = "game"): object {
+    serialize(channel: "game" | "social" = "game"): object {
         return {
             channel,
             serializedMessage: {

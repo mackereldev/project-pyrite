@@ -13,10 +13,10 @@ import type { Room } from "colyseus.js";
 // https://stackoverflow.com/a/60807986/14270868
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
 type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
-type SingleKey<T> = IsUnion<keyof T> extends true ? never : {} extends T ? never : T;
+type SingleKey<T> = IsUnion<keyof T> extends true ? never : object extends T ? never : T;
 
 export abstract class Cmd {
-    public args: { [key: string]: string | number; } = {};
+    args: { [key: string]: string | number; } = {};
     protected room: Room<GameState>;
     protected player: Player;
 
@@ -34,10 +34,10 @@ export abstract class Cmd {
         }
     }
 
-    public abstract execute(): ChatMessage | undefined;
+    abstract execute(): ChatMessage | undefined;
 
-    public static help(): string | undefined { return ; };
-    
+    static help(): string | undefined { return  }
+
     protected static asGame(text: string, isError: boolean = false) {
         return new ChatMessage(undefined, "game", text, isError);
     }
@@ -48,7 +48,7 @@ export abstract class Cmd {
 
     protected static toInt<T extends Record<string, string>>(number: SingleKey<T>, allowNegative: boolean = false): number {
         const [name, value] = Object.entries(number)[0];
-        
+
         if (isNatural(value) || allowNegative && isInteger(value)) {
             return parseInt(value);
         } else {
@@ -58,7 +58,7 @@ export abstract class Cmd {
 
     protected static toEnum<T extends Record<string, string>, K extends string>(string: SingleKey<T>, options: readonly K[]): K {
         const [name, value] = Object.entries(string)[0];
-        
+
         if (options.includes(value as K)) {
             return value as K;
         } else {
@@ -81,7 +81,7 @@ export class CmdError implements Error {
 export type CmdRequisite = "None" | "QuestActive" | "CurrentTurn";
 
 export class PingCmd extends Cmd {
-    public override args;
+    override args;
 
     constructor(delay: string) {
         super();
@@ -97,7 +97,7 @@ export class PingCmd extends Cmd {
 }
 
 export class QuestCmd extends Cmd {
-    public override args;
+    override args;
 
     constructor(action: string) {
         super();
@@ -120,7 +120,7 @@ export class AdvanceCmd extends Cmd {
 }
 
 export class InspectCmd extends Cmd {
-    public override args;
+    override args;
 
     constructor(type: string, target: string = "") {
         super("QuestActive");
@@ -144,7 +144,9 @@ export class InspectCmd extends Cmd {
                     return Cmd.asGame("You're empty :(");
                 }
             }
-        }
+        };
+
+        const player = this.room.state.questState.players.find((p) => p.clientId === this.args.target);
 
         switch (this.args.type) {
             case "self":
@@ -157,12 +159,11 @@ export class InspectCmd extends Cmd {
                 }
                 return;
             case "player":
-                const player = this.room.state.questState.players.find((p) => p.clientId === this.args.target);
                 if (player) {
                     if (player.clientId === this.player.clientId) {
                         return inspectSelf();
                     }
-    
+
                     if (player.isDead) {
                         return Cmd.asGame(`Player '${player.clientId}' cannot be inspected because they are dead.`);
                     } else {
@@ -202,18 +203,18 @@ export class InspectCmd extends Cmd {
      */
     private evaluateEntity = (entity: Entity, showIndices: boolean): string | null => {
         const getMultiplierString = (equipment: Equipment): string => {
-            let multipliers: { [key: string]: number } = {
+            const multipliers: { [key: string]: number } = {
                 HP: equipment.healthModifier,
                 DMG: equipment.damageModifier,
-            }
-    
+            };
+
             const validMultipliers = Object.entries(multipliers).filter((mult) => mult[1] !== 0);
             if (validMultipliers.length > 0) {
                 return ": " + validMultipliers.map((mult) => `${mult[1] < 0 ? "" : "+"}${mult[1] * 100}% ${mult[0]}`).join(", ");
             } else {
                 return "";
             }
-        }
+        };
 
         type Section = {name: string, prependIndices: boolean, items: string[]};
         const Section = function (this: Section, name: string, prependIndices: boolean, items: string[]) {
@@ -226,15 +227,15 @@ export class InspectCmd extends Cmd {
         let sections: Section[] = [];
 
         const dmgMult = this.evaluateEquipmentModifier(entity, "DMG");
-        
+
         sections.push(new Section("Attributes", false, [`Health: ${entity.health}/${entity.maxHealth} HP`]));
         const equipmentSubSections: Section[] = [
             new Section("Weapons", true, entity.equipmentSlots.filter((slot) => slot.typeRestriction === "weapon").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY")),
             new Section("Rings", true, entity.equipmentSlots.filter((slot) => slot.typeRestriction === "ring").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY")),
-        ]
+        ];
         sections.push(new Section("Equipment", false, equipmentSubSections.filter((section) => section.items.length > 0).map((section: Section) => `${section.name}${section.items.map((item, idx) => `\n    ${showIndices && section.prependIndices ? `[${idx + 1}] ` : ""}${item}`).join("")}`)));
-        sections.push(new Section("Abilities", true, entity.abilities.map((ability) => `${ability.name}: ${ability.damage * dmgMult} DMG${dmgMult != 1 ? ` (${ability.damage} DMG)` : ""}`)));
-        
+        sections.push(new Section("Abilities", true, entity.abilities.map((ability) => `${ability.name}: ${ability.damage * dmgMult} DMG${dmgMult !== 1 ? ` (${ability.damage} DMG)` : ""}`)));
+
         const player = entity as Player;
         if (player.inventory) {
             sections.push(new Section("Inventory", true, player.inventory.map((item) => `${item.name}${(item as StackableItem).quantity > 1 ? ` (${(item as StackableItem).quantity})` : ""}`)));
@@ -246,7 +247,7 @@ export class InspectCmd extends Cmd {
         } else {
             return null;
         }
-    }
+    };
 
     /**
      * @returns The aggregate multiplier for the specified stat summed from each equipment on the entity.
@@ -261,11 +262,11 @@ export class InspectCmd extends Cmd {
             default:
                 return 1;
         }
-    }
+    };
 }
 
 export class AttackCmd extends Cmd {
-    public override args;
+    override args;
 
     constructor(targetEnemy: string, targetAbility: string) {
         super("CurrentTurn");
@@ -285,7 +286,7 @@ export class AttackCmd extends Cmd {
         } else {
             throw new CmdError("There are no enemies in this room.");
         }
-        
+
         if (this.args.targetAbility <= 0 || this.args.targetAbility > this.player.abilities.length) {
             throw new CmdError("Argument 'targetAbility' must point to one of your abilities.");
         }
@@ -297,18 +298,18 @@ export class AttackCmd extends Cmd {
 
 export class EquipCmd extends Cmd {
     specifiedPreferredSlot: boolean;
-    public override args;
-    
+    override args;
+
     constructor(targetItem: string, preferredSlot?: string) {
         super("QuestActive");
-        this.specifiedPreferredSlot = !!preferredSlot
+        this.specifiedPreferredSlot = !!preferredSlot;
         this.args = {
             targetItem: Cmd.toInt({targetItem}),
             preferredSlot: preferredSlot ? Cmd.toInt({preferredSlot}) : -1,
         };
     }
 
-    override execute(): ChatMessage | undefined {        
+    override execute(): ChatMessage | undefined {
         if (this.args.targetItem > 0 && this.args.targetItem <= this.player.inventory.length) {
             const item = this.player.inventory[this.args.targetItem - 1];
             if ("type" in item) {
@@ -336,8 +337,8 @@ export class EquipCmd extends Cmd {
 }
 
 export class UnequipCmd extends Cmd {
-    public override args;
-    
+    override args;
+
     constructor(equipmentType: string, targetEquipment: string) {
         super("QuestActive");
         this.args = {

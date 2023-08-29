@@ -9,12 +9,12 @@ import { BattleRoom } from "../schema/quest/QuestRoom";
 const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
 export class Game extends Room<GameState> {
-    GAME_CHANNEL = "game:rooms";
+    private GAME_CHANNEL = "game:rooms";
 
     private commandHandler: CommandReceiver = new CommandReceiver(this);
-    public questHandler: QuestHandler = new QuestHandler(this);
+    questHandler: QuestHandler = new QuestHandler(this);
 
-    generateRoomIdSingle(): string {
+    private generateRoomIdSingle(): string {
         let result = "";
         for (let i = 0; i < 4; i++) {
             result += CONSONANTS.charAt(Math.floor(Math.random() * CONSONANTS.length));
@@ -34,7 +34,7 @@ export class Game extends Room<GameState> {
         return;
     }
 
-    async generateRoomId(): Promise<string> {
+    private async generateRoomId(): Promise<string> {
         const currentIds = await this.presence.smembers(this.GAME_CHANNEL);
         let id;
         do {
@@ -45,7 +45,7 @@ export class Game extends Room<GameState> {
         return id;
     }
 
-    async onCreate(options: any) {
+    override async onCreate(options: any) {
         const { maxClients }: { maxClients: number } = options;
 
         this.setState(new GameState(Date.now()));
@@ -54,11 +54,11 @@ export class Game extends Room<GameState> {
         this.maxClients = [2, 4, 8, 16].includes(maxClients) ? maxClients : 4;
     }
 
-    onJoin(client: Client, options: any) {
+    override onJoin(client: Client, options: any) {
         let { clientId }: { clientId: string } = options;
-        
-        clientId = clientId && clientId != "" ? clientId : "Player";
-        
+
+        clientId = clientId && clientId !== "" ? clientId : "Player";
+
         if (this.state.clientData.some((client) => client.clientId === clientId)) {
             console.log(`clientId '${clientId}' is taken.`);
             client.leave(4101, `clientId '${clientId}' is taken`);
@@ -79,12 +79,12 @@ export class Game extends Room<GameState> {
         }
     }
 
-    onLeave(client: Client, consented: boolean) {
+    override onLeave(client: Client) {
         console.log(client.sessionId, "left!");
         const replaceLeader = this.commandHandler.isLeader(client); // Replace leader if the leader is leaving
 
         const idx = this.state.clientData.findIndex((c) => c.sessionId === client.sessionId);
-        if (idx != -1) {
+        if (idx !== -1) {
             // Leave player from the quest
             if (this.state.questState.active) {
                 this.questHandler.leavePlayer(this.state.clientData[idx].clientId);

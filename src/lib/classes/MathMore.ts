@@ -21,7 +21,7 @@ export const remap = (origFrom: number, origTo: number, targetFrom: number, targ
 // https://stackoverflow.com/a/55671924/14270868
 export const weightedRandom = (options: { item: any; weight: number }[]) => {
     let i;
-    let weights = [options[0].weight];
+    const weights = [options[0].weight];
 
     for (i = 1; i < options.length; i++) {
         weights[i] = options[i].weight + weights[i - 1];

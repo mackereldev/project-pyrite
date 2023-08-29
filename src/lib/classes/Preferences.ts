@@ -1,14 +1,14 @@
 import { browser } from "$app/environment";
 
 export default class Preferences {
-    public characterName: string = "";
+    characterName: string = "";
     private _darkMode: boolean = false;
 
-    public get darkMode() {
+    get darkMode() {
         return this._darkMode;
     }
 
-    public set darkMode(value: boolean) {
+    set darkMode(value: boolean) {
         this._darkMode = value;
         if (value) {
             if (!document.documentElement.classList.contains("dark")) {
@@ -21,7 +21,7 @@ export default class Preferences {
         }
     }
 
-    public static loadPrefs = () => {
+    static loadPrefs = () => {
         if (browser) {
             const prefs = new Preferences();
             const storage = localStorage.getItem("preferences");
@@ -35,7 +35,7 @@ export default class Preferences {
         }
     };
 
-    public static savePrefs = (prefs: Preferences) => {
+    static savePrefs = (prefs: Preferences) => {
         if (browser) {
             localStorage.setItem("preferences", JSON.stringify(prefs));
         }

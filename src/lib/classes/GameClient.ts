@@ -12,7 +12,7 @@ export const generateUpcomingTurns = (count: number) => {
     const turnIndex = questState.turnCycle.indexOf(questState.currentTurn);
 
     if (turnIndex !== -1) {
-        let arr: Entity[] = [];
+        const arr: Entity[] = [];
         for (let i = turnIndex; i < count + turnIndex; i++) {
             arr.push(questState.turnCycle[i % questState.turnCycle.length]);
         }

@@ -1,35 +1,35 @@
-import { Schema, ArraySchema, MapSchema, type } from "@colyseus/schema";
+import { Schema, ArraySchema, type } from "@colyseus/schema";
 import { Ability } from "./Ability";
 import { Equipment, EquipmentType } from "./Item";
 import { EquipmentSlot } from "./EquipmentSlot";
 
 export abstract class Entity extends Schema {
     @type("string")
-    public name: string;
+    name: string;
 
     @type("number")
-    public baseHealth: number;
+    baseHealth: number;
 
     @type("number")
-    public maxHealth: number;
+    maxHealth: number;
 
     @type("number")
-    public health: number;
+    health: number;
 
     @type("boolean")
-    public isDead: boolean = false;
+    isDead: boolean = false;
 
     /**
      * @remarks This should not be modified directly. Use `replaceEquipment()` and `removeEquipment()` instead.
      */
     @type([EquipmentSlot])
-    public readonly equipmentSlots = new ArraySchema<EquipmentSlot>(
+    readonly equipmentSlots = new ArraySchema<EquipmentSlot>(
         new EquipmentSlot("weapon"),
         new EquipmentSlot("ring"),
     );
 
     @type([Ability])
-    public abilities: ArraySchema<Ability>;
+    abilities: ArraySchema<Ability>;
 
     constructor(name: string, health: number, abilities: Ability[] = [], equipmentSlots: EquipmentType[] = []) {
         super();
@@ -45,7 +45,7 @@ export abstract class Entity extends Schema {
      * Deals damage to the entity.
      * @returns Whether the entity died as a result of the damage dealt or was already dead (Entity.isDead).
      */
-    public dealDamage = (damage: number): boolean => {
+    dealDamage = (damage: number): boolean => {
         this.health -= damage;
         if (this.health <= 0) {
             this.isDead = true;
@@ -59,7 +59,7 @@ export abstract class Entity extends Schema {
      * @param slotIndex The index of the slot to be replaced within the equipment type's respective section.
      * @returns The equipment being replaced.
      */
-    public replaceEquipment = (equipment: Equipment, slot: EquipmentSlot, refillHealth: boolean = false): Equipment => {
+    replaceEquipment = (equipment: Equipment, slot: EquipmentSlot, refillHealth: boolean = false): Equipment => {
         let replaced: Equipment;
 
         if (slot.typeRestriction === equipment.type) {
@@ -71,10 +71,10 @@ export abstract class Entity extends Schema {
             slot.equipment = equipment;
             this.abilities.push(...equipment.abilities);
             this.updateHealth(refillHealth);
-    
+
             return replaced;
         } else {
-            console.error(`Equipment of type '${equipment.type}' cannot be assigned to slot of type '${slot.typeRestriction}'`)
+            console.error(`Equipment of type '${equipment.type}' cannot be assigned to slot of type '${slot.typeRestriction}'`);
             return;
         }
     };
@@ -85,10 +85,10 @@ export abstract class Entity extends Schema {
      * @param forceEquip Whether the equipment should replace another already equiped item when necessary.
      * @returns The equipment being replaced (only exists if `forceEquip` is true).
      */
-    public addEquipment = (equipment: Equipment, forceEquip: boolean = false, refillHealth: boolean = false): Equipment => {
+    addEquipment = (equipment: Equipment, forceEquip: boolean = false, refillHealth: boolean = false): Equipment => {
         // All equipment slots with a matching equipment type
         const slots: EquipmentSlot[] = this.equipmentSlots.filter((s) => s.typeRestriction === equipment.type);
-        
+
         if (slots.length > 0) {
             // All equipment slots with a matching equipment type that are empty
             const emptySlots = slots.filter((s) => !s.equipment);
@@ -105,13 +105,13 @@ export abstract class Entity extends Schema {
             console.error(`No slots available for equipment of type '${equipment.type}'`);
             return;
         }
-    }
+    };
 
     /**
      * Removes equipment and its associated abilities and stat boosts from the entity.
      * @returns The equipment being removed.
      */
-    public removeEquipment = (slot: EquipmentSlot, refillHealth: boolean = false): Equipment => {
+    removeEquipment = (slot: EquipmentSlot, refillHealth: boolean = false): Equipment => {
         if (this.equipmentSlots.includes(slot)) {
             this.abilities = this.abilities.filter((ability) => !slot.equipment.abilities.includes(ability));
             this.updateHealth(refillHealth);
@@ -128,7 +128,7 @@ export abstract class Entity extends Schema {
     /**
      * @returns The aggregate multiplier for the specified stat summed from each equipment on the entity.
      */
-    public evaluateEquipmentModifier = (stat: "HP" | "DMG"): number => {
+    evaluateEquipmentModifier = (stat: "HP" | "DMG"): number => {
         switch (stat) {
             case "HP":
                 return Math.max(0.1, (this.equipmentSlots.filter((slot) => slot.equipment) as EquipmentSlot[]).reduce((total, slot) => total + slot.equipment!.healthModifier, 1));
@@ -137,13 +137,13 @@ export abstract class Entity extends Schema {
             default:
                 return 1;
         }
-    }
+    };
 
-    public updateHealth = (refillHealth: boolean = false) => {
+    updateHealth = (refillHealth: boolean = false) => {
         const multiplier = this.evaluateEquipmentModifier("HP");
         this.maxHealth = this.baseHealth * multiplier;
         if (this.health > this.maxHealth || refillHealth) {
             this.health = this.maxHealth;
         }
-    }
+    };
 }

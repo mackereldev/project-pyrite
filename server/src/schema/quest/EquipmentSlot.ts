@@ -3,13 +3,13 @@ import { Equipment, EquipmentType } from "./Item";
 
 export class EquipmentSlot extends Schema {
     @type("string")
-    public readonly typeRestriction: EquipmentType;
+    readonly typeRestriction: EquipmentType;
 
     /**
      * @remarks Do not modify this directly.
      */
     @type(Equipment)
-    public equipment: Equipment | undefined;
+    equipment: Equipment | undefined;
 
     constructor(typeRestriction: EquipmentType) {
         super();

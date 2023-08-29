@@ -4,7 +4,7 @@ import { Boss, bossRefs } from "../quest/Boss";
 
 export abstract class QuestRoom extends Schema {
     @type("string")
-    public type: "battle" | "market" | "boss";
+    type: "battle" | "market" | "boss";
 
     abstract generate(): void;
 
@@ -15,10 +15,10 @@ export abstract class QuestRoom extends Schema {
 }
 
 export class BattleRoom extends QuestRoom {
-    public enemyPrefabs: (() => Enemy)[];
+    enemyPrefabs: (() => Enemy)[];
 
     @type([Enemy])
-    public enemies: ArraySchema<Enemy> = new ArraySchema<Enemy>();
+    enemies: ArraySchema<Enemy> = new ArraySchema<Enemy>();
     
     constructor(...enemyPrefabs: (keyof typeof enemyRefs)[]) {
         super("battle");
@@ -56,7 +56,7 @@ export class BossRoom extends QuestRoom {
     private bossPrefab: (() => Boss);
 
     @type(Boss)
-    public boss: Boss;
+    boss: Boss;
 
     constructor(bossPrefab: keyof typeof bossRefs) {
         super("boss");

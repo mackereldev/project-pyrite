@@ -19,13 +19,13 @@
     "plugins": ["@typescript-eslint"],
     "rules": {
         "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
-        "@typescript-eslint/explicit-member-accessibility": "warn",
         "eqeqeq": ["error", "always"],
+        "@typescript-eslint/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
         "@typescript-eslint/no-explicit-any": "off"
     },
     "overrides": [
         {
-            "files": ["*.ts", "*.tsx", "*.js"],
+            "files": ["*.ts", "*.js"],
             "parser": "@typescript-eslint/parser"
         },
         {

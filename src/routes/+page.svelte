@@ -29,7 +29,7 @@
             $page.url.searchParams.delete("error");
             window.history.replaceState(window.history.state, "", $page.url);
         }
-        if (errorReason != -1) {
+        if (errorReason !== -1) {
             handleError(errorReason);
         }
 
@@ -87,7 +87,7 @@
         <div class="flex flex-col">
             <span class="text-lg font-light">Character Name</span>
             <!-- prettier-ignore -->
-            <Input bind:value={characterNameValue} on:input={() => {$preferencesStore.characterName = characterNameValue;}} placeholder="Player" class="text-center" />
+            <Input bind:value={characterNameValue} on:input={() => {$preferencesStore.characterName = characterNameValue}} placeholder="Player" class="text-center" />
         </div>
     </div>
     <div class="flex flex-row gap-8">
