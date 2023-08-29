@@ -19,7 +19,8 @@
     "plugins": ["@typescript-eslint"],
     "rules": {
         "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
-        "@typescript-eslint/explicit-member-accessibility": "warn"
+        "@typescript-eslint/explicit-member-accessibility": "warn",
+        "@typescript-eslint/no-explicit-any": "off"
     },
     "overrides": [
         {
