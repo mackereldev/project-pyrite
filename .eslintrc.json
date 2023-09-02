@@ -18,10 +18,12 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "semi": ["error", "always", { "omitLastInOneLineBlock": true}],
+        "no-unused-vars": "warn",
+        "semi": ["error", "always", { "omitLastInOneLineBlock": true }],
         "eqeqeq": ["error", "always"],
         "@typescript-eslint/explicit-member-accessibility": ["error", { "accessibility": "no-public" }],
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/adjacent-overload-signatures": "warn"
     },
     "overrides": [
         {
