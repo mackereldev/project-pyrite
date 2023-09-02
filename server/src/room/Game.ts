@@ -103,7 +103,7 @@ export class Game extends Room<GameState> {
         }
     }
 
-    onDispose() {
+    override onDispose() {
         console.log("room", this.roomId, "disposing...");
         this.presence.srem(this.GAME_CHANNEL, this.roomId);
         this.commandHandler = null;

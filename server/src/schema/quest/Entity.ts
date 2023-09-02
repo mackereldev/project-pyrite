@@ -23,10 +23,7 @@ export abstract class Entity extends Schema {
      * @remarks This should not be modified directly. Use `replaceEquipment()` and `removeEquipment()` instead.
      */
     @type([EquipmentSlot])
-    readonly equipmentSlots = new ArraySchema<EquipmentSlot>(
-        new EquipmentSlot("weapon"),
-        new EquipmentSlot("ring"),
-    );
+    readonly equipmentSlots: ArraySchema<EquipmentSlot>;
 
     @type([Ability])
     abilities: ArraySchema<Ability>;
@@ -42,11 +39,11 @@ export abstract class Entity extends Schema {
     }
 
     /**
-     * Deals damage to the entity.
-     * @returns Whether the entity died as a result of the damage dealt or was already dead (Entity.isDead).
+     * Changes the health of this entity.
+     * @returns Whether the entity died as a result of the health change or if it was already dead (Entity.isDead).
      */
-    dealDamage = (damage: number): boolean => {
-        this.health -= damage;
+    changeHealth = (difference: number): boolean => {
+        this.health += difference;
         if (this.health <= 0) {
             this.isDead = true;
         }
@@ -113,7 +110,7 @@ export abstract class Entity extends Schema {
      */
     removeEquipment = (slot: EquipmentSlot, refillHealth: boolean = false): Equipment => {
         if (this.equipmentSlots.includes(slot)) {
-            this.abilities = this.abilities.filter((ability) => !slot.equipment.abilities.includes(ability));
+            this.abilities = this.abilities.filter((ability) => !slot.equipment?.abilities.includes(ability));
             this.updateHealth(refillHealth);
 
             const removedEquipment = slot.equipment;

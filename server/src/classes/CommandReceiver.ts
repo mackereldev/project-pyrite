@@ -6,6 +6,7 @@ import { QuestInactive, OnlyLeader } from "./MessageTemplate";
 import { BattleRoom } from "../schema/quest/QuestRoom";
 import { Equipment, EquipmentType } from "../schema/quest/Item";
 import { EquipmentSlot } from "../schema/quest/EquipmentSlot";
+import { AbilityExecutionContext } from "../schema/quest/AbilityExecutionContext";
 
 export class CommandReceiver {
     private game: Game;
@@ -95,21 +96,25 @@ export class CommandReceiver {
 
                 const ability = player.abilities[targetAbility - 1];
                 const battleRoom = this.game.state.questState.room as BattleRoom;
-                const enemy = battleRoom.enemies[targetEnemy - 1];
+                const primaryEnemy = battleRoom.enemies[targetEnemy - 1];
 
-                const enemyString = `'${enemy.name}' (Enemy ${targetEnemy})`;
-                const totalDamage = ability.damage * player.evaluateEquipmentModifier("DMG");
-                const messages = [
-                    `'${player.clientId}' uses '${ability.name}' on ${enemyString}, dealing ${totalDamage} damage.`,
-                ];
-
-                if (enemy.dealDamage(totalDamage)) {
-                    battleRoom.enemies.deleteAt(targetEnemy - 1);
-                    messages.push(`${enemyString} dies.`);
-                } else {
-                    messages.push(`${enemyString} is now on ${enemy.health}/${enemy.maxHealth} HP`);
-                }
-
+                const abilityExecutionResult = ability.execute(new AbilityExecutionContext(player, primaryEnemy, this.game.state.questState.players, battleRoom.enemies));
+                const playerDamageMultiplier = player.evaluateEquipmentModifier("DMG");
+                
+                const messages = [];
+                messages.push(`'${player.clientId}' uses '${ability.name}' on '${primaryEnemy.name}' (Enemy ${targetEnemy})${abilityExecutionResult.message.length > 0 ? `, ${abilityExecutionResult.message}` : "."}`);
+                abilityExecutionResult.enemyChanges.forEach(enemyChange => {
+                    const enemyIndex = battleRoom.enemies.indexOf(enemyChange.enemy);
+                    const enemyString = `'${enemyChange.enemy.name}' (Enemy ${enemyIndex + 1})`;
+                    const damage = enemyChange.changes.health * playerDamageMultiplier;
+                    if (enemyChange.enemy.changeHealth(damage)) {
+                        battleRoom.enemies.deleteAt(enemyIndex);
+                        messages.push(`${enemyString} dies.`);
+                    } else {
+                        messages.push(`${enemyString} is now on ${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP`);
+                    }
+                });
+                
                 this.game.questHandler.nextTurn();
 
                 this.game.broadcast("server-chat", messages.map((text) => new ServerChat("game", text).serialize()));
@@ -123,6 +128,12 @@ export class CommandReceiver {
 
             try {
                 const player = this.game.state.questState.players.find((p) => p.clientId === client.userData.clientId);
+
+                if (this.game.state.questState.currentTurn !== player) {
+                    console.error(`${player.clientId} tried to equip something but it's not their turn.`);
+                    return;
+                }
+
                 const equipment = player.inventory[targetEquipment - 1] as Equipment;
 
                 let replaced: Equipment;

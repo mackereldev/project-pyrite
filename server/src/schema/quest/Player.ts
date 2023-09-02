@@ -10,7 +10,7 @@ export class Player extends Entity {
     inventory: ArraySchema<Item> = new ArraySchema<Item>();
 
     constructor(clientId: string, isDead: boolean) {
-        super("~PLAYER", 50, undefined, ["weapon", "weapon", "ring", "ring"]);
+        super("~PLAYER", 50, undefined, ["weapon", "ring", "ring"]);
         this.addEquipment(equipmentRefs.training_sword(), false, true);
         this.addItem(equipmentRefs.steel_sword(), itemRefs.coin(20));
         this.clientId = clientId;

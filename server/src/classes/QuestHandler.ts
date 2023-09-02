@@ -18,7 +18,7 @@ export class QuestHandler {
             "Catacombs",
             () => new BattleRoom("skeleton", "bat"),
             () => new MarketRoom(0),
-            () => new BossRoom("skeletonKing")
+            () => new BossRoom("giantSkeleton")
         ),
         // new Quest("Dark Forest", ...),
     ];

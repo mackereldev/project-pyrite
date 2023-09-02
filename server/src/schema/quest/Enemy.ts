@@ -1,4 +1,4 @@
-import { Ability } from "./Ability";
+import { Ability, DamageAbility } from "./Ability";
 import { Entity } from "./Entity";
 import { Equipment } from "./Item";
 
@@ -14,10 +14,10 @@ export class Enemy extends Entity {
 export const enemyRefs = {
     skeleton: () => new Enemy("Skeleton", 50, [], [
         new Equipment("Bone Cutlass", "weapon", [
-            new Ability("Sword Slash", 15),
+            new DamageAbility("Sword Slash", 15),
         ], 0, 0),
     ]),
     bat: () => new Enemy("Bat", 20, [
-        new Ability("Swoop", 15),
+        new DamageAbility("Swoop", 15),
     ]),
 };

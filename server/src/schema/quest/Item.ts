@@ -1,5 +1,5 @@
 import { Schema, ArraySchema, type } from "@colyseus/schema";
-import { Ability } from "./Ability";
+import { Ability, AoeDamageAbility, DamageAbility } from "./Ability";
 
 export type EquipmentType = "weapon" | "ring";
 
@@ -16,7 +16,7 @@ export abstract class Item extends Schema {
 export class StackableItem extends Item {
     @type("uint16")
     quantity: number;
-    
+
     constructor(name: string, quantity: number = 1) {
         super(name);
         this.quantity = quantity;
@@ -50,6 +50,6 @@ export const itemRefs = {
 };
 
 export const equipmentRefs = {
-    training_sword: () => new Equipment("Training Sword", "weapon", [new Ability("Sword Thrust", 8)], 0, 0),
-    steel_sword: () => new Equipment("Steel Sword", "weapon", [new Ability("Valiant Strike", 25)], 0.25, 0.5),
+    training_sword: () => new Equipment("Training Sword", "weapon", [new DamageAbility("Sword Thrust", 8)], 0, 0),
+    steel_sword: () => new Equipment("Steel Sword", "weapon", [new DamageAbility("Valiant Strike", 15), new AoeDamageAbility("Rapid Sweep", 8, 5)], 0, 0),
 };

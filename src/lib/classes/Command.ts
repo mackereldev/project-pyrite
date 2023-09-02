@@ -9,6 +9,7 @@ import type { Player } from "../../../server/src/schema/quest/Player";
 import type { EquipmentSlot } from "../../../server/src/schema/quest/EquipmentSlot";
 import type { GameState } from "../../../server/src/schema/GameState";
 import type { Room } from "colyseus.js";
+import type { DamageAbility } from "../../../server/src/schema/quest/Ability";
 
 // https://stackoverflow.com/a/60807986/14270868
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
@@ -222,6 +223,7 @@ export class InspectCmd extends Cmd {
             this.prependIndices = prependIndices;
             this.items = items;
             return this;
+            // eslint-disable-next-line no-unused-vars
         } as any as { new (name: string, prependIndices: boolean, items: string[]): Section };
 
         let sections: Section[] = [];
@@ -234,7 +236,8 @@ export class InspectCmd extends Cmd {
             new Section("Rings", true, entity.equipmentSlots.filter((slot) => slot.typeRestriction === "ring").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY")),
         ];
         sections.push(new Section("Equipment", false, equipmentSubSections.filter((section) => section.items.length > 0).map((section: Section) => `${section.name}${section.items.map((item, idx) => `\n    ${showIndices && section.prependIndices ? `[${idx + 1}] ` : ""}${item}`).join("")}`)));
-        sections.push(new Section("Abilities", true, entity.abilities.map((ability) => `${ability.name}: ${ability.damage * dmgMult} DMG${dmgMult !== 1 ? ` (${ability.damage} DMG)` : ""}`)));
+        // Improve '(ability as DamageAbility)'; add AoeAbility
+        sections.push(new Section("Abilities", true, entity.abilities.map((ability) => `${ability.name}: ${(ability as DamageAbility).damage * dmgMult} DMG${dmgMult !== 1 ? ` (${(ability as DamageAbility).damage} DMG)` : ""}`)));
 
         const player = entity as Player;
         if (player.inventory) {
@@ -301,7 +304,7 @@ export class EquipCmd extends Cmd {
     override args;
 
     constructor(targetItem: string, preferredSlot?: string) {
-        super("QuestActive");
+        super("CurrentTurn");
         this.specifiedPreferredSlot = !!preferredSlot;
         this.args = {
             targetItem: Cmd.toInt({targetItem}),

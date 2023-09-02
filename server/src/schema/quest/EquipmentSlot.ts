@@ -1,5 +1,5 @@
 import { Schema, type } from "@colyseus/schema";
-import { Equipment, EquipmentType } from "./Item";
+import { Equipment, type EquipmentType } from "./Item";
 
 export class EquipmentSlot extends Schema {
     @type("string")
