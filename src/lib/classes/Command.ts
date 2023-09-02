@@ -10,6 +10,7 @@ import type { EquipmentSlot } from "../../../server/src/schema/quest/EquipmentSl
 import type { GameState } from "../../../server/src/schema/GameState";
 import type { Room } from "colyseus.js";
 import type { DamageAbility } from "../../../server/src/schema/quest/Ability";
+import { constructSection, type Section } from "./RecursiveSection";
 
 // https://stackoverflow.com/a/60807986/14270868
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
@@ -140,7 +141,7 @@ export class InspectCmd extends Cmd {
             } else {
                 const evaluation = this.evaluateEntity(self, true);
                 if (evaluation) {
-                    return Cmd.asGame(`You inspect yourself:\n${evaluation}`);
+                    return Cmd.asGame(`You inspect yourself:${evaluation}`);
                 } else {
                     return Cmd.asGame("You're empty :(");
                 }
@@ -155,8 +156,10 @@ export class InspectCmd extends Cmd {
             case "room":
                 // TODO: support boss rooms
                 if (["battle"].includes(this.room.state.questState.room?.type)) {
-                    const enemies = "Enemies:\n" + (this.room.state.questState.room as BattleRoom).enemies.map((e, idx) => `  [${idx + 1}] ${e.name}: ${e.health}/${e.maxHealth} HP`).join("\n");
-                    return Cmd.asGame(`You inspect the room:\n${enemies}`);
+                    const rootSection: Section = {
+                        "Enemies": { prependIndices: true, items: (this.room.state.questState.room as BattleRoom).enemies.map((enemy) => `${enemy.name}: ${enemy.health}/${enemy.maxHealth} HP`) }
+                    };
+                    return Cmd.asGame(`You inspect the room:${constructSection(rootSection, true)}`);
                 }
                 return;
             case "player":
@@ -168,7 +171,7 @@ export class InspectCmd extends Cmd {
                     if (player.isDead) {
                         return Cmd.asGame(`Player '${player.clientId}' cannot be inspected because they are dead.`);
                     } else {
-                        return Cmd.asGame(`You inspect player '${player.clientId}':\n${this.evaluateEntity(player, false)}`);
+                        return Cmd.asGame(`You inspect player '${player.clientId}':${this.evaluateEntity(player, false)}`);
                     }
                 } else {
                     throw new CmdError(`Argument 'target' must be a valid player.`);
@@ -181,7 +184,7 @@ export class InspectCmd extends Cmd {
                             const enemy = (this.room.state.questState.room as BattleRoom).enemies[parseInt(this.args.target) - 1];
                             const evaluation = this.evaluateEntity(enemy, false);
                             if (evaluation) {
-                                return Cmd.asGame(`You inspect enemy ${this.args.target} (${enemy.name}):\n${evaluation}`);
+                                return Cmd.asGame(`You inspect enemy ${this.args.target} (${enemy.name}):${evaluation}`);
                             } else {
                                 return Cmd.asGame(`The enemy: ${this.args.target} (${enemy.name}) is empty :(.`);
                             }
@@ -202,7 +205,7 @@ export class InspectCmd extends Cmd {
     /**
      * @returns A string of inspection details, or null if entity is empty.
      */
-    private evaluateEntity = (entity: Entity, showIndices: boolean): string | null => {
+    private evaluateEntity = (entity: Entity, showIndices: boolean): string => {
         const getMultiplierString = (equipment: Equipment): string => {
             const multipliers: { [key: string]: number } = {
                 HP: equipment.healthModifier,
@@ -217,39 +220,20 @@ export class InspectCmd extends Cmd {
             }
         };
 
-        type Section = {name: string, prependIndices: boolean, items: string[]};
-        const Section = function (this: Section, name: string, prependIndices: boolean, items: string[]) {
-            this.name = name;
-            this.prependIndices = prependIndices;
-            this.items = items;
-            return this;
-            // eslint-disable-next-line no-unused-vars
-        } as any as { new (name: string, prependIndices: boolean, items: string[]): Section };
-
-        let sections: Section[] = [];
-
         const dmgMult = this.evaluateEquipmentModifier(entity, "DMG");
+        
+        const rootSection: Section = {
+            "Attributes": { prependIndices: false, items: [`Health: ${entity.health}/${entity.maxHealth} HP`] },
+            "Equipment": {
+                "Weapons": { prependIndices: true, items: entity.equipmentSlots.filter((slot) => slot.typeRestriction === "weapon").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY") },
+                "Rings": { prependIndices: true, items: entity.equipmentSlots.filter((slot) => slot.typeRestriction === "ring").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY") },
+            },
+            // Improve '(ability as DamageAbility)'; add AoeAbility
+            "Abilities": { prependIndices: true, items: entity.abilities.map((ability) => `${ability.name}: ${(ability as DamageAbility).damage * dmgMult} DMG${dmgMult !== 1 ? ` (${(ability as DamageAbility).damage} DMG)` : ""}`) },
+            "Inventory": (entity as Player).inventory && { prependIndices: true, items: (entity as Player).inventory.map((item) => `${item.name}${(item as StackableItem).quantity > 1 ? ` (${(item as StackableItem).quantity})` : ""}`) },
+        };
 
-        sections.push(new Section("Attributes", false, [`Health: ${entity.health}/${entity.maxHealth} HP`]));
-        const equipmentSubSections: Section[] = [
-            new Section("Weapons", true, entity.equipmentSlots.filter((slot) => slot.typeRestriction === "weapon").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY")),
-            new Section("Rings", true, entity.equipmentSlots.filter((slot) => slot.typeRestriction === "ring").map((slot: EquipmentSlot) => slot.equipment ? `${slot.equipment.name}${getMultiplierString(slot.equipment)}` : "EMPTY")),
-        ];
-        sections.push(new Section("Equipment", false, equipmentSubSections.filter((section) => section.items.length > 0).map((section: Section) => `${section.name}${section.items.map((item, idx) => `\n    ${showIndices && section.prependIndices ? `[${idx + 1}] ` : ""}${item}`).join("")}`)));
-        // Improve '(ability as DamageAbility)'; add AoeAbility
-        sections.push(new Section("Abilities", true, entity.abilities.map((ability) => `${ability.name}: ${(ability as DamageAbility).damage * dmgMult} DMG${dmgMult !== 1 ? ` (${(ability as DamageAbility).damage} DMG)` : ""}`)));
-
-        const player = entity as Player;
-        if (player.inventory) {
-            sections.push(new Section("Inventory", true, player.inventory.map((item) => `${item.name}${(item as StackableItem).quantity > 1 ? ` (${(item as StackableItem).quantity})` : ""}`)));
-        }
-
-        sections = sections.filter((section) => section.items.length > 0);
-        if (sections.length > 0) {
-            return sections.map((section) => `${section.name}${section.items.map((item, idx) => `\n  ${showIndices && section.prependIndices ? `[${idx + 1}] ` : ""}${item}`).join("")}`).join("\n");
-        } else {
-            return null;
-        }
+        return constructSection(rootSection, showIndices);
     };
 
     /**
