@@ -13,7 +13,7 @@
     };
 </script>
 
-<div class="fixed bottom-0 right-0 flex flex-col-reverse gap-2 p-2 z-10">
+<div class="fixed bottom-0 right-0 z-10 flex flex-col-reverse gap-2 p-2">
     {#each toasts as toast (toast)}
         <ToastElement {toast} on:remove={remove} />
     {/each}

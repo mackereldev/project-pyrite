@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { GameState} from "../../server/src/schema/GameState";
+    import type { GameState } from "../../server/src/schema/GameState";
     import Input from "$lib/components/Input.svelte";
     import { page } from "$app/stores";
     import { onMount } from "svelte";

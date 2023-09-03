@@ -26,7 +26,7 @@
     let currentChatChannel = chatChannels.game;
     $gameChat = chatChannels.game;
 
-    let turns: { type: "player" | "enemy"; name: string}[] = [];
+    let turns: { type: "player" | "enemy"; name: string }[] = [];
 
     let autoScrollBehaviour = AutoScrollBehaviour.Always;
     let queueAutoScroll = false;
@@ -278,19 +278,19 @@
                     <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Turns</span>
                     <div class="flex flex-col overflow-y-scroll">
                         {#each turns as turn, index}
-                            <div class="flex p-2 items-center {index === 0 && "ring-2"} ring-inset rounded-md ring-zinc-300">
+                            <div class="flex items-center p-2 {index === 0 && 'ring-2'} rounded-md ring-inset ring-zinc-300">
                                 <div class={`mr-2 ${index === 0 ? "h-3 w-3" : "h-2 w-2"} rounded-full ${turn.type === "player" ? "bg-emerald-400" : "bg-red-400"}`} />
                                 <span class={`${index === 0 ? "font-bold" : ""}`}>{turn.name}</span>
                             </div>
                         {/each}
                     </div>
                 {:else}
-                    <div class="flex w-full h-full items-center justify-center">
+                    <div class="flex h-full w-full items-center justify-center">
                         <span class="text-lg">Not currently in a battle room</span>
                     </div>
                 {/if}
             {:else}
-                <div class="flex w-full h-full items-center justify-center">
+                <div class="flex h-full w-full items-center justify-center">
                     <span class="text-lg">Quest not active</span>
                 </div>
             {/if}
