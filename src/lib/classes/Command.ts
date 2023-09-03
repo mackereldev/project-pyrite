@@ -38,7 +38,7 @@ export abstract class Cmd {
 
     abstract execute(): ChatMessage | undefined;
 
-    static help(): string | undefined { return  }
+    static help(): string | undefined { return }
 
     protected static asGame(text: string, isError: boolean = false) {
         return new ChatMessage(undefined, "game", text, isError);
@@ -88,7 +88,7 @@ export class PingCmd extends Cmd {
     constructor(delay: string) {
         super();
         this.args = {
-            delay: Cmd.toInt({delay}),
+            delay: Cmd.toInt({ delay }),
         };
     }
 
@@ -104,8 +104,8 @@ export class QuestCmd extends Cmd {
     constructor(action: string, quest?: string) {
         super();
         this.args = {
-            action: Cmd.toEnum({action}, ["start", "stop", "list"]),
-            quest: quest ? Cmd.toInt({quest}) : -1,
+            action: Cmd.toEnum({ action }, ["start", "stop", "list"]),
+            quest: quest ? Cmd.toInt({ quest }) : -1,
         };
     }
 
@@ -129,7 +129,7 @@ export class InspectCmd extends Cmd {
         super("QuestActive");
 
         this.args = {
-            type: Cmd.toEnum({type}, ["self", "room", "player", "enemy"]),
+            type: Cmd.toEnum({ type }, ["self", "room", "player", "enemy"]),
             target,
         };
     }
@@ -222,7 +222,7 @@ export class InspectCmd extends Cmd {
         };
 
         const dmgMult = this.evaluateEquipmentModifier(entity, "DMG");
-        
+
         const rootSection: Section = {
             "Attributes": { prependIndices: false, items: [`Health: ${entity.health}/${entity.maxHealth} HP`] },
             "Equipment": {
@@ -259,8 +259,8 @@ export class AttackCmd extends Cmd {
     constructor(targetEnemy: string, targetAbility: string) {
         super("CurrentTurn");
         this.args = {
-            targetEnemy: Cmd.toInt({targetEnemy}),
-            targetAbility: Cmd.toInt({targetAbility}),
+            targetEnemy: Cmd.toInt({ targetEnemy }),
+            targetAbility: Cmd.toInt({ targetAbility }),
         };
     }
 
@@ -292,8 +292,8 @@ export class EquipCmd extends Cmd {
         super("CurrentTurn");
         this.specifiedPreferredSlot = !!preferredSlot;
         this.args = {
-            targetItem: Cmd.toInt({targetItem}),
-            preferredSlot: preferredSlot ? Cmd.toInt({preferredSlot}) : -1,
+            targetItem: Cmd.toInt({ targetItem }),
+            preferredSlot: preferredSlot ? Cmd.toInt({ preferredSlot }) : -1,
         };
     }
 
@@ -330,8 +330,8 @@ export class UnequipCmd extends Cmd {
     constructor(equipmentType: string, targetEquipment: string) {
         super("QuestActive");
         this.args = {
-            equipmentType: Cmd.toEnum({equipmentType}, ["weapon", "ring"]),
-            targetEquipment: Cmd.toInt({targetEquipment}),
+            equipmentType: Cmd.toEnum({ equipmentType }, ["weapon", "ring"]),
+            targetEquipment: Cmd.toInt({ targetEquipment }),
         };
     }
 

@@ -54,7 +54,7 @@ export class AoeDamageAbility extends DamageAbility {
 
     override execute(context: AbilityExecutionContext): AbilityExecutionResult {
         super.execute(context);
-        
+
         if (context.enemies.includes(context.target)) {
             const targetEnemy: Enemy = context.target as Enemy;
             const enemyChanges: EnemyChanges = [];

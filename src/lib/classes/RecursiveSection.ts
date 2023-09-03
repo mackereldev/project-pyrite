@@ -9,11 +9,11 @@ const isRecursiveSection = (obj: any): obj is Section => {
 export const constructSection = (rootSection: Section, showIndices: boolean = false) => {
     const recurSection = (section: Section, depth: number = 1): string => {
         let tree = "";
-        
+
         const headings = Object.keys(section);
         for (let i = 0; i < headings.length; i++) {
             const heading = headings[i];
-    
+
             if (isRecursiveSection(section[heading])) {
                 const subSection = recurSection(section[heading] as Section, depth + 1);
                 if (subSection) {
@@ -28,7 +28,7 @@ export const constructSection = (rootSection: Section, showIndices: boolean = fa
                 }
             }
         }
-    
+
         return tree;
     };
 

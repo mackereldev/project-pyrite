@@ -19,7 +19,7 @@ export class BattleRoom extends QuestRoom {
 
     @type([Enemy])
     enemies: ArraySchema<Enemy> = new ArraySchema<Enemy>();
-    
+
     constructor(...enemyPrefabs: (keyof typeof enemyRefs)[]) {
         super("battle");
         this.enemyPrefabs = enemyPrefabs.map((e) => enemyRefs[e]);
@@ -34,7 +34,7 @@ export class BattleRoom extends QuestRoom {
 
             generatedEnemies.push(enemy());
         }
-        
+
         this.enemies.push(...generatedEnemies);
     }
 }

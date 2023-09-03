@@ -32,17 +32,17 @@ export class QuestHandler {
     }
 
     start = (questIndex: number) => {
-        try {            
+        try {
             this.questState.active = true;
             this.currentQuest = QuestHandler.quests[questIndex];
             this.questState.roomIndex = -1;
             this.questState.name = this.currentQuest.name;
             this.nextRoom();
-    
+
             // Join every currently connected player to the quest
             this.game.state.clientData.forEach((client) => this.joinPlayer(client));
             this.questState.currentTurn = this.questState.players[0];
-    
+
             this.game.broadcast("quest-start", undefined, { afterNextPatch: true });
         } catch (error) {
             console.error("Quest could not be started.");
@@ -95,5 +95,5 @@ export class QuestHandler {
         this.questState.players.clear();
     };
 
-    dispose = () => {};
+    dispose = () => { };
 }

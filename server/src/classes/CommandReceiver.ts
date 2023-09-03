@@ -105,7 +105,7 @@ export class CommandReceiver {
 
                 const abilityExecutionResult = ability.execute(new AbilityExecutionContext(player, primaryEnemy, this.game.state.questState.players, battleRoom.enemies));
                 const playerDamageMultiplier = player.evaluateEquipmentModifier("DMG");
-                
+
                 const messages = [];
                 messages.push(`'${player.clientId}' uses '${ability.name}' on '${primaryEnemy.name}' (Enemy ${targetEnemy})${abilityExecutionResult.message.length > 0 ? `, ${abilityExecutionResult.message}` : "."}`);
                 abilityExecutionResult.enemyChanges.forEach(enemyChange => {
@@ -119,7 +119,7 @@ export class CommandReceiver {
                         messages.push(`${enemyString} is now on ${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP`);
                     }
                 });
-                
+
                 this.game.questHandler.nextTurn();
 
                 this.game.broadcast("server-chat", messages.map((text) => new ServerChat("game", text).serialize()));

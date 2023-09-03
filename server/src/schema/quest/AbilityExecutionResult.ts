@@ -9,10 +9,9 @@ export class AbilityExecutionResult {
     enemyChanges: EnemyChanges;
     message: string;
 
-    static get default() : AbilityExecutionResult {
+    static get default(): AbilityExecutionResult {
         return new AbilityExecutionResult([], [], "");
     }
-    
 
     constructor(playerChanges: PlayerChanges = [], enemyChanges: EnemyChanges = [], message: string) {
         this.playerChanges = playerChanges;
