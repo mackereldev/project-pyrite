@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@types/eslint':
     specifier: ^8.44.2
@@ -48,6 +52,9 @@ devDependencies:
   svelte-check:
     specifier: ^3.4.6
     version: 3.4.6(postcss@8.4.27)(svelte@4.1.1)
+  svelte-eslint-parser:
+    specifier: ^0.33.0
+    version: 0.33.0(svelte@4.1.1)
   tailwindcss:
     specifier: ^3.3.3
     version: 3.3.3
@@ -2421,7 +2428,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
