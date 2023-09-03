@@ -13,7 +13,7 @@ export class QuestHandler {
         return this.game.state.questState;
     }
 
-    private static quests: Quest[] = [
+    static quests: Quest[] = [
         new Quest(
             "Catacombs",
             () => new BattleRoom("skeleton", "bat"),
@@ -30,18 +30,22 @@ export class QuestHandler {
         this.game = game;
     }
 
-    start = () => {
-        this.questState.active = true;
-        this.currentQuest = QuestHandler.quests[0];
-        this.questState.roomIndex = -1;
-        this.questState.name = this.currentQuest.name;
-        this.nextRoom();
-
-        // Join every currently connected player to the quest
-        this.game.state.clientData.forEach((client) => this.joinPlayer(client));
-        this.questState.currentTurn = this.questState.players[0];
-
-        this.game.broadcast("quest-start", undefined, { afterNextPatch: true });
+    start = (questIndex: number) => {
+        try {            
+            this.questState.active = true;
+            this.currentQuest = QuestHandler.quests[questIndex];
+            this.questState.roomIndex = -1;
+            this.questState.name = this.currentQuest.name;
+            this.nextRoom();
+    
+            // Join every currently connected player to the quest
+            this.game.state.clientData.forEach((client) => this.joinPlayer(client));
+            this.questState.currentTurn = this.questState.players[0];
+    
+            this.game.broadcast("quest-start", undefined, { afterNextPatch: true });
+        } catch (error) {
+            console.error("Quest could not be started.");
+        }
     };
 
     nextRoom = () => {

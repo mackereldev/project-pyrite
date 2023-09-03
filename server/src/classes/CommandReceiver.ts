@@ -7,6 +7,7 @@ import { BattleRoom } from "../schema/quest/QuestRoom";
 import { Equipment, EquipmentType } from "../schema/quest/Item";
 import { EquipmentSlot } from "../schema/quest/EquipmentSlot";
 import { AbilityExecutionContext } from "../schema/quest/AbilityExecutionContext";
+import { QuestHandler } from "./QuestHandler";
 
 export class CommandReceiver {
     private game: Game;
@@ -43,7 +44,7 @@ export class CommandReceiver {
         });
 
         this.game.onMessage("cmd-quest", (client, message) => {
-            const { action }: { action: "start" | "stop" } = message;
+            const { action, quest }: { action: "start" | "stop" | "list", quest: number } = message;
 
             if (!this.isLeader(client)) {
                 client.send("server-chat", new ServerChat("system", OnlyLeader("quest"), true).serialize());
@@ -52,7 +53,11 @@ export class CommandReceiver {
 
             if (action === "start") {
                 if (!this.game.state.questState.active) {
-                    this.game.questHandler.start();
+                    if (quest > 0 && quest <= QuestHandler.quests.length) {
+                        this.game.questHandler.start(quest - 1);
+                    } else {
+                        client.send("server-chat", new ServerChat("system", "Argument 'quest' must be an index of an available quest. See 'quest list' command.", true).serialize());
+                    }
                 } else {
                     client.send("server-chat", new ServerChat("system", "Quest has already started.", true).serialize());
                 }
@@ -62,8 +67,8 @@ export class CommandReceiver {
                 } else {
                     client.send("server-chat", new ServerChat("system", QuestInactive(), true).serialize());
                 }
-            } else {
-                client.send("server-chat", new ServerChat("system", `(cmd-quest) Unknown action '${action}'.`, true).serialize());
+            } else if (action === "list") {
+                client.send("server-chat", new ServerChat("system", "Available quests:" + QuestHandler.quests.map((quest, index) => `\n  [${index + 1}] ${quest.name}`).join("")).serialize());
             }
         });
 

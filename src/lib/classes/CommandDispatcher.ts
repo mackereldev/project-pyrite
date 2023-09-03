@@ -40,7 +40,7 @@ export default class CommandDispatcher {
                     case PingCmd:
                         return new PingCmd(args[0]).execute();
                     case QuestCmd:
-                        return new QuestCmd(args[0]).execute();
+                        return new QuestCmd(args[0], args[1]).execute();
                     case AdvanceCmd:
                         return new AdvanceCmd().execute();
                     case InspectCmd:

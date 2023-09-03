@@ -101,15 +101,16 @@ export class PingCmd extends Cmd {
 export class QuestCmd extends Cmd {
     override args;
 
-    constructor(action: string) {
+    constructor(action: string, quest?: string) {
         super();
         this.args = {
-            action: Cmd.toEnum({action}, ["start", "stop"]),
+            action: Cmd.toEnum({action}, ["start", "stop", "list"]),
+            quest: quest ? Cmd.toInt({quest}) : -1,
         };
     }
 
     override execute(): ChatMessage | undefined {
-        this.room.send("cmd-quest", { action: this.args.action });
+        this.room.send("cmd-quest", { action: this.args.action, quest: this.args.quest });
         return;
     }
 }
