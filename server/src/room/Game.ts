@@ -11,7 +11,7 @@ const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 export class Game extends Room<GameState> {
     private GAME_CHANNEL = "game:rooms";
 
-    private commandHandler: CommandReceiver = new CommandReceiver(this);
+    private commandReceiver: CommandReceiver = new CommandReceiver(this);
     questHandler: QuestHandler = new QuestHandler(this);
 
     private generateRoomIdSingle(): string {
@@ -49,7 +49,7 @@ export class Game extends Room<GameState> {
         const { maxClients }: { maxClients: number } = options;
 
         this.setState(new GameState(Date.now()));
-        this.commandHandler.register();
+        this.commandReceiver.register();
         this.roomId = await this.generateRoomId();
         this.maxClients = [2, 4, 8, 16].includes(maxClients) ? maxClients : 4;
     }
@@ -81,7 +81,7 @@ export class Game extends Room<GameState> {
 
     override onLeave(client: Client) {
         console.log(client.sessionId, "left!");
-        const replaceLeader = this.commandHandler.isLeader(client); // Replace leader if the leader is leaving
+        const replaceLeader = this.commandReceiver.isLeader(client); // Replace leader if the leader is leaving
 
         const idx = this.state.clientData.findIndex((c) => c.sessionId === client.sessionId);
         if (idx !== -1) {
@@ -106,7 +106,7 @@ export class Game extends Room<GameState> {
     override onDispose() {
         console.log("room", this.roomId, "disposing...");
         this.presence.srem(this.GAME_CHANNEL, this.roomId);
-        this.commandHandler = null;
+        this.commandReceiver = null;
         this.questHandler = null;
     }
 }
