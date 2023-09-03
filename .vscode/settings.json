@@ -1,4 +1,9 @@
 {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "eslint.validate": ["javascript", "svelte"]
+    "eslint.validate": [
+        "javascript",
+        "svelte"
+    ],
+    "[svelte]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
