@@ -14,7 +14,7 @@ export class QuestState extends Schema {
     currentTurn: Entity;
 
     @type([Entity])
-    turnCycle: Entity[] = [];
+    turnCycle: ArraySchema<Entity> = new ArraySchema<Entity>();
 
     @type("number")
     roomIndex: number = -1;

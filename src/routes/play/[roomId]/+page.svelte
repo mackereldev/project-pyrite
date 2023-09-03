@@ -68,6 +68,7 @@
                 .then((r) => {
                     $roomStore = r;
                     registerClientSubscriptions();
+                    updatePlayerList();
                 })
                 .catch((err) => {
                     goto(`/?error=${err.code}`);
@@ -90,6 +91,10 @@
                 console.debug("Playground message types", message);
             });
         }
+
+        $roomStore.state.clientData.onChange(() => {
+            updatePlayerList();
+        });
 
         $roomStore.onMessage("server-chat", (message) => {
             function chat(msg: { channel: "game" | "social"; serializedMessage: { type: "game" | "system"; text: string; isError: boolean } }) {

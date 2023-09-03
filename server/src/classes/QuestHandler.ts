@@ -5,6 +5,7 @@ import { ServerChat } from "./ServerChat";
 import { Player } from "../schema/quest/Player";
 import { ClientData } from "../schema/ClientData";
 import { Entity } from "../schema/quest/Entity";
+import { ArraySchema } from "@colyseus/schema";
 
 export class QuestHandler {
     private game: Game;
@@ -61,6 +62,9 @@ export class QuestHandler {
     leavePlayer = (clientId: string) => {
         const idx = this.questState.players.findIndex((p) => p.clientId === clientId);
         if (idx !== -1) {
+            if (this.questState.currentTurn === this.questState.players[idx]) {
+                this.nextTurn();
+            }
             this.questState.players.deleteAt(idx);
         }
     };
@@ -76,7 +80,7 @@ export class QuestHandler {
     };
 
     updateTurnCycle = () => {
-        this.questState.turnCycle = (this.questState.players.toArray() as Entity[]).concat((this.questState.room as BattleRoom).enemies.toArray());
+        this.questState.turnCycle = new ArraySchema<Entity>(...(this.questState.players.toArray() as Entity[]).concat((this.questState.room as BattleRoom).enemies.toArray() as Entity[]).filter((entity) => !entity.isDead));
     };
 
     stop = () => {
