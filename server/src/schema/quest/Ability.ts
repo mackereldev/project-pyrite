@@ -38,7 +38,7 @@ export class DamageAbility extends Ability {
             const enemy: Enemy = context.target as Enemy;
             const totalBaseDamage = this.damage * context.executor.evaluateEquipmentModifier("DMG");
 
-            return new AbilityExecutionResult([], [{ enemy, changes: { health: -totalBaseDamage } }], `dealing ${totalBaseDamage} damage.`);
+            return new AbilityExecutionResult([], [{ enemy, changes: { health: -totalBaseDamage } }]);
         }
     }
 }
@@ -67,7 +67,7 @@ export class AoeDamageAbility extends DamageAbility {
             enemyChanges.push({ enemy: targetEnemy, changes: { health: -totalBaseDamage * executorDamageMultiplier } });
             adjacentEnemies.forEach((enemy) => enemyChanges.push({ enemy, changes: { health: -totalAdjacentDamage } }));
 
-            return new AbilityExecutionResult([], enemyChanges, `dealing ${totalBaseDamage} damage to ${targetEnemy.name}, and ${totalAdjacentDamage} damage to ${adjacentEnemies.map((adj) => adj.name).join(", ")}.`);
+            return new AbilityExecutionResult([], enemyChanges);
         }
     }
 }

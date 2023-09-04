@@ -7,15 +7,13 @@ export type EnemyChanges = { enemy: Enemy; changes: { health: number } }[];
 export class AbilityExecutionResult {
     playerChanges: PlayerChanges;
     enemyChanges: EnemyChanges;
-    message: string;
 
     static get default(): AbilityExecutionResult {
-        return new AbilityExecutionResult([], [], "");
+        return new AbilityExecutionResult([], []);
     }
 
-    constructor(playerChanges: PlayerChanges = [], enemyChanges: EnemyChanges = [], message: string) {
+    constructor(playerChanges: PlayerChanges = [], enemyChanges: EnemyChanges = []) {
         this.playerChanges = playerChanges;
         this.enemyChanges = enemyChanges;
-        this.message = message;
     }
 }

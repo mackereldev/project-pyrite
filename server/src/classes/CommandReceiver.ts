@@ -107,16 +107,20 @@ export class CommandReceiver {
                 const playerDamageMultiplier = player.evaluateEquipmentModifier("DMG");
 
                 const messages = [];
-                messages.push(`'${player.clientId}' uses '${ability.name}' on '${primaryEnemy.name}' (Enemy ${targetEnemy})${abilityExecutionResult.message.length > 0 ? `, ${abilityExecutionResult.message}` : "."}`);
+                messages.push(`'${player.clientId}' uses '${ability.name}' on '${primaryEnemy.name}' (Enemy ${targetEnemy})`);
                 abilityExecutionResult.enemyChanges.forEach(enemyChange => {
                     const enemyIndex = battleRoom.enemies.indexOf(enemyChange.enemy);
                     const enemyString = `'${enemyChange.enemy.name}' (Enemy ${enemyIndex + 1})`;
-                    const damage = enemyChange.changes.health * playerDamageMultiplier;
-                    if (enemyChange.enemy.changeHealth(damage)) {
+                    const healthChange = enemyChange.changes.health * playerDamageMultiplier;
+                    if (enemyChange.enemy.changeHealth(healthChange)) {
                         battleRoom.enemies.deleteAt(enemyIndex);
-                        messages.push(`${enemyString} dies.`);
+                        messages.push(`${enemyString} took ${-healthChange} damage and died.`);
                     } else {
-                        messages.push(`${enemyString} is now on ${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP`);
+                        if (healthChange > 0) {
+                            messages.push(`${enemyString} healed for ${healthChange} health (${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP)`);
+                        } else {
+                            messages.push(`${enemyString} took ${-healthChange} damage (${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP)`);
+                        }
                     }
                 });
 
