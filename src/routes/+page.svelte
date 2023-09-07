@@ -32,8 +32,6 @@
         if (errorReason !== -1) {
             handleError(errorReason);
         }
-
-        createRoom();
     });
 
     const createRoom = async () => {
