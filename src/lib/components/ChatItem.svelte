@@ -3,6 +3,7 @@
 
     export let message: ChatMessage;
     export let relativeStartTime: number;
+    export let unreadIndicator: boolean = false;
 
     let colour = "text-zinc-500";
     let author = "invalid";
@@ -18,7 +19,7 @@
     }
 </script>
 
-<div class="font-mono">
+<div class={`font-mono${unreadIndicator ? " unread-msg-shadow" : ""}`}>
     <span class="text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class={colour}>[{author}]</span>
     <span class={`whitespace-pre-wrap${message.isError ? " text-red-400" : ""}`}>{message.text}</span>

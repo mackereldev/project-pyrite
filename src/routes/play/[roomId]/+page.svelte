@@ -20,7 +20,7 @@
     let messageHistory: HTMLDivElement;
 
     let peers: { clientId: string; isLeader: boolean }[] = [];
-    const chatChannels = {
+    let chatChannels = {
         game: new ChatChannel("Game", (chatChannel, message) => onChatMessage(chatChannel, message)),
         social: new ChatChannel("Social", (chatChannel, message) => onChatMessage(chatChannel, message)),
     };
@@ -156,9 +156,11 @@
     };
 
     const changeChatChannel = (channel: ChatChannel) => {
+        currentChatChannel.lastReadMessage = currentChatChannel.getMessages().at(-1);
+
         currentChatChannel = channel;
-        currentChatChannel = currentChatChannel; // Force redraw
         messageElement.focus();
+        channel.isUnread = false;
     };
 
     const sendChatMessage = () => {
@@ -191,6 +193,9 @@
             if (messageHistory && autoScrollBehaviour === AutoScrollBehaviour.Always) {
                 queueAutoScroll = true;
             }
+        } else {
+            chatChannel.isUnread = true;
+            chatChannels = chatChannels; // Force redraw
         }
     };
 
@@ -201,7 +206,17 @@
             sendChatMessage();
         }
 
+        // Automtically mark as read
+        currentChatChannel.lastReadMessage = undefined;
+
         messageValue = "";
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+            // Manually mark as read
+            currentChatChannel.lastReadMessage = undefined;
+        }
     };
 
     const updateShowShadow = () => {
@@ -235,7 +250,7 @@
     };
 </script>
 
-<svelte:window on:resize={updateShowShadow} />
+<svelte:window on:resize={updateShowShadow} on:keydown={onKeyDown} />
 
 <div class="flex h-full w-full gap-4 p-6">
     <div class="flex flex-1 basis-[36rem] flex-col overflow-hidden rounded ring-2 ring-zinc-300">
@@ -243,14 +258,17 @@
             {#each Object.values(chatChannels) as chatChannel}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <!-- svelte-ignore a11y-no-static-element-interactions -->
-                <div on:click={() => changeChatChannel(chatChannel)} class="group cursor-pointer border-x first:border-l-0 first:border-l-transparent last:border-r-2">
+                <div on:click={() => changeChatChannel(chatChannel)} class="group relative cursor-pointer border-x first:border-l-0 first:border-l-transparent last:border-r-2">
                     <div class="px-4 py-1 text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-zinc-200 {currentChatChannel === chatChannel ? 'text-violet-500 shadow-violet-500' : 'text-zinc-400 shadow-transparent group-hover:text-zinc-500'}">{chatChannel.name}</div>
+                    {#if chatChannel.isUnread}
+                        <div class="absolute right-1 top-1 w-1.5 h-1.5 rounded-full bg-violet-400"></div>
+                    {/if}
                 </div>
             {/each}
         </div>
         <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow flex-col overflow-y-scroll break-words px-3 pt-3 transition-all">
-            {#each currentChatChannel.getMessages() as message (message)}
-                <ChatItem {message} relativeStartTime={$roomStore.state.serverStartTime} />
+            {#each currentChatChannel.getMessages() as message, i (message)}
+                <ChatItem {message} unreadIndicator={i !== currentChatChannel.messageCount - 1 && currentChatChannel.lastReadMessage === message} relativeStartTime={$roomStore.state.serverStartTime} />
             {/each}
         </div>
         <form on:submit|preventDefault={submitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>

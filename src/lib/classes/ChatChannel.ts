@@ -5,6 +5,9 @@ export default class ChatChannel {
     private messages: ChatMessage[] = [];
     private onMessageCallback;
 
+    lastReadMessage: ChatMessage | undefined;
+    isUnread: boolean = false;
+
     constructor(name: string, onMessageCallback: (chatChannel: ChatChannel, message: ChatMessage) => void) {
         this.name = name;
         this.onMessageCallback = onMessageCallback;
@@ -18,4 +21,8 @@ export default class ChatChannel {
     getMessages = () => {
         return [...this.messages];
     };
+
+    get messageCount() {
+        return this.messages.length;
+    }
 }

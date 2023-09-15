@@ -53,6 +53,10 @@
         @apply shadow-[0px_-5px_10px_rgba(0,0,0,0.1)];
     }
 
+    .unread-msg-shadow {
+        @apply shadow-[0px_1px_0px_#c4b5fd];
+    }
+
     .sup {
         line-height: 50%;
         font-size: 0.8rem;
