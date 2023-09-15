@@ -86,10 +86,11 @@ export class QuestHandler {
 
         // Enemy turn
         if (this.questState.currentTurn instanceof Enemy) {
-            const enemy = this.questState.currentTurn as Enemy;
-            enemy.takeTurn(this.game, this.questState.alivePlayers);
-            console.log("turn ended; going next");
-            this.nextTurn();
+            this.game.clock.setTimeout(() => {
+                const enemy = this.questState.currentTurn as Enemy;
+                enemy.takeTurn(this.game, this.questState.alivePlayers);
+                this.nextTurn();
+            }, 1500);
         }
     };
 
