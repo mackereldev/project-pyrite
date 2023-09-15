@@ -261,7 +261,7 @@
                 <div on:click={() => changeChatChannel(chatChannel)} class="group relative cursor-pointer border-x first:border-l-0 first:border-l-transparent last:border-r-2">
                     <div class="px-4 py-1 text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-zinc-200 {currentChatChannel === chatChannel ? 'text-violet-500 shadow-violet-500' : 'text-zinc-400 shadow-transparent group-hover:text-zinc-500'}">{chatChannel.name}</div>
                     {#if chatChannel.isUnread}
-                        <div class="absolute right-1 top-1 w-1.5 h-1.5 rounded-full bg-violet-400"></div>
+                        <div class="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-violet-400"></div>
                     {/if}
                 </div>
             {/each}
@@ -283,7 +283,18 @@
                 {#each peers as peer}
                     <div class="flex p-4">
                         {#if peer.isLeader}
-                            <span class="mr-2">👑</span>
+                            <span class="mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 fill-amber-400 stroke-amber-400 stroke-2">
+                                    <path d="M4 19H20M11.2929 5.70711L8.70711 8.2929C8.31658 8.68342 7.68342 8.68342 7.29289 8.2929L5.70711 6.70711C5.07714 6.07714 4 6.52331 4 7.41422V15C4 15.5523 4.44772 16 5 16H19C19.5523 16 20 15.5523 20 15V7.41421C20 6.52331 18.9229 6.07714 18.2929 6.70711L16.7071 8.2929C16.3166 8.68342 15.6834 8.68342 15.2929 8.2929L12.7071 5.70711C12.3166 5.31658 11.6834 5.31658 11.2929 5.70711Z" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </span>
+                        {:else}
+                            <span class="mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-neutral-400 stroke-2">
+                                    <path d="M17.5 21.0001H6.5C5.11929 21.0001 4 19.8808 4 18.5001C4 14.4194 10 14.5001 12 14.5001C14 14.5001 20 14.4194 20 18.5001C20 19.8808 18.8807 21.0001 17.5 21.0001Z" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </span>
                         {/if}
                         <span class="font-bold">{peer.clientId}</span>
                         {#if peer.clientId === clientId}
