@@ -233,16 +233,11 @@
             console.trace(error);
         }
     };
-
-    const logState = () => {
-        console.log($roomStore.state.questState.room.type);
-    };
 </script>
 
 <svelte:window on:resize={updateShowShadow} />
 
 <div class="flex h-full w-full gap-4 p-6">
-    <button on:click={logState} class="btn text-sm">Log State</button>
     <div class="flex flex-1 basis-[36rem] flex-col overflow-hidden rounded ring-2 ring-zinc-300">
         <div class="flex border-b-2 border-zinc-300">
             {#each Object.values(chatChannels) as chatChannel}
