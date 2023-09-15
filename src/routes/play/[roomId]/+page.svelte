@@ -15,6 +15,7 @@
     export let data: PageData;
     $: ({ roomId, clientId } = data ?? {});
 
+    let messageElement: HTMLInputElement;
     let messageValue: string;
     let messageHistory: HTMLDivElement;
 
@@ -157,6 +158,7 @@
     const changeChatChannel = (channel: ChatChannel) => {
         currentChatChannel = channel;
         currentChatChannel = currentChatChannel; // Force redraw
+        messageElement.focus();
     };
 
     const sendChatMessage = () => {
@@ -257,7 +259,8 @@
             {/each}
         </div>
         <form on:submit|preventDefault={submitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
-            <input type="text" bind:value={messageValue} class="h-8 w-full rounded px-2 text-sm ring-2 ring-zinc-300" />
+            <!-- svelte-ignore a11y-autofocus -->
+            <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} class="h-8 w-full rounded px-2 text-sm ring-2 ring-zinc-300" />
         </form>
     </div>
     <div class="flex flex-shrink basis-96 flex-col gap-4">
