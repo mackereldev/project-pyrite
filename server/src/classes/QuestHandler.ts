@@ -59,12 +59,13 @@ export class QuestHandler {
     };
 
     leavePlayer = (clientId: string) => {
-        const idx = this.questState.players.findIndex((p) => p.clientId === clientId);
-        if (idx !== -1) {
-            if (this.questState.currentTurn === this.questState.players[idx]) {
+        const playerIdx = this.questState.players.findIndex((p) => p.clientId === clientId);
+        if (playerIdx !== -1) {
+            if (this.questState.currentTurn === this.questState.players[playerIdx]) {
                 this.nextTurn();
             }
-            this.questState.players.deleteAt(idx);
+            this.questState.players.deleteAt(playerIdx);
+            
         }
     };
 
@@ -92,6 +93,20 @@ export class QuestHandler {
                 this.nextTurn();
             }, 1500);
         }
+    };
+
+    voteAdvance = (player: Player) => {
+        player.votedForAdvance = true;
+
+        if (this.questState.alivePlayers.every((player) => player.votedForAdvance)) {
+            this.advance();
+        }
+    };
+
+    private advance = () => {
+        this.game.questHandler.nextRoom();
+        this.game.broadcast("quest-advance", undefined, { afterNextPatch: true });
+        this.questState.players.forEach(player => player.votedForAdvance = false);
     };
 
     stop = () => {

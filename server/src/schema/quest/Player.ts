@@ -11,6 +11,9 @@ export class Player extends Entity {
     @type([Item])
     inventory: ArraySchema<Item> = new ArraySchema<Item>();
 
+    @type("boolean")
+    votedForAdvance: boolean;
+
     constructor(clientId: string, isDead: boolean, onPlayerDeath: (player: Player) => void) {
         super(clientId, 50, undefined, ["weapon", "ring", "ring"]);
         this.onPlayerDeath = onPlayerDeath;

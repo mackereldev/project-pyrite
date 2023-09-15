@@ -74,19 +74,21 @@ export class CommandReceiver {
         });
 
         this.game.onMessage("cmd-advance", (client) => {
-            if (!this.isLeader(client)) {
-                client.send("server-chat", new ServerChat("system", OnlyLeader("advance"), true).serialize());
-                return;
-            } else if (!this.game.state.questState.active) {
+            const player = this.game.state.questState.players.find((p) => p.clientId === client.userData.clientId);
+
+            if (!this.game.state.questState.active) {
                 client.send("server-chat", new ServerChat("system", QuestInactive(), true).serialize());
                 return;
             } else if (this.game.state.questState.room.type === "battle" && (this.game.state.questState.room as BattleRoom).enemies.length > 0) {
                 client.send("server-chat", new ServerChat("system", "All enemies must first be defeated before advancing.", true).serialize());
                 return;
+            } else if (player.votedForAdvance) {
+                client.send("server-chat", new ServerChat("system", "You have already voted to advance", true).serialize());
+                return;
             }
 
-            this.game.questHandler.nextRoom();
-            this.game.broadcast("quest-advance", undefined, { afterNextPatch: true });
+            this.game.questHandler.voteAdvance(player);
+            this.game.broadcast("server-chat", new ServerChat("game", `${player.name} has voted to advance.`).serialize());
         });
 
         this.game.onMessage("cmd-attack", (client, message) => {
