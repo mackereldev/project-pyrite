@@ -2,6 +2,7 @@ import { ServerChat } from "../../classes/ServerChat";
 import { Game } from "../../room/Game";
 import { Ability, DamageAbility } from "./Ability";
 import { AbilityExecutionContext } from "./AbilityExecutionContext";
+import { EnemyPrefab } from "./EnemyPrefab";
 import { Entity } from "./Entity";
 import { Equipment } from "./Item";
 import { Player } from "./Player";
@@ -10,7 +11,7 @@ import { BattleRoom } from "./QuestRoom";
 export class Enemy extends Entity {
     room: BattleRoom;
 
-    constructor(room: BattleRoom, name: string, health: number, abilities: Ability[], equipment: Equipment[] = []) {
+    constructor(room: BattleRoom, name: string, health: number, abilities: Ability[], equipment: Equipment[]) {
         super(name, health, abilities, equipment.map((eq) => eq.type));
         this.room = room;
         equipment.forEach(eq => {
@@ -54,12 +55,18 @@ export class Enemy extends Entity {
 }
 
 export const enemyRefs = {
-    skeleton: (room: BattleRoom) => new Enemy(room, "Skeleton", 14, [], [
-        new Equipment("Bone Cutlass", "weapon", [
-            new DamageAbility("Sword Slash", 4),
-        ], 0, 0),
-    ]),
-    bat: (room: BattleRoom) => new Enemy(room, "Bat", 8, [
-        new DamageAbility("Swoop", 3),
-    ]),
+    skeleton: new EnemyPrefab(2, (room: BattleRoom) => new Enemy(room, "Skeleton", 14,
+        [],
+        [
+            new Equipment("Bone Cutlass", "weapon", [
+                new DamageAbility("Sword Slash", 5),
+            ], 0, 0),
+        ]
+    )),
+    bat: new EnemyPrefab(1, (room: BattleRoom) => new Enemy(room, "Bat", 8,
+        [
+            new DamageAbility("Swoop", 3),
+        ],
+        []
+    )),
 };

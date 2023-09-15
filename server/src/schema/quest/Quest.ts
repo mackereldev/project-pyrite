@@ -1,7 +1,7 @@
-import { BattleRoom, BossRoom, MarketRoom } from "./QuestRoom";
+import { BattleRoom, BossRoom, MarketRoom, QuestRoom } from "./QuestRoom";
 
 export class Quest {
-    private configuration;
+    private configuration: (() => QuestRoom)[];
 
     name;
     battleRoom: () => BattleRoom;
@@ -33,7 +33,8 @@ export class Quest {
         const callback = [this.battleRoom, this.marketRoom, this.bossRoom].find((t) => t === roomType);
 
         const room = callback();
-        room.generate();
+        const difficulty = Math.floor(idx / 3) * 1.25 + 2;
+        room.generate(difficulty);
 
         return room;
     };
