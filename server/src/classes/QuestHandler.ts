@@ -4,8 +4,6 @@ import { BattleRoom, BossRoom, MarketRoom, QuestRoom } from "../schema/quest/Que
 import { ServerChat } from "./ServerChat";
 import { Player } from "../schema/quest/Player";
 import { ClientData } from "../schema/ClientData";
-import { Entity } from "../schema/quest/Entity";
-import { ArraySchema } from "@colyseus/schema";
 import { Enemy } from "../schema/quest/Enemy";
 
 export class QuestHandler {
@@ -93,10 +91,6 @@ export class QuestHandler {
             console.log("turn ended; going next");
             this.nextTurn();
         }
-    };
-
-    updateTurnCycle = () => {
-        this.questState.turnCycle = new ArraySchema<Entity>(...(this.questState.players.toArray() as Entity[]).concat((this.questState.room as BattleRoom).enemies.toArray() as Entity[]).filter((entity) => !entity.isDead));
     };
 
     stop = () => {

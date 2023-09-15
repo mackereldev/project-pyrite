@@ -1,10 +1,12 @@
 import { Client, Room } from "@colyseus/core";
+import { ArraySchema } from "@colyseus/schema";
 import { GameState } from "../schema/GameState";
 import { CommandReceiver } from "../classes/CommandReceiver";
 import { QuestHandler } from "../classes/QuestHandler";
 import { ClientData } from "../schema/ClientData";
 import { ChangeTree } from "@colyseus/schema/lib/changes/ChangeTree";
 import { BattleRoom } from "../schema/quest/QuestRoom";
+import { Entity } from "../schema/quest/Entity";
 
 const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
 
@@ -23,12 +25,12 @@ export class Game extends Room<GameState> {
     }
 
     override onBeforePatch(state: GameState): void | Promise<any> {
-        // Checks if the player or enemy state has changed this patch, and updates the turn cycle
+        // Checks if the player or enemy state has changed this patch, and updates the client-side turn cycle
         const playerChangeTree = (state.questState.players as any)?.$changes as ChangeTree;
         const enemiesChangeTree = ((state.questState.room as BattleRoom)?.enemies as any)?.$changes as ChangeTree;
 
         if (playerChangeTree?.changed || enemiesChangeTree?.changed) {
-            this.questHandler.updateTurnCycle();
+            this.state.questState.clientTurnCycle = new ArraySchema<Entity>(...this.state.questState.turnCycle);
         }
 
         return;

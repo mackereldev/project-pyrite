@@ -9,12 +9,12 @@ export const generateUpcomingTurns = (count: number) => {
         throw new Error("Must be in a battle room. (WIP)");
     }
 
-    const turnIndex = questState.turnCycle.indexOf(questState.currentTurn);
+    const turnIndex = questState.clientTurnCycle.indexOf(questState.currentTurn);
 
     if (turnIndex !== -1) {
         const arr: Entity[] = [];
         for (let i = turnIndex; i < count + turnIndex; i++) {
-            arr.push(questState.turnCycle[i % questState.turnCycle.length]);
+            arr.push(questState.clientTurnCycle[i % questState.clientTurnCycle.length]);
         }
         return arr;
     } else {

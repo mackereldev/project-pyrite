@@ -142,7 +142,7 @@
         });
 
         $roomStore.state.questState.listen("currentTurn", updateTurnsList, false);
-        $roomStore.state.questState.listen("turnCycle", updateTurnsList, false);
+        $roomStore.state.questState.listen("clientTurnCycle", updateTurnsList, false);
     };
 
     const leaveRoom = async (consented: boolean) => {

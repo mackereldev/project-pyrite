@@ -1,5 +1,5 @@
 import { Schema, ArraySchema, type } from "@colyseus/schema";
-import { QuestRoom } from "./quest/QuestRoom";
+import { BattleRoom, QuestRoom } from "./quest/QuestRoom";
 import { Player } from "./quest/Player";
 import { Entity } from "./quest/Entity";
 
@@ -14,7 +14,15 @@ export class QuestState extends Schema {
     currentTurn: Entity;
 
     @type([Entity])
-    turnCycle: ArraySchema<Entity> = new ArraySchema<Entity>();
+    clientTurnCycle: ArraySchema<Entity> = new ArraySchema<Entity>();
+
+    get turnCycle(): Entity[] {
+        if (this.room.type === "battle") {
+            return (this.players.toArray() as Entity[]).concat((this.room as BattleRoom).enemies.toArray() as Entity[]).filter((entity) => !entity.isDead);
+        } else {
+            return [];
+        }
+    }
 
     @type("number")
     roomIndex: number = -1;
