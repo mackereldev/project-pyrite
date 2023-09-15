@@ -3,10 +3,6 @@
     import { tweened } from "svelte/motion";
     import { linear, quintOut, circOut } from "svelte/easing";
     import { onMount, createEventDispatcher } from "svelte";
-    import Success from "$lib/components/svg/Success.svelte";
-    import Info from "$lib/components/svg/Info.svelte";
-    import Warning from "$lib/components/svg/Warning.svelte";
-    import Error from "$lib/components/svg/Error.svelte";
     import type ToastData from "$lib/classes/ToastData";
 
     export let toast: ToastData;
@@ -52,13 +48,21 @@
 <div in:fly={{ x: 100, duration: 500, opacity: 1, easing: quintOut }} out:fade={{ duration: 200, easing: circOut }} class="flex h-20 w-96">
     <button on:click={remove} class="relative flex flex-grow items-center gap-3 truncate rounded-lg px-4 {colour}">
         {#if toast.severity === "success"}
-            <Success class="h-8 w-8" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+            </svg>
         {:else if toast.severity === "info"}
-            <Info class="h-8 w-8" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
         {:else if toast.severity === "warning"}
-            <Warning class="h-8 w-8" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
         {:else if toast.severity === "error"}
-            <Error class="h-8 w-8" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+            </svg>
         {/if}
         <div class="flex flex-grow flex-col items-start">
             <div class="text-lg font-medium">{toast.message}</div>
