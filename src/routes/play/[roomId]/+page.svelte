@@ -224,7 +224,7 @@
         try {
             if ($roomStore.state.questState.currentTurn) {
                 turns = generateUpcomingTurns(6).map((entity) => {
-                    return { type: (entity as Player)?.clientId ? "player" : "enemy", name: (entity as Player)?.clientId || entity?.name || "INVALID_ENTITY" };
+                    return { type: (entity as Player)?.clientId ? "player" : "enemy", name: entity?.name || "INVALID_ENTITY" };
                 });
             }
         } catch (error) {

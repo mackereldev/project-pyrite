@@ -1,7 +1,10 @@
 import { Schema, type } from "@colyseus/schema";
-import { AbilityExecutionResult, EnemyChanges } from "./AbilityExecutionResult";
+import { AbilityExecutionResult, EntityChanges } from "./AbilityExecutionResult";
 import { AbilityExecutionContext } from "./AbilityExecutionContext";
 import type { Enemy } from "./Enemy";
+import { Entity } from "./Entity";
+import { Game } from "../../room/Game";
+import { ServerChat } from "../../classes/ServerChat";
 
 export abstract class Ability extends Schema {
     @type("string")
@@ -20,6 +23,31 @@ export abstract class Ability extends Schema {
         context.validate(this.nature);
         return AbilityExecutionResult.default;
     }
+
+    evaluate(game: Game, result: AbilityExecutionResult): void {
+        const messages = [];
+        messages.push(`'${result.context.executor.name}' uses '${this.name}' on '${result.context.target.name}'`);
+
+        const entityDeathQueue: Entity[] = [];
+
+        const executorDamageMultiplier = result.context.executor.evaluateEquipmentModifier("DMG");
+        result.entityChanges.forEach(entityChange => {
+            const healthChange = entityChange.changes.health * executorDamageMultiplier;
+            if (entityChange.entity.changeHealth(healthChange)) {
+                messages.push(`${entityChange.entity.name} took ${-healthChange} damage and died.`);
+                entityDeathQueue.push(entityChange.entity);
+            } else {
+                if (healthChange > 0) {
+                    messages.push(`${entityChange.entity.name} healed for ${healthChange} health (${entityChange.entity.health}/${entityChange.entity.maxHealth} HP)`);
+                } else {
+                    messages.push(`${entityChange.entity.name} took ${-healthChange} damage (${entityChange.entity.health}/${entityChange.entity.maxHealth} HP)`);
+                }
+            }
+        });
+
+        game.broadcast("server-chat", messages.map((text) => new ServerChat("game", text).serialize()));
+        entityDeathQueue.forEach(entity => entity.die());
+    }
 }
 
 export class DamageAbility extends Ability {
@@ -34,11 +62,10 @@ export class DamageAbility extends Ability {
     override execute(context: AbilityExecutionContext): AbilityExecutionResult {
         super.execute(context);
 
-        if (context.enemies.includes(context.target)) {
-            const enemy: Enemy = context.target as Enemy;
+        if (context.hostiles.includes(context.target)) {
             const totalBaseDamage = this.damage * context.executor.evaluateEquipmentModifier("DMG");
 
-            return new AbilityExecutionResult([], [{ enemy, changes: { health: -totalBaseDamage } }]);
+            return new AbilityExecutionResult(context, [{ entity: context.target, changes: { health: -totalBaseDamage } }]);
         }
     }
 }
@@ -55,19 +82,19 @@ export class AoeDamageAbility extends DamageAbility {
     override execute(context: AbilityExecutionContext): AbilityExecutionResult {
         super.execute(context);
 
-        if (context.enemies.includes(context.target)) {
+        if (context.hostiles.includes(context.target as Enemy)) {
             const targetEnemy: Enemy = context.target as Enemy;
-            const enemyChanges: EnemyChanges = [];
+            const entityChanges: EntityChanges = [];
             const executorDamageMultiplier = context.executor.evaluateEquipmentModifier("DMG");
 
             const totalBaseDamage = this.damage * executorDamageMultiplier;
             const totalAdjacentDamage = this.adjacencyDamage * executorDamageMultiplier;
 
-            const adjacentEnemies = context.enemies.filter((enemy) => enemy !== targetEnemy);
-            enemyChanges.push({ enemy: targetEnemy, changes: { health: -totalBaseDamage * executorDamageMultiplier } });
-            adjacentEnemies.forEach((enemy) => enemyChanges.push({ enemy, changes: { health: -totalAdjacentDamage } }));
+            const adjacentEnemies = context.hostiles.filter((entity) => entity !== targetEnemy);
+            entityChanges.push({ entity: targetEnemy, changes: { health: -totalBaseDamage * executorDamageMultiplier } });
+            adjacentEnemies.forEach((entity) => entityChanges.push({ entity, changes: { health: -totalAdjacentDamage } }));
 
-            return new AbilityExecutionResult([], enemyChanges);
+            return new AbilityExecutionResult(context, entityChanges);
         }
     }
 }

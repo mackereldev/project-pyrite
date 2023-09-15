@@ -40,15 +40,19 @@ export abstract class Entity extends Schema {
 
     /**
      * Changes the health of this entity.
-     * @returns Whether the entity died as a result of the health change or if it was already dead (Entity.isDead).
+     * @returns Whether the entity died as a result of the health change.
      */
     changeHealth = (difference: number): boolean => {
         this.health += difference;
         if (this.health <= 0) {
             this.isDead = true;
+            return true;
         }
-        return this.isDead;
+
+        return false;
     };
+
+    abstract die: () => void;
 
     /**
      * Adds equipment and its respective abilities and stat boosts (if any) to the entity.
@@ -136,7 +140,7 @@ export abstract class Entity extends Schema {
         }
     };
 
-    updateHealth = (refillHealth: boolean = false) => {
+    private updateHealth = (refillHealth: boolean = false) => {
         const multiplier = this.evaluateEquipmentModifier("HP");
         this.maxHealth = this.baseHealth * multiplier;
         if (this.health > this.maxHealth || refillHealth) {

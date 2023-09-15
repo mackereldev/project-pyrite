@@ -24,4 +24,8 @@ export class QuestState extends Schema {
 
     @type([Player])
     players: ArraySchema<Player> = new ArraySchema<Player>();
+
+    get alivePlayers(): Player[] {
+        return this.players.filter((player) => !player.isDead);
+    }
 }

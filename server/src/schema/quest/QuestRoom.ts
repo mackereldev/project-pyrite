@@ -15,7 +15,7 @@ export abstract class QuestRoom extends Schema {
 }
 
 export class BattleRoom extends QuestRoom {
-    enemyPrefabs: (() => Enemy)[];
+    enemyPrefabs: ((room: BattleRoom) => Enemy)[];
 
     @type([Enemy])
     enemies: ArraySchema<Enemy> = new ArraySchema<Enemy>();
@@ -32,7 +32,7 @@ export class BattleRoom extends QuestRoom {
             const random = Math.random() * this.enemyPrefabs.length;
             const enemy = this.enemyPrefabs[Math.floor(random)];
 
-            generatedEnemies.push(enemy());
+            generatedEnemies.push(enemy(this));
         }
 
         this.enemies.push(...generatedEnemies);

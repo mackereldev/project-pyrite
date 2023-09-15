@@ -5,14 +5,14 @@ import { Player } from "./Player";
 export class AbilityExecutionContext {
     executor: Entity;
     target: Entity;
-    players: Player[];
-    enemies: Enemy[];
+    allies: Entity[];
+    hostiles: Entity[];
 
-    constructor(executor: Entity, target: Entity, players: Player[], enemies: Enemy[]) {
+    constructor(executor: Entity, target: Entity, allies: Entity[], hostiles: Entity[]) {
         this.executor = executor;
         this.target = target;
-        this.players = players;
-        this.enemies = enemies;
+        this.allies = allies;
+        this.hostiles = hostiles;
     }
 
     validate(nature: "friendly" | "hostile") {

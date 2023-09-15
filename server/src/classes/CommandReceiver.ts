@@ -63,6 +63,7 @@ export class CommandReceiver {
                 }
             } else if (action === "stop") {
                 if (this.game.state.questState.active) {
+                    this.game.broadcast("server-chat", new ServerChat("game", `Your party abandons the quest.`).serialize());
                     this.game.questHandler.stop();
                 } else {
                     client.send("server-chat", new ServerChat("system", QuestInactive(), true).serialize());
@@ -89,7 +90,7 @@ export class CommandReceiver {
         });
 
         this.game.onMessage("cmd-attack", (client, message) => {
-            const { targetEnemy, targetAbility }: { targetEnemy: number, targetAbility: number } = message;
+            const { targetEnemy: targetEnemyIdx, targetAbility }: { targetEnemy: number, targetAbility: number } = message;
 
             try {
                 const player = this.game.state.questState.players.find((p) => p.clientId === client.userData.clientId);
@@ -101,32 +102,11 @@ export class CommandReceiver {
 
                 const ability = player.abilities[targetAbility - 1];
                 const battleRoom = this.game.state.questState.room as BattleRoom;
-                const primaryEnemy = battleRoom.enemies[targetEnemy - 1];
+                const targetEnemy = battleRoom.enemies[targetEnemyIdx - 1];
 
-                const abilityExecutionResult = ability.execute(new AbilityExecutionContext(player, primaryEnemy, this.game.state.questState.players, battleRoom.enemies));
-                const playerDamageMultiplier = player.evaluateEquipmentModifier("DMG");
-
-                const messages = [];
-                messages.push(`'${player.clientId}' uses '${ability.name}' on '${primaryEnemy.name}' (Enemy ${targetEnemy})`);
-                abilityExecutionResult.enemyChanges.forEach(enemyChange => {
-                    const enemyIndex = battleRoom.enemies.indexOf(enemyChange.enemy);
-                    const enemyString = `'${enemyChange.enemy.name}' (Enemy ${enemyIndex + 1})`;
-                    const healthChange = enemyChange.changes.health * playerDamageMultiplier;
-                    if (enemyChange.enemy.changeHealth(healthChange)) {
-                        battleRoom.enemies.deleteAt(enemyIndex);
-                        messages.push(`${enemyString} took ${-healthChange} damage and died.`);
-                    } else {
-                        if (healthChange > 0) {
-                            messages.push(`${enemyString} healed for ${healthChange} health (${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP)`);
-                        } else {
-                            messages.push(`${enemyString} took ${-healthChange} damage (${enemyChange.enemy.health}/${enemyChange.enemy.maxHealth} HP)`);
-                        }
-                    }
-                });
-
+                const abilityExecutionResult = ability.execute(new AbilityExecutionContext(player, targetEnemy, this.game.state.questState.players.toArray(), battleRoom.enemies.toArray()));
+                ability.evaluate(this.game, abilityExecutionResult);
                 this.game.questHandler.nextTurn();
-
-                this.game.broadcast("server-chat", messages.map((text) => new ServerChat("game", text).serialize()));
             } catch (error) {
                 console.trace(error);
             }

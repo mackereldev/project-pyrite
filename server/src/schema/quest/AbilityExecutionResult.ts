@@ -1,19 +1,18 @@
-import { Enemy } from "./Enemy";
-import { Player } from "./Player";
+import { AbilityExecutionContext } from "./AbilityExecutionContext";
+import { Entity } from "./Entity";
 
-export type PlayerChanges = { player: Player; changes: { health: number } }[];
-export type EnemyChanges = { enemy: Enemy; changes: { health: number } }[];
+export type EntityChanges = { entity: Entity; changes: { health: number } }[];
 
 export class AbilityExecutionResult {
-    playerChanges: PlayerChanges;
-    enemyChanges: EnemyChanges;
+    context: AbilityExecutionContext;
+    entityChanges: EntityChanges;
 
     static get default(): AbilityExecutionResult {
-        return new AbilityExecutionResult([], []);
+        return new AbilityExecutionResult(undefined, []);
     }
 
-    constructor(playerChanges: PlayerChanges = [], enemyChanges: EnemyChanges = []) {
-        this.playerChanges = playerChanges;
-        this.enemyChanges = enemyChanges;
+    constructor(context: AbilityExecutionContext, entityChanges: EntityChanges = []) {
+        this.context = context;
+        this.entityChanges = entityChanges;
     }
 }

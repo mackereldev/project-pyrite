@@ -3,14 +3,17 @@ import { Entity } from "./Entity";
 import { Item, StackableItem, equipmentRefs, itemRefs } from "./Item";
 
 export class Player extends Entity {
+    onPlayerDeath: (player: Player) => void;
+
     @type("string")
     clientId: string;
 
     @type([Item])
     inventory: ArraySchema<Item> = new ArraySchema<Item>();
 
-    constructor(clientId: string, isDead: boolean) {
-        super("~PLAYER", 50, undefined, ["weapon", "ring", "ring"]);
+    constructor(clientId: string, isDead: boolean, onPlayerDeath: (player: Player) => void) {
+        super(clientId, 50, undefined, ["weapon", "ring", "ring"]);
+        this.onPlayerDeath = onPlayerDeath;
         this.addEquipment(equipmentRefs.training_sword(), false, true);
         this.addItem(equipmentRefs.steel_sword(), itemRefs.coin(20));
         this.clientId = clientId;
@@ -46,5 +49,9 @@ export class Player extends Entity {
                 this.inventory.deleteAt(this.inventory.findIndex((i) => i.name === item.name));
             }
         });
+    };
+
+    override die = () => {
+        this.onPlayerDeath(this);
     };
 }

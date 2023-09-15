@@ -6,6 +6,7 @@ import { Player } from "../schema/quest/Player";
 import { ClientData } from "../schema/ClientData";
 import { Entity } from "../schema/quest/Entity";
 import { ArraySchema } from "@colyseus/schema";
+import { Enemy } from "../schema/quest/Enemy";
 
 export class QuestHandler {
     private game: Game;
@@ -56,7 +57,7 @@ export class QuestHandler {
     };
 
     joinPlayer = (client: ClientData, asDead: boolean = false) => {
-        this.questState.players.push(new Player(client.clientId, asDead));
+        this.questState.players.push(new Player(client.clientId, asDead, this.onPlayerDeath));
     };
 
     leavePlayer = (clientId: string) => {
@@ -69,6 +70,13 @@ export class QuestHandler {
         }
     };
 
+    onPlayerDeath = (player: Player) => {
+        if (this.questState.alivePlayers.length <= 0) {
+            this.game.broadcast("server-chat", new ServerChat("game", `All adventurers have died. The quest is over.`).serialize());
+            this.stop();
+        }
+    };
+
     nextTurn = () => {
         if (!["battle"].includes(this.questState.room?.type)) {
             console.error("Must be in a battle room. (WIP)");
@@ -77,6 +85,14 @@ export class QuestHandler {
 
         const turnIndex = this.questState.turnCycle.indexOf(this.questState.currentTurn);
         this.questState.currentTurn = this.questState.turnCycle[(turnIndex + 1) % this.questState.turnCycle.length];
+
+        // Enemy turn
+        if (this.questState.currentTurn instanceof Enemy) {
+            const enemy = this.questState.currentTurn as Enemy;
+            enemy.takeTurn(this.game, this.questState.alivePlayers);
+            console.log("turn ended; going next");
+            this.nextTurn();
+        }
     };
 
     updateTurnCycle = () => {
@@ -91,7 +107,6 @@ export class QuestHandler {
         this.questState.currentTurn = null;
         this.currentRoom = null;
 
-        this.game.broadcast("server-chat", new ServerChat("game", `Your party abandons the quest.`).serialize());
         this.questState.players.clear();
     };
 
