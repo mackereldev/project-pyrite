@@ -30,6 +30,10 @@ export abstract class Cmd {
         if ((requisite === "QuestActive" || requisite === "CurrentTurn") && !this.room.state.questState.active) {
             throw new CmdError("The quest must be active.");
         }
+        
+        if (requisite === "QuestInactive" && this.room.state.questState.active) {
+            throw new CmdError("The quest must not be active.");
+        }
 
         if (requisite === "CurrentTurn" && this.room.state.questState.currentTurn !== this.player) {
             throw new CmdError("It's not your turn.");
@@ -80,7 +84,7 @@ export class CmdError implements Error {
     }
 }
 
-export type CmdRequisite = "None" | "QuestActive" | "CurrentTurn";
+export type CmdRequisite = "None" | "QuestActive" | "QuestInactive" | "CurrentTurn";
 
 export class PingCmd extends Cmd {
     override args;
