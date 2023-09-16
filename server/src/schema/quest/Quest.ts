@@ -1,12 +1,12 @@
 import { BattleRoom, BossRoom, MarketRoom, QuestRoom } from "./QuestRoom";
 
 export class Quest {
-    private configuration: (() => QuestRoom)[];
+    private readonly configuration: (() => QuestRoom)[];
 
-    name;
-    battleRoom: () => BattleRoom;
-    marketRoom: () => MarketRoom;
-    bossRoom: () => BossRoom;
+    readonly name;
+    readonly battleRoom: () => BattleRoom;
+    readonly marketRoom: () => MarketRoom;
+    readonly bossRoom: () => BossRoom;
 
     constructor(name: string, battleRoom: () => BattleRoom, marketRoom: () => MarketRoom, bossRoom: () => BossRoom) {
         this.name = name;

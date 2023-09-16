@@ -69,4 +69,4 @@ export const enemyRefs = {
         ],
         []
     )),
-};
+} satisfies { [key: string]: EnemyPrefab };

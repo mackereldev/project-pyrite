@@ -47,9 +47,9 @@ export class Equipment extends Item {
 
 export const itemRefs = {
     coin: (quantity: number = 1) => new StackableItem("Coin", quantity),
-};
+} satisfies { [key: string]: (quantity: number) => StackableItem };
 
 export const equipmentRefs = {
     training_sword: () => new Equipment("Training Sword", "weapon", [new DamageAbility("Sword Thrust", 8)], 0, 0),
     steel_sword: () => new Equipment("Steel Sword", "weapon", [new DamageAbility("Valiant Strike", 15), new AoeDamageAbility("Rapid Sweep", 8, 5)], 0, 0),
-};
+} satisfies { [key: string]: () => Equipment };

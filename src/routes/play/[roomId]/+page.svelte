@@ -306,7 +306,7 @@
         </div>
         <div class="flex flex-1 flex-col gap-2 overflow-clip rounded p-5 ring-2 ring-zinc-300">
             {#if $roomStore?.state.questState?.active}
-                {#if $roomStore.state.questState.room.type === "battle"}
+                {#if $roomStore.state.questState.room?.type === "battle"}
                     <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Turns</span>
                     <div class="flex flex-col overflow-y-scroll">
                         {#each turns as turn, index}
