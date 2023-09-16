@@ -1,6 +1,6 @@
 import { Game } from "../room/Game";
 import { Quest } from "../schema/quest/Quest";
-import { BattleRoom, BossRoom, MarketRoom, QuestRoom } from "../schema/quest/QuestRoom";
+import { BattleRoom, BossRoom, MarketRoom } from "../schema/quest/QuestRoom";
 import { ServerChat } from "./ServerChat";
 import { Player } from "../schema/quest/Player";
 import { ClientData } from "../schema/ClientData";
@@ -24,7 +24,6 @@ export class QuestHandler {
     ];
 
     private currentQuest: Quest = null;
-    private currentRoom: QuestRoom = null;
 
     constructor(game: Game) {
         this.game = game;
@@ -36,13 +35,12 @@ export class QuestHandler {
             this.currentQuest = QuestHandler.quests[questIndex];
             this.questState.roomIndex = -1;
             this.questState.name = this.currentQuest.name;
-            this.nextRoom();
 
             // Join every currently connected player to the quest
             this.game.state.clientData.forEach((client) => this.joinPlayer(client));
-            this.questState.currentTurn = this.questState.players[0];
 
             this.game.broadcast("quest-start", undefined, { afterNextPatch: true });
+            this.nextRoom();
         } catch (error) {
             console.error("Quest could not be started.");
         }
@@ -50,8 +48,11 @@ export class QuestHandler {
 
     nextRoom = () => {
         this.questState.roomIndex++;
-        this.currentRoom = this.currentQuest.generateRoomByIndex(this.questState.roomIndex);
-        this.questState.room = this.currentRoom;
+        this.questState.room = this.currentQuest.generateRoomByIndex(this.questState.roomIndex);
+
+        if (this.questState.room.type === "battle") {
+            this.questState.currentTurn = this.questState.players[0];
+        }
     };
 
     joinPlayer = (client: ClientData, asDead: boolean = false) => {
@@ -65,11 +66,11 @@ export class QuestHandler {
                 this.nextTurn();
             }
             this.questState.players.deleteAt(playerIdx);
-            
+
         }
     };
 
-    onPlayerDeath = (player: Player) => {
+    onPlayerDeath = () => {
         if (this.questState.alivePlayers.length <= 0) {
             this.game.broadcast("server-chat", new ServerChat("game", `All adventurers have died. The quest is over.`).serialize());
             this.stop();
@@ -115,7 +116,6 @@ export class QuestHandler {
         this.questState.roomIndex = -1;
         this.questState.name = "";
         this.questState.currentTurn = null;
-        this.currentRoom = null;
 
         this.questState.players.clear();
     };
