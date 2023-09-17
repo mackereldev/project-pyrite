@@ -1,13 +1,9 @@
 import { Schema, ArraySchema, type } from "@colyseus/schema";
-import { QuestState } from "./QuestState";
 import { ClientData } from "./ClientData";
 
-export class GameState extends Schema {
+export class MainState extends Schema {
     @type("number")
     serverStartTime: number = 0;
-
-    @type(QuestState)
-    questState: QuestState = new QuestState();
 
     @type([ClientData])
     clientData: ArraySchema<ClientData> = new ArraySchema<ClientData>();

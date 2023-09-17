@@ -10,9 +10,6 @@
     if (message.type === "player") {
         colour = "text-violet-500";
         author = message.author || "invalid";
-    } else if (message.type === "game") {
-        colour = "text-sky-500";
-        author = "GAME";
     } else if (message.type === "system") {
         colour = "text-green-500";
         author = "SYSTEM";

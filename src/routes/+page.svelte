@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { GameState } from "../../server/src/schema/GameState";
+    import type { MainState } from "../../server/src/schema/MainState";
     import Input from "$lib/components/Input.svelte";
     import { page } from "$app/stores";
     import { onMount } from "svelte";
@@ -32,15 +32,13 @@
         if (errorReason !== -1) {
             handleError(errorReason);
         }
-
-        createRoom();
     });
 
     const createRoom = async () => {
         try {
-            $roomStore = await $clientStore.create<GameState>("game", { clientId: characterNameValue, maxClients: maxClientsValue });
+            $roomStore = await $clientStore.create<MainState>("chat-room", { clientId: characterNameValue, maxClients: maxClientsValue });
 
-            goto(`/play/${$roomStore.id}`);
+            goto(`/room/${$roomStore.id}`);
         } catch (error) {
             console.trace(error);
         }
@@ -50,10 +48,10 @@
         console.debug(`attempting to join room '${roomId}'`);
 
         $clientStore
-            .joinById<GameState>(roomId, { clientId: characterNameValue })
+            .joinById<MainState>(roomId, { clientId: characterNameValue })
             .then((r) => {
                 $roomStore = r;
-                goto(`/play/${roomId}`);
+                goto(`/room/${roomId}`);
             })
             .catch((err) => {
                 handleError(err.code);

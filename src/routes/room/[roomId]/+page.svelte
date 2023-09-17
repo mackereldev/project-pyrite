@@ -1,16 +1,14 @@
 <script lang="ts">
-    import { clientStore, gameChat, roomStore } from "$lib/classes/Stores";
+    import { clientStore, roomStore } from "$lib/classes/Stores";
     import { afterUpdate, onMount } from "svelte";
     import type { PageData } from "./$types";
     import { beforeNavigate, goto } from "$app/navigation";
-    import type { GameState } from "../../../../server/src/schema/GameState";
+    import type { MainState } from "../../../../server/src/schema/MainState";
     import { AutoScrollBehaviour } from "$lib/enums";
     import ChatChannel from "$lib/classes/ChatChannel";
-    import { ChatMessage, type ChatMessageType } from "$lib/classes/ChatMessage";
+    import { ChatMessage } from "$lib/classes/ChatMessage";
     import ChatItem from "$lib/components/ChatItem.svelte";
     import CommandDispatcher from "$lib/classes/CommandDispatcher";
-    import { generateUpcomingTurns } from "$lib/classes/GameClient";
-    import type { Player } from "../../../../server/src/schema/quest/Player";
 
     export let data: PageData;
     $: ({ roomId, clientId } = data ?? {});
@@ -19,15 +17,11 @@
     let messageValue: string;
     let messageHistory: HTMLDivElement;
 
-    let peers: { clientId: string; isLeader: boolean }[] = [];
-    let chatChannels = {
-        game: new ChatChannel("Game", (chatChannel, message) => onChatMessage(chatChannel, message)),
-        social: new ChatChannel("Social", (chatChannel, message) => onChatMessage(chatChannel, message)),
-    };
-    let currentChatChannel = chatChannels.game;
-    $gameChat = chatChannels.game;
+    let clients: { clientId: string; isLeader: boolean }[] = [];
 
-    let turns: { type: "player" | "enemy"; name: string }[] = [];
+    // TODO: These should be dynamic (room code)
+    let chatChannels: { [key: string]: ChatChannel } = {};
+    let currentChatChannel: ChatChannel;
 
     let autoScrollBehaviour = AutoScrollBehaviour.Always;
     let queueAutoScroll = false;
@@ -61,15 +55,19 @@
 
     onMount(() => {
         updateShowShadow();
+        chatChannels = {
+            mainRoom: new ChatChannel(roomId, (chatChannel, message) => onChatMessage(chatChannel, message)),
+        };
+        currentChatChannel = chatChannels.mainRoom;
 
         if (!connected) {
             console.debug("Join and register");
             $clientStore
-                .joinById<GameState>(roomId, { clientId })
+                .joinById<MainState>(roomId, { clientId })
                 .then((r) => {
                     $roomStore = r;
                     registerClientSubscriptions();
-                    updatePlayerList();
+                    updateClientList();
                 })
                 .catch((err) => {
                     goto(`/?error=${err.code}`);
@@ -77,7 +75,7 @@
         } else {
             console.debug("Register");
             registerClientSubscriptions();
-            updatePlayerList();
+            updateClientList();
         }
     });
 
@@ -94,17 +92,13 @@
         }
 
         $roomStore.state.clientData.onChange(() => {
-            updatePlayerList();
+            updateClientList();
         });
 
         $roomStore.onMessage("server-chat", (message) => {
-            function chat(msg: { channel: "game" | "social"; serializedMessage: { type: "game" | "system"; text: string; isError: boolean } }) {
-                const chatMessage = new ChatMessage(undefined, msg.serializedMessage.type as ChatMessageType, msg.serializedMessage.text, msg.serializedMessage.isError);
-                if (msg.channel === "game") {
-                    chatChannels.game.addMessage(chatMessage);
-                } else if (msg.channel === "social") {
-                    chatChannels.social.addMessage(chatMessage);
-                }
+            function chat(msg: { serializedMessage: { text: string; isError: boolean } }) {
+                const chatMessage = new ChatMessage(undefined, "system", msg.serializedMessage.text, msg.serializedMessage.isError);
+                chatChannels.mainRoom.addMessage(chatMessage);
             }
 
             if (Array.isArray(message)) {
@@ -117,33 +111,14 @@
         $roomStore.onMessage("player-chat", (message) => {
             const { msg, author }: { msg: string; author: { sessionId: string; clientId: string } } = message;
             console.debug("MESSAGE:", message);
-            chatChannels.social.addMessage(new ChatMessage(author.clientId, "player", msg));
+            chatChannels.mainRoom.addMessage(new ChatMessage(author.clientId, "player", msg));
         });
 
         $roomStore.onMessage("cmd-ping", (message) => {
             const { sender }: { sender: { sessionId: string; clientId: string } } = message;
 
-            chatChannels.game.addMessage(new ChatMessage(undefined, "system", `Client '${sender.clientId}' pinged all clients.`));
+            chatChannels.mainRoom.addMessage(new ChatMessage(undefined, "system", `Client '${sender.clientId}' pinged all clients.`));
         });
-
-        $roomStore.onMessage("quest-start", () => {
-            chatChannels.game.addMessage(new ChatMessage(undefined, "game", `Your party embarks into the '${$roomStore.state.questState.name}'.`));
-            enterQuestRoom();
-        });
-
-        $roomStore.onMessage("quest-advance", () => {
-            chatChannels.game.addMessage(new ChatMessage(undefined, "game", "Your party advances."));
-            enterQuestRoom();
-        });
-
-        $roomStore.state.questState.listen("active", (value) => {
-            if (!value) {
-                turns = [];
-            }
-        });
-
-        $roomStore.state.questState.listen("currentTurn", updateTurnsList, false);
-        $roomStore.state.questState.listen("clientTurnCycle", updateTurnsList, false);
     };
 
     const leaveRoom = async (consented: boolean) => {
@@ -178,9 +153,9 @@
         const args = command.slice(1);
 
         console.debug("COMMAND:", commandName);
-        const response = await CommandDispatcher.executeCommand(commandName, ...args);
+        const response = CommandDispatcher.executeCommand(commandName, ...args);
         if (response) {
-            chatChannels.game.addMessage(response);
+            chatChannels.mainRoom.addMessage(response);
         }
     };
 
@@ -200,11 +175,8 @@
     };
 
     const submitMessage = async () => {
-        if (currentChatChannel === chatChannels.game) {
-            sendCommand();
-        } else if (currentChatChannel === chatChannels.social) {
-            sendChatMessage();
-        }
+        // TODO: Support sending commands
+        sendChatMessage();
 
         // Automtically mark as read
         currentChatChannel.lastReadMessage = undefined;
@@ -223,30 +195,11 @@
         showShadow = messageHistory.scrollHeight - messageHistory.scrollTop > messageHistory.clientHeight;
     };
 
-    const updatePlayerList = () => {
+    const updateClientList = () => {
         const clientData = $roomStore.state.clientData.toArray();
-        peers = clientData.map((client) => {
+        clients = clientData.map((client) => {
             return { clientId: client.clientId, isLeader: $roomStore.state.leader === client.clientId };
         });
-    };
-
-    const enterQuestRoom = async () => {
-        const response = await CommandDispatcher.executeCommand("inspect", "room");
-        if (response) {
-            chatChannels.game.addMessage(response);
-        }
-    };
-
-    const updateTurnsList = () => {
-        try {
-            if ($roomStore.state.questState.currentTurn) {
-                turns = generateUpcomingTurns(6).map((entity) => {
-                    return { type: (entity as Player)?.clientId ? "player" : "enemy", name: entity?.name || "INVALID_ENTITY" };
-                });
-            }
-        } catch (error) {
-            console.trace(error);
-        }
     };
 </script>
 
@@ -267,9 +220,11 @@
             {/each}
         </div>
         <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow flex-col overflow-y-scroll break-words px-3 pt-3 transition-all">
-            {#each currentChatChannel.getMessages() as message, i (message)}
-                <ChatItem {message} unreadIndicator={i !== currentChatChannel.messageCount - 1 && currentChatChannel.lastReadMessage === message} relativeStartTime={$roomStore.state.serverStartTime} />
-            {/each}
+            {#if currentChatChannel}
+                {#each currentChatChannel.getMessages() as message, i (message)}
+                    <ChatItem {message} unreadIndicator={i !== currentChatChannel.messageCount - 1 && currentChatChannel.lastReadMessage === message} relativeStartTime={$roomStore.state.serverStartTime} />
+                {/each}
+            {/if}
         </div>
         <form on:submit|preventDefault={submitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
             <!-- svelte-ignore a11y-autofocus -->
@@ -280,7 +235,7 @@
         <div class="flex flex-1 flex-col overflow-clip rounded p-5 ring-2 ring-zinc-300">
             <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Players</span>
             <div class="flex flex-col overflow-y-scroll">
-                {#each peers as peer}
+                {#each clients as peer}
                     <div class="flex p-4">
                         {#if peer.isLeader}
                             <span class="mr-2">
@@ -305,27 +260,9 @@
             </div>
         </div>
         <div class="flex flex-1 flex-col gap-2 overflow-clip rounded p-5 ring-2 ring-zinc-300">
-            {#if $roomStore?.state.questState?.active}
-                {#if $roomStore.state.questState.room?.type === "battle"}
-                    <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Turns</span>
-                    <div class="flex flex-col overflow-y-scroll">
-                        {#each turns as turn, index}
-                            <div class="flex items-center p-2 {index === 0 && 'ring-2'} rounded-md ring-inset ring-zinc-300">
-                                <div class={`mr-2 ${index === 0 ? "h-3 w-3" : "h-2 w-2"} rounded-full ${turn.type === "player" ? "bg-emerald-400" : "bg-red-400"}`} />
-                                <span class={`${index === 0 ? "font-bold" : ""}`}>{turn.name}</span>
-                            </div>
-                        {/each}
-                    </div>
-                {:else}
-                    <div class="flex h-full w-full items-center justify-center">
-                        <span class="text-lg">Not currently in a battle room</span>
-                    </div>
-                {/if}
-            {:else}
-                <div class="flex h-full w-full items-center justify-center">
-                    <span class="text-lg">Quest not active</span>
-                </div>
-            {/if}
+            <div class="flex h-full w-full items-center justify-center">
+                <span class="text-lg">Command list</span>
+            </div>
         </div>
     </div>
 </div>
