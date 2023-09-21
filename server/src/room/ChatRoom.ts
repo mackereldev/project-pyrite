@@ -41,7 +41,7 @@ export class ChatRoom extends Room<MainState> {
     override onJoin(client: Client, options: any) {
         let { clientId }: { clientId: string } = options;
 
-        clientId = clientId && clientId !== "" ? clientId : "Player";
+        clientId = clientId && clientId !== "" ? clientId : "User";
 
         if (this.state.clientData.some((client) => client.clientId === clientId)) {
             console.log(`clientId '${clientId}' is taken.`);

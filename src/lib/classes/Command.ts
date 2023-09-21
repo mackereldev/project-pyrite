@@ -1,10 +1,10 @@
-import { get } from "svelte/store";
 import { ChatMessage } from "./ChatMessage";
-import { roomStore } from "./Stores";
 import { isInteger, isNatural } from "./Utility";
 import type { MainState } from "../../../server/src/schema/MainState";
 import type { Room } from "colyseus.js";
 import type { ClientData } from "../../../server/src/schema/ClientData";
+import { closeTab } from "./TabHandler";
+import type { ChatTab } from "./ChatTab";
 
 // https://stackoverflow.com/a/60807986/14270868
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
@@ -13,15 +13,15 @@ type SingleKey<T> = IsUnion<keyof T> extends true ? never : object extends T ? n
 
 export abstract class Cmd {
     args: { [key: string]: string | number; } = {};
-    protected room: Room<MainState>;
+    protected context: CmdContext;
     protected clientData: ClientData;
 
-    constructor() {
-        this.room = get(roomStore);
-        this.clientData = this.room.state.clientData.find((c) => c.sessionId === this.room.sessionId)!;
+    constructor(context: CmdContext) {
+        this.context = context;
+        this.clientData = this.context.room.state.clientData.find((c) => c.sessionId === this.context.room.sessionId)!;
     }
 
-    abstract execute(): ChatMessage | undefined;
+    abstract execute(): Promise<ChatMessage | undefined> | undefined;
 
     static help(): string | undefined { return }
 
@@ -50,6 +50,16 @@ export abstract class Cmd {
     }
 }
 
+export class CmdContext {
+    room: Room<MainState>;
+    chatTab: ChatTab;
+
+    constructor(room: Room<MainState>, chatTab: ChatTab) {
+        this.room = room;
+        this.chatTab = chatTab;
+    }
+}
+
 export class CmdError implements Error {
     name: string = "CmdError";
     message: string;
@@ -64,15 +74,26 @@ export class CmdError implements Error {
 export class PingCmd extends Cmd {
     override args;
 
-    constructor(delay: string) {
-        super();
+    constructor(context: CmdContext, delay: string) {
+        super(context);
         this.args = {
             delay: Cmd.toInt({ delay }),
         };
     }
 
-    override execute(): ChatMessage | undefined {
-        this.room.send("cmd-ping", { delay: this.args.delay });
+    override execute(): Promise<ChatMessage | undefined> | undefined {
+        this.context.room.send("cmd-ping", { delay: this.args.delay });
+        return;
+    }
+}
+
+export class LeaveCmd extends Cmd {
+    constructor(context: CmdContext) {
+        super(context);
+    }
+    
+    override async execute(): Promise<ChatMessage | undefined> {
+        await closeTab(this.context.chatTab);
         return;
     }
 }

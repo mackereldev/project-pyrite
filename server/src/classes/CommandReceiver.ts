@@ -17,9 +17,9 @@ export class CommandReceiver {
         Wrap everything in try and catch
         */
 
-        this.chatRoom.onMessage("player-chat", (client, message) => {
+        this.chatRoom.onMessage("client-chat", (client, message) => {
             const { msg }: { msg: string } = message;
-            this.chatRoom.broadcast("player-chat", { msg, author: { sessionId: client.id, clientId: client.userData.clientId } });
+            this.chatRoom.broadcast("client-chat", { msg, author: { sessionId: client.id, clientId: client.userData.clientId } });
         });
 
         this.chatRoom.onMessage("cmd-ping", (client, message) => {

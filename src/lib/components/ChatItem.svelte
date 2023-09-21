@@ -7,7 +7,7 @@
 
     let colour = "text-zinc-500";
     let author = "invalid";
-    if (message.type === "player") {
+    if (message.type === "user") {
         colour = "text-violet-500";
         author = message.author || "invalid";
     } else if (message.type === "system") {

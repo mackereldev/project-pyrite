@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
-export type ChatMessageType = "player" | "system";
+export type ChatMessageType = "user" | "system";
 
 export class ChatMessage {
     author: string | undefined;

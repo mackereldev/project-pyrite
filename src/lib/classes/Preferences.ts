@@ -1,8 +1,10 @@
 import { browser } from "$app/environment";
+import { AutoScrollBehaviour } from "$lib/enums";
 
-export default class Preferences {
-    characterName: string = "";
+export class Preferences {
+    username: string = "";
     private _darkMode: boolean = false;
+    autoScrollBehaviour: AutoScrollBehaviour = AutoScrollBehaviour.Always;
 
     get darkMode() {
         return this._darkMode;
@@ -28,7 +30,7 @@ export default class Preferences {
             if (storage) {
                 const obj = JSON.parse(storage);
 
-                prefs.characterName = obj.characterName;
+                prefs.username = obj.username;
                 prefs.darkMode = obj._darkMode;
             }
             return prefs;
