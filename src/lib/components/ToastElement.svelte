@@ -59,7 +59,7 @@
             <div class="text-lg font-medium">{toast.message}</div>
             <div class="text-sm">{toast.detail}</div>
         </div>
-        <Icon src={XMark} class="h-7 w-7 stroke-neutral-800/20 transition-colors hover:stroke-neutral-600/50 stroke-2" />
+        <Icon src={XMark} class="h-7 w-7 stroke-neutral-800/20 stroke-2 transition-colors hover:stroke-neutral-600/50" />
         {#if toast.expires}
             <div bind:this={progressBar} class="absolute bottom-0 left-0 h-1 bg-neutral-800/20" />
         {/if}
