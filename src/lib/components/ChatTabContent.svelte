@@ -5,11 +5,12 @@
     import { preferencesStore } from "$lib/classes/Stores";
     import { get, type Unsubscriber } from "svelte/store";
     import { AutoScrollBehaviour } from "$lib/enums";
+    import { commandRefs } from "$lib/classes/CommandDispatcher";
 
     export let chatTab: ChatTab;
 
     let messageElement: HTMLInputElement;
-    let messageValue: string;
+    let messageValue: string = "";
     let messageHistory: HTMLDivElement;
 
     let showShadow: boolean;
@@ -19,6 +20,8 @@
 
     const clients = chatTab.clients;
     let messagesStoreUnsubscribe: Unsubscriber;
+
+    $: commands = Object.keys(commandRefs);
 
     onMount(() => {
         updateShowShadow();
@@ -43,7 +46,7 @@
         }
     });
 
-    const onFormSubmit = async () => {
+    const onSubmitMessage = async () => {
         const room = get(chatTab.roomStore);
 
         if (room) {
@@ -76,6 +79,11 @@
         chatTab.lastReadMessage = undefined;
     };
 
+    const suggestCommand = (commandName: string) => {
+        messageValue += "/" + commandName;
+        messageElement.focus();
+    };
+
     const onKeyDown = (event: KeyboardEvent) => {
         if (event.key === "Escape") {
             // Manually mark as read
@@ -97,13 +105,13 @@
                 <ChatItem {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
         </div>
-        <form on:submit|preventDefault={onFormSubmit} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
+        <form on:submit|preventDefault={onSubmitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
             <!-- svelte-ignore a11y-autofocus -->
             <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} class="h-8 w-full rounded px-2 text-sm ring-2 ring-zinc-300" />
         </form>
     </div>
     <div class="flex basis-80 flex-col">
-        <div class="flex flex-1 flex-col overflow-clip border-b-2 border-zinc-300 p-5">
+        <div class="flex flex-1 flex-col overflow-clip border-b border-zinc-300 p-5">
             <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Members</span>
             <div class="flex flex-col overflow-y-scroll">
                 {#each $clients as client}
@@ -127,9 +135,14 @@
                 {/each}
             </div>
         </div>
-        <div class="flex flex-1 flex-col gap-2 overflow-clip p-5">
-            <div class="flex h-full w-full items-center justify-center">
-                <span class="text-lg">Command list</span>
+        <div class="flex flex-1 flex-col overflow-clip border-t border-zinc-300 p-5">
+            <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Commands</span>
+            <div class="flex flex-col overflow-y-scroll">
+                {#each commands as command}
+                    <button on:click={() => suggestCommand(command)} class="mt-2 flex">
+                        <div class="w-full rounded-lg px-3 py-2 text-start ring-2 ring-inset ring-zinc-200">{command}</div>
+                    </button>
+                {/each}
             </div>
         </div>
     </div>
