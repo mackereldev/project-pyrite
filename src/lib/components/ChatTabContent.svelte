@@ -85,9 +85,20 @@
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
-            // Manually mark as read
-            chatTab.lastReadMessage = undefined;
+        if (!event.repeat) {
+            if (event.key === "Escape") {
+                // Manually mark as read
+                chatTab.lastReadMessage = undefined;
+            } else if (document.activeElement !== messageElement) {
+                if (event.key.match(/^[\x20-\x7F]$/g)) {
+                    // Automatically focus the message box
+                    messageElement.focus();
+                } else if (["Delete", "Backspace"].includes(event.key)) {
+                    // Automatically focus the message box without affecting the input value
+                    messageElement.focus();
+                    event.preventDefault();
+                }
+            }
         }
     };
 
