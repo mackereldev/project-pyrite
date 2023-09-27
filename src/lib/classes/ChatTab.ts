@@ -41,35 +41,19 @@ export class ChatTab extends Tab {
 
     private create = () => {
         get(clientStore).create<MainState>("chat-room", { clientId: get(preferencesStore).username })
-            .then((room) => this.setUpRoom(room))
+            .then((room) => this.initialiseRoom(room))
             .catch((err) => this.handleError(err));
     };
 
     private join = (code: string) => {
         get(clientStore).joinById<MainState>(code, { clientId: get(preferencesStore).username })
-            .then((room) => this.setUpRoom(room))
+            .then((room) => this.initialiseRoom(room))
             .catch((err) => this.handleError(err));
     };
 
-    private setUpRoom = (room: Colyseus.Room<MainState>) => {
+    private initialiseRoom = (room: Colyseus.Room<MainState>) => {
         this.roomStore.set(room);
         this.name.set(room.roomId);
-        this.registerClientSubscriptions();
-    };
-
-    private handleError = (err: any) => {
-        const toastContainer = get(toastContainerStore);
-        if (err.code === 4101) {
-            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username was taken"));
-        } else if (err.code === 4212) {
-            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room not found"));
-        }
-        console.error(`Colyseus error (${err.code}): ${err.message}`);
-        closeTab(this);
-    };
-
-    private registerClientSubscriptions = () => {
-        const room = get(this.roomStore);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         room.onLeave((code) => {
@@ -85,7 +69,7 @@ export class ChatTab extends Tab {
         room.state.clientData.onAdd((client: ClientData) => {
             this.clients.update((clients) => clients.concat({ clientId: client.clientId, isLeader: get(this.roomStore).state.leader === client.clientId }));
         });
-        
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         room.state.clientData.onRemove((client: ClientData, key: number) => {
             this.clients.update((clients) => clients.filter((value, idx) => idx !== key));
@@ -106,7 +90,7 @@ export class ChatTab extends Tab {
 
         room.onMessage("client-chat", (message) => {
             const { msg, author }: { msg: string; author: { sessionId: string; clientId: string } } = message;
-            
+
             console.debug("MESSAGE:", message);
             this.addMessage(new ChatMessage(author.clientId, "user", msg));
         });
@@ -116,6 +100,17 @@ export class ChatTab extends Tab {
 
             this.addMessage(new ChatMessage(undefined, "system", `Client '${sender.clientId}' pinged all clients.`));
         });
+    };
+
+    private handleError = (err: any) => {
+        const toastContainer = get(toastContainerStore);
+        if (err.code === 4101) {
+            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username was taken"));
+        } else if (err.code === 4212) {
+            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room not found"));
+        }
+        console.error(`Colyseus error (${err.code}): ${err.message}`);
+        closeTab(this);
     };
 
     override dispose = async () => {
