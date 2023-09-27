@@ -20,6 +20,8 @@ export class ChatTab extends Tab {
     lastReadMessage: ChatMessage | undefined;
     isUnread = writable<boolean>(false);
 
+    effectiveUsername = writable<string>("");
+
     constructor(code?: string) {
         super();
 
@@ -28,6 +30,8 @@ export class ChatTab extends Tab {
         } else {
             this.create();
         }
+
+        this.effectiveUsername.set(get(preferencesStore).username || "User");
     }
 
     addMessage = (message: ChatMessage) => {
@@ -98,7 +102,7 @@ export class ChatTab extends Tab {
         room.onMessage("cmd-ping", (message) => {
             const { sender }: { sender: { sessionId: string; clientId: string } } = message;
 
-            this.addMessage(new ChatMessage(undefined, "system", `Client '${sender.clientId}' pinged all clients.`));
+            this.addMessage(new ChatMessage(undefined, "system", `Client ${sender.clientId} pinged all clients.`));
         });
     };
 

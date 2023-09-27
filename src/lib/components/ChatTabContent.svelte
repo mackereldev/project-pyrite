@@ -111,9 +111,9 @@
 
 <div class="flex w-full flex-grow flex-row">
     <div class="flex flex-1 basis-48 flex-col overflow-clip border-r-2 border-zinc-300">
-        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow basis-0 flex-col overflow-y-scroll break-words px-3 pt-3 transition-all">
+        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="gap-1 flex flex-grow basis-0 flex-col overflow-y-scroll break-words px-3 pt-3 transition-all">
             {#each $messages as message, i (message)}
-                <ChatItem {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
+                <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
         </div>
         <form on:submit|preventDefault={onSubmitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
