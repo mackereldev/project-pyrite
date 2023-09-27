@@ -17,6 +17,7 @@
     let queueAutoScroll = true;
 
     const messages = chatTab.messages;
+    const effectiveUsername = chatTab.effectiveUsername;
 
     const clients = chatTab.clients;
     let messagesStoreUnsubscribe: Unsubscriber;
@@ -141,7 +142,7 @@
                                 </svg>
                             </span>
                         {/if}
-                        <span class="font-bold">{client.clientId}</span>
+                        <span class="font-bold{client.clientId === $effectiveUsername ? " text-violet-500" : ""}">{client.clientId}</span>
                     </div>
                 {/each}
             </div>

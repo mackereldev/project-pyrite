@@ -20,7 +20,7 @@ export class ChatTab extends Tab {
     lastReadMessage: ChatMessage | undefined;
     isUnread = writable<boolean>(false);
 
-    effectiveUsername = writable<string>("");
+    effectiveUsername = writable<string>(get(preferencesStore).username || "User");
 
     constructor(code?: string) {
         super();
@@ -30,8 +30,6 @@ export class ChatTab extends Tab {
         } else {
             this.create();
         }
-
-        this.effectiveUsername.set(get(preferencesStore).username || "User");
     }
 
     addMessage = (message: ChatMessage) => {
