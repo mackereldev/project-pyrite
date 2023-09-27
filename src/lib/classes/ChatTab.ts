@@ -72,11 +72,13 @@ export class ChatTab extends Tab {
 
         room.state.clientData.onAdd((client: ClientData) => {
             this.clients.update((clients) => clients.concat({ clientId: client.clientId, isLeader: get(this.roomStore).state.leader === client.clientId }));
+            this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} joined the room.`));
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         room.state.clientData.onRemove((client: ClientData, key: number) => {
             this.clients.update((clients) => clients.filter((value, idx) => idx !== key));
+            this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} left the room.`));
         });
 
         room.onMessage("server-chat", (message) => {
