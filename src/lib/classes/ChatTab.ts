@@ -8,6 +8,7 @@ import { CommandDispatcher } from "./CommandDispatcher";
 import { closeTab } from "./TabHandler";
 import ToastData from "./ToastData";
 import { tabsStore, currentTabIdx } from "./TabHandler";
+import type { ClientData } from "../../../server/src/schema/ClientData";
 
 export class ChatTab extends Tab {
     roomStore = writable<Colyseus.Room<MainState>>();
@@ -54,7 +55,6 @@ export class ChatTab extends Tab {
         this.roomStore.set(room);
         this.name.set(room.roomId);
         this.registerClientSubscriptions();
-        this.updateClientList();
     };
 
     private handleError = (err: any) => {
@@ -82,8 +82,13 @@ export class ChatTab extends Tab {
             });
         }
 
-        room.state.clientData.onChange(() => {
-            this.updateClientList();
+        room.state.clientData.onAdd((client: ClientData) => {
+            this.clients.update((clients) => clients.concat({ clientId: client.clientId, isLeader: get(this.roomStore).state.leader === client.clientId }));
+        });
+        
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        room.state.clientData.onRemove((client: ClientData, key: number) => {
+            this.clients.update((clients) => clients.filter((value, idx) => idx !== key));
         });
 
         room.onMessage("server-chat", (message) => {
@@ -111,15 +116,6 @@ export class ChatTab extends Tab {
 
             this.addMessage(new ChatMessage(undefined, "system", `Client '${sender.clientId}' pinged all clients.`));
         });
-    };
-
-    private updateClientList = () => {
-        const room = get(this.roomStore);
-        const clientData = room.state.clientData.toArray();
-
-        this.clients.set(clientData.map((client) => {
-            return { clientId: client.clientId, isLeader: room.state.leader === client.clientId };
-        }));
     };
 
     override dispose = async () => {
