@@ -26,7 +26,7 @@
     onMount(() => {
         // https://stackoverflow.com/a/65149088
         const usernames = get(chatTab.clients).map((client) => client.clientId);
-        const pattern = new RegExp(`(.*?)(${usernames.join("|")})`, "g");
+        const pattern = new RegExp(`(.*?)\\b(${usernames.join("|")})\\b`, "g");
         const matches = message.text.split(pattern).filter(Boolean);
 
         messageContent.innerText = "";
