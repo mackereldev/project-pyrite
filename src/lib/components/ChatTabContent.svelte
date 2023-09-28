@@ -6,6 +6,8 @@
     import { get, type Unsubscriber } from "svelte/store";
     import { AutoScrollBehaviour } from "$lib/enums";
     import { commandRefs } from "$lib/classes/CommandDispatcher";
+    import { Icon } from "@steeze-ui/svelte-icon";
+    import { Clipboard, ArrowDownTray, Cog6Tooth, ArrowRightOnRectangle } from "@steeze-ui/heroicons";
 
     export let chatTab: ChatTab;
 
@@ -106,13 +108,29 @@
     const updateShowShadow = () => {
         showShadow = messageHistory.scrollHeight - messageHistory.scrollTop > messageHistory.clientHeight;
     };
+
+    const copyRoomID = () => {
+        console.log("copy room ID");
+    };
+
+    const exportChatHistory = () => {
+        console.log("export chat history");
+    };
+
+    const openPreferencesModal = () => {
+        console.log("open preferences modal");
+    };
+    
+    const leaveRoom = () => {
+        console.log("leave room");
+    };
 </script>
 
 <svelte:window on:resize={updateShowShadow} on:keydown={onKeyDown} />
 
 <div class="flex w-full flex-grow flex-row">
     <div class="flex flex-1 basis-48 flex-col overflow-clip border-r-2 border-zinc-300">
-        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="gap-1 flex flex-grow basis-0 flex-col overflow-y-scroll break-words px-3 pt-3 transition-all">
+        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow basis-0 flex-col gap-1 overflow-y-scroll break-words px-3 pt-3 transition-all">
             {#each $messages as message, i (message)}
                 <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
@@ -123,6 +141,20 @@
         </form>
     </div>
     <div class="flex basis-80 flex-col">
+        <div class="flex h-8 border-b-2 border-zinc-300">
+            <button on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
+                <Icon src={Clipboard} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
+            </button>
+            <button on:click={exportChatHistory} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
+                <Icon on:click={exportChatHistory} src={ArrowDownTray} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
+            </button>
+            <button on:click={openPreferencesModal} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
+                <Icon on:click={openPreferencesModal} src={Cog6Tooth} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
+            </button>
+            <button on:click={leaveRoom} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
+                <Icon on:click={leaveRoom} src={ArrowRightOnRectangle} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
+            </button>
+        </div>
         <div class="flex flex-1 flex-col overflow-clip border-b border-zinc-300 p-5">
             <span class="border-b-2 border-zinc-300 pb-2 text-2xl">Members</span>
             <div class="flex flex-col overflow-y-scroll">
@@ -142,7 +174,7 @@
                                 </svg>
                             </span>
                         {/if}
-                        <span class="font-bold{client.clientId === $effectiveUsername ? " text-violet-500" : ""}">{client.clientId}</span>
+                        <span class="font-bold{client.clientId === $effectiveUsername ? ' text-violet-500' : ''}">{client.clientId}</span>
                     </div>
                 {/each}
             </div>

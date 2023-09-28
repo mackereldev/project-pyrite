@@ -34,7 +34,7 @@
             if (usernames.includes(match)) {
                 const el = document.createElement("span");
                 el.innerText = match;
-                el.className = "bg-violet-200 text-violet-400 transition-all hover:bg-violet-300 hover:text-violet-600";
+                el.className = "bg-violet-200 text-violet-400 transition-colors hover:bg-violet-300 hover:text-violet-600";
                 messageContent.appendChild(el);
 
                 // Highlight the entire message if the user was mentioned
