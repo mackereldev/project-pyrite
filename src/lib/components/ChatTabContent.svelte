@@ -8,6 +8,8 @@
     import { commandRefs } from "$lib/classes/CommandDispatcher";
     import { Icon } from "@steeze-ui/svelte-icon";
     import { Clipboard, ArrowDownTray, Cog6Tooth, ArrowRightOnRectangle } from "@steeze-ui/heroicons";
+    import { closeTab } from "$lib/classes/TabHandler";
+    import { computePosition, flip, arrow, offset, shift } from "@floating-ui/dom";
 
     export let chatTab: ChatTab;
 
@@ -25,6 +27,12 @@
     let messagesStoreUnsubscribe: Unsubscriber;
 
     $: commands = Object.keys(commandRefs);
+
+    let copyRoomIDButton: HTMLButtonElement;
+    let copyRoomIDButtonTooltip: HTMLDivElement;
+    let copyRoomIDButtonTooltipArrow: HTMLDivElement;
+    let copyRoomIDButtonTooltipShowTimeout: number = -1;
+    let copyRoomIDButtonTooltipSuccess: boolean;
 
     onMount(() => {
         updateShowShadow();
@@ -110,7 +118,63 @@
     };
 
     const copyRoomID = () => {
-        console.log("copy room ID");
+        // Copy code to clipboard
+        navigator.clipboard.writeText(get(chatTab.name)).then(
+            () => {
+                copyRoomIDButtonTooltipSuccess = true;
+                showCopyRoomIdTooltip();
+            },
+            () => {
+                copyRoomIDButtonTooltipSuccess = false;
+                showCopyRoomIdTooltip();
+            },
+        );
+    };
+
+    const showCopyRoomIdTooltip = () => {
+        // Show tooltip
+        copyRoomIDButtonTooltip.style.opacity = "1";
+
+        // Clear existing timeout
+        if (copyRoomIDButtonTooltipShowTimeout !== -1) {
+            clearTimeout(copyRoomIDButtonTooltipShowTimeout);
+        }
+
+        // Set tooltip to disappear after 1s
+        copyRoomIDButtonTooltipShowTimeout = setTimeout(() => {
+            copyRoomIDButtonTooltip.style.opacity = "0";
+            copyRoomIDButtonTooltipShowTimeout = -1;
+        }, 1000);
+
+        // Position tooltip
+        computePosition(copyRoomIDButton, copyRoomIDButtonTooltip, {
+            placement: "top",
+            middleware: [offset(10), flip({ padding: 5 }), shift({ padding: 5 }), arrow({ element: copyRoomIDButtonTooltipArrow })],
+        }).then(({ x, y, placement, middlewareData }) => {
+            Object.assign(copyRoomIDButtonTooltip.style, {
+                left: `${x}px`,
+                top: `${y}px`,
+            });
+
+            if (middlewareData.arrow) {
+                const { x: arrowX, y: arrowY } = middlewareData.arrow;
+
+                const staticSide = {
+                    top: "bottom",
+                    right: "left",
+                    bottom: "top",
+                    left: "right",
+                }[placement.split("-")[0]] as string;
+
+                Object.assign(copyRoomIDButtonTooltipArrow.style, {
+                    left: arrowX !== null && arrowX !== undefined ? `${arrowX}px` : "",
+                    top: arrowY !== null && arrowY !== undefined ? `${arrowY}px` : "",
+                    right: "",
+                    bottom: "",
+                    [staticSide]: "-4px",
+                });
+            }
+        });
     };
 
     const exportChatHistory = () => {
@@ -120,9 +184,10 @@
     const openPreferencesModal = () => {
         console.log("open preferences modal");
     };
-    
+
     const leaveRoom = () => {
         console.log("leave room");
+        closeTab(chatTab);
     };
 </script>
 
@@ -142,9 +207,13 @@
     </div>
     <div class="flex basis-80 flex-col">
         <div class="flex h-8 border-b-2 border-zinc-300">
-            <button on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
+            <button bind:this={copyRoomIDButton} on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
                 <Icon src={Clipboard} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
             </button>
+            <div bind:this={copyRoomIDButtonTooltip} class="pointer-events-none absolute rounded-lg px-2 py-1 opacity-0 transition-opacity duration-150 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300 text-green-600' : 'bg-zinc-300 text-zinc-500'}">
+                {copyRoomIDButtonTooltipSuccess ? "Copied!" : "Unable to copy"}
+                <div bind:this={copyRoomIDButtonTooltipArrow} class="absolute h-2 w-2 rotate-45 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300' : 'bg-zinc-300'}" />
+            </div>
             <button on:click={exportChatHistory} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
                 <Icon on:click={exportChatHistory} src={ArrowDownTray} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
             </button>
