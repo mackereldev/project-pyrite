@@ -1,7 +1,7 @@
 import { get, writable } from "svelte/store";
 import { ChatMessage } from "./ChatMessage";
 import { Tab } from "./Tab";
-import { clientStore, preferencesStore, toastContainerStore } from "./Stores";
+import { clientStore, toastContainerStore } from "./Stores";
 import type * as Colyseus from "colyseus.js";
 import type { MainState } from "../../../server/src/schema/MainState";
 import { CommandDispatcher } from "./CommandDispatcher";
@@ -9,6 +9,7 @@ import { closeTab } from "./TabHandler";
 import ToastData from "./ToastData";
 import { tabsStore, currentTabIdx } from "./TabHandler";
 import type { ClientData } from "../../../server/src/schema/ClientData";
+import { preferences } from "./Preferences";
 
 export class ChatTab extends Tab {
     roomStore = writable<Colyseus.Room<MainState>>();
@@ -20,7 +21,7 @@ export class ChatTab extends Tab {
     lastReadMessage: ChatMessage | undefined;
     isUnread = writable<boolean>(false);
 
-    effectiveUsername = writable<string>(get(preferencesStore).username || "User");
+    effectiveUsername = writable<string>(get(preferences.username) || "User");
 
     constructor(code?: string) {
         super();
@@ -42,13 +43,13 @@ export class ChatTab extends Tab {
     };
 
     private create = () => {
-        get(clientStore).create<MainState>("chat-room", { clientId: get(preferencesStore).username })
+        get(clientStore).create<MainState>("chat-room", { clientId: get(preferences.username) })
             .then((room) => this.initialiseRoom(room))
             .catch((err) => this.handleError(err));
     };
 
     private join = (code: string) => {
-        get(clientStore).joinById<MainState>(code, { clientId: get(preferencesStore).username })
+        get(clientStore).joinById<MainState>(code, { clientId: get(preferences.username) })
             .then((room) => this.initialiseRoom(room))
             .catch((err) => this.handleError(err));
     };
@@ -70,13 +71,17 @@ export class ChatTab extends Tab {
 
         room.state.clientData.onAdd((client: ClientData) => {
             this.clients.update((clients) => clients.concat({ clientId: client.clientId, isLeader: get(this.roomStore).state.leader === client.clientId }));
-            this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} joined the room.`));
+            if (get(preferences.joinLeaveMessages)) {
+                this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} joined the room.`));
+            }
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         room.state.clientData.onRemove((client: ClientData, key: number) => {
             this.clients.update((clients) => clients.filter((value, idx) => idx !== key));
-            this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} left the room.`));
+            if (get(preferences.joinLeaveMessages)) {
+                this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} left the room.`));
+            }
         });
 
         room.onMessage("server-chat", (message) => {

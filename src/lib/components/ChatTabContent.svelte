@@ -2,14 +2,16 @@
     import type { ChatTab } from "$lib/classes/ChatTab";
     import { afterUpdate, onDestroy, onMount } from "svelte";
     import ChatItem from "./ChatItem.svelte";
-    import { preferencesStore } from "$lib/classes/Stores";
+    import { preferencesModalStore } from "$lib/classes/Stores";
     import { get, type Unsubscriber } from "svelte/store";
-    import { AutoScrollBehaviour } from "$lib/enums";
+    import { AutoScrollBehaviour, ChatStyle } from "$lib/enums";
     import { commandRefs } from "$lib/classes/CommandDispatcher";
     import { Icon } from "@steeze-ui/svelte-icon";
     import { Clipboard, ArrowDownTray, Cog6Tooth, ArrowRightOnRectangle } from "@steeze-ui/heroicons";
     import { closeTab } from "$lib/classes/TabHandler";
     import { computePosition, flip, arrow, offset, shift } from "@floating-ui/dom";
+    import { preferences } from "$lib/classes/Preferences";
+    import type { ChatMessage } from "$lib/classes/ChatMessage";
 
     export let chatTab: ChatTab;
 
@@ -34,13 +36,16 @@
     let copyRoomIDButtonTooltipShowTimeout: number = -1;
     let copyRoomIDButtonTooltipSuccess: boolean;
 
+    const chatStyle = preferences.chatStyle;
+    const autoScrollBehaviour = preferences.autoScrollBehaviour;
+
     onMount(() => {
         updateShowShadow();
         messageElement.focus();
 
-        messagesStoreUnsubscribe = messages.subscribe(() => {
-            // Automatically scroll after message has been added (afterUpdate)
-            if (get(preferencesStore).autoScrollBehaviour === AutoScrollBehaviour.Always) {
+        messagesStoreUnsubscribe = messages.subscribe((msgs: ChatMessage[]) => {
+            // Handle auto-scroll now, but only scoll after the message has been added to the DOM (afterUpdate)
+            if ($autoScrollBehaviour === AutoScrollBehaviour.Always || ($autoScrollBehaviour === AutoScrollBehaviour.OnlySelf && msgs.at(-1)?.author === $effectiveUsername)) {
                 queueAutoScroll = true;
             }
         });
@@ -181,10 +186,6 @@
         console.log("export chat history");
     };
 
-    const openPreferencesModal = () => {
-        console.log("open preferences modal");
-    };
-
     const leaveRoom = () => {
         console.log("leave room");
         closeTab(chatTab);
@@ -195,7 +196,7 @@
 
 <div class="flex w-full flex-grow flex-row">
     <div class="flex flex-1 basis-48 flex-col overflow-clip border-r-2 border-zinc-300">
-        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="flex flex-grow basis-0 flex-col gap-1 overflow-y-scroll break-words px-3 pt-3 transition-all">
+        <div bind:this={messageHistory} on:scroll={updateShowShadow} class="{$chatStyle === ChatStyle.Cozy ? 'gap-1.5' : 'gap-0.5'} flex flex-grow basis-0 flex-col overflow-y-scroll break-words px-3 pt-3">
             {#each $messages as message, i (message)}
                 <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
@@ -217,8 +218,8 @@
             <button on:click={exportChatHistory} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
                 <Icon on:click={exportChatHistory} src={ArrowDownTray} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
             </button>
-            <button on:click={openPreferencesModal} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
-                <Icon on:click={openPreferencesModal} src={Cog6Tooth} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
+            <button on:click={$preferencesModalStore.open} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
+                <Icon src={Cog6Tooth} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />
             </button>
             <button on:click={leaveRoom} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-zinc-200">
                 <Icon on:click={leaveRoom} src={ArrowRightOnRectangle} class="stroke-zinc-400 stroke-2 transition-colors group-hover:stroke-zinc-500" />

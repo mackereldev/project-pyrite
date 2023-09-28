@@ -3,6 +3,8 @@
     import { onMount } from "svelte";
     import type { ChatTab } from "$lib/classes/ChatTab";
     import { get } from "svelte/store";
+    import { preferences } from "$lib/classes/Preferences";
+    import { ChatStyle } from "$lib/enums";
 
     export let chatTab: ChatTab;
     export let message: ChatMessage;
@@ -46,10 +48,12 @@
             }
         }
     });
+
+    const chatStyle = preferences.chatStyle;
 </script>
 
-<div class="text-sm {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100' : ''}">
-    <span class="font-mono text-base text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
+<div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100' : ''}">
+    <span class="font-mono text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class="font-semibold {colour}">[{author}]</span>
     <span bind:this={messageContent} class="whitespace-pre-wrap{message.isError ? ' text-red-400' : ''}" />
 </div>

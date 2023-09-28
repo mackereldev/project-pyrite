@@ -1,11 +1,14 @@
 <script lang="ts">
     import { ChatTab } from "$lib/classes/ChatTab";
-    import { preferencesStore, toastContainerStore } from "$lib/classes/Stores";
+    import { toastContainerStore } from "$lib/classes/Stores";
     import { addTab } from "$lib/classes/TabHandler";
+    import { preferences } from "$lib/classes/Preferences";
     import ToastData from "$lib/classes/ToastData";
     import Input from "./Input.svelte";
 
     let roomIdValue: string;
+
+    const username = preferences.username;
 
     const createRoom = () => {
         addTab(new ChatTab());
@@ -22,12 +25,10 @@
 </script>
 
 <div class="relative flex h-full flex-col items-center justify-center gap-20">
-    {#if $preferencesStore}
-        <div class="absolute right-4 top-4 flex flex-col">
-            <span>Username</span>
-            <Input bind:value={$preferencesStore.username} placeholder="User" />
-        </div>
-    {/if}
+    <div class="absolute right-4 top-4 flex flex-col">
+        <span>Username</span>
+        <Input bind:value={$username} placeholder="User" />
+    </div>
     <div class="flex flex-col items-center">
         <h1 class="text-3xl">Welcome to <span class="text-amber-500">Pyrite</span></h1>
         <p>A messaging app</p>
