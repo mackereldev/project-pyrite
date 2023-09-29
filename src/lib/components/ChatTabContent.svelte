@@ -33,7 +33,7 @@
     let copyRoomIDButton: HTMLButtonElement;
     let copyRoomIDButtonTooltip: HTMLDivElement;
     let copyRoomIDButtonTooltipArrow: HTMLDivElement;
-    let copyRoomIDButtonTooltipShowTimeout: number = -1;
+    let copyRoomIDButtonTooltipShowTimeout: ReturnType<typeof setTimeout> | null = null;
     let copyRoomIDButtonTooltipSuccess: boolean;
 
     const chatStyle = preferences.chatStyle;
@@ -141,14 +141,14 @@
         copyRoomIDButtonTooltip.style.opacity = "1";
 
         // Clear existing timeout
-        if (copyRoomIDButtonTooltipShowTimeout !== -1) {
+        if (copyRoomIDButtonTooltipShowTimeout !== null) {
             clearTimeout(copyRoomIDButtonTooltipShowTimeout);
         }
 
         // Set tooltip to disappear after 1s
         copyRoomIDButtonTooltipShowTimeout = setTimeout(() => {
             copyRoomIDButtonTooltip.style.opacity = "0";
-            copyRoomIDButtonTooltipShowTimeout = -1;
+            copyRoomIDButtonTooltipShowTimeout = null;
         }, 1000);
 
         // Position tooltip
