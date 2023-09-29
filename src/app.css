@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        @apply text-zinc-600;
-    }
-
     ::-webkit-scrollbar {
         width: 14px;
     }
@@ -23,7 +19,7 @@
     }
 
     body {
-        @apply flex h-screen w-screen items-center justify-center bg-zinc-50;
+        @apply bg-background flex h-screen w-screen items-center justify-center;
     }
 
     h1,
@@ -32,21 +28,30 @@
     h4,
     h5,
     h6 {
-        @apply text-zinc-700;
+        @apply text-heading;
+    }
+
+    div,
+    span {
+        @apply text-text;
+    }
+
+    select {
+        @apply bg-faint rounded-lg pl-1 pr-3;
     }
 }
 
 @layer components {
     .ring-input {
-        @apply rounded-lg ring-2 ring-zinc-300 transition-all focus-within:ring-violet-500;
+        @apply ring-border rounded-lg ring-2 transition-all focus-within:ring-violet-500;
     }
 
     .btn {
-        @apply rounded-lg px-4 py-1 text-center text-lg font-medium text-zinc-500 ring-2 ring-zinc-300 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:text-zinc-300 disabled:ring-zinc-300 disabled:hover:ring-2;
+        @apply text-accent ring-border disabled:text-border disabled:ring-border rounded-lg px-4 py-1 text-center text-lg font-medium ring-2 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:hover:ring-2;
     }
 
-    .btn-highlight {
-        @apply bg-violet-500 font-medium text-zinc-100 ring-0 hover:bg-violet-400 hover:text-zinc-50 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
+    .btn-accent {
+        @apply text-subtle hover:text-subtle bg-violet-500 font-medium ring-0 hover:bg-violet-400 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
     }
 
     .chat-entry-shadow {

@@ -19,8 +19,8 @@
 <PreferencesModal bind:this={$preferencesModalStore} />
 
 <div class="flex h-full w-full gap-4 p-6">
-    <div class="flex flex-1 basis-[36rem] flex-col overflow-hidden rounded ring-2 ring-zinc-300">
-        <div class="flex h-7 border-b-2 border-zinc-300">
+    <div class="flex flex-1 basis-[36rem] flex-col overflow-hidden rounded ring-2 ring-border">
+        <div class="flex h-7 border-b-2 border-border">
             {#each $tabsStore as tab, index}
                 <TabButton on:click={() => changeTab(index)} {tab} isCurrentTab={currentTab === tab} />
             {/each}

@@ -13,7 +13,7 @@
 
     let messageContent: HTMLSpanElement;
 
-    let colour = "text-zinc-500";
+    let colour = "text-accent";
     let author = "invalid";
     if (message.type === "user") {
         colour = "text-violet-500";
@@ -36,7 +36,7 @@
             if (usernames.includes(match)) {
                 const el = document.createElement("span");
                 el.innerText = match;
-                el.className = "bg-violet-200 rounded px-0.5 text-violet-400 transition-colors hover:bg-violet-300 hover:text-violet-600 not-italic";
+                el.className = "bg-violet-200 dark:bg-violet-400 dark:hover:bg-violet-500 rounded px-0.5 text-violet-400 dark:text-violet-600 transition-colors hover:bg-violet-300 hover:text-violet-600 dark:hover:text-violet-800 not-italic";
                 messageContent.appendChild(el);
 
                 // Highlight the entire message if the user was mentioned
@@ -52,8 +52,8 @@
     const chatStyle = preferences.chatStyle;
 </script>
 
-<div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100' : ''}">
-    <span class="font-mono text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
+<div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100 dark:bg-amber-400/20' : ''}">
+    <span class="font-mono text-faded">{message.getRelativeTime(relativeStartTime)}</span>
     <span class="font-semibold {colour}">[{author}]</span>
-    <span bind:this={messageContent} class="whitespace-pre-wrap {message.type === 'system' ? 'italic text-zinc-400' : 'not-italic'}{message.isError ? ' !text-red-400' : ''}" />
+    <span bind:this={messageContent} class="whitespace-pre-wrap {message.type === 'system' ? 'italic text-faded' : 'not-italic'}{message.isError ? ' !text-red-400' : ''}" />
 </div>

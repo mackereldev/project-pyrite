@@ -13,8 +13,8 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div on:click class="group relative flex h-full cursor-pointer border-x first:border-l-0 first:border-l-transparent last:border-r-2">
-    <div class="flex flex-grow items-center {tab.heroIcon === undefined ? 'px-4' : 'px-1'} text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-zinc-200 {isCurrentTab ? 'stroke-violet-500 text-violet-500 shadow-violet-500' : 'stroke-zinc-400 text-zinc-400 shadow-transparent group-hover:stroke-zinc-500 group-hover:text-zinc-500'}">
+<div on:click class="group relative flex h-full cursor-pointer border-x border-faint first:border-l-0 first:border-l-transparent last:border-r-2">
+    <div class="flex flex-grow items-center {tab.heroIcon === undefined ? 'px-4' : 'px-1'} text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-faint {isCurrentTab ? 'stroke-violet-500 text-violet-500 shadow-violet-500' : 'stroke-faded text-faded shadow-transparent group-hover:stroke-accent group-hover:text-accent'}">
         {#if tab.heroIcon !== undefined}
             <Icon src={Home} class="h-5 w-5 cursor-pointer fill-none" />
         {:else}

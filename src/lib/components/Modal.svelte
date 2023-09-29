@@ -22,6 +22,6 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<dialog bind:this={dialog} on:click={onClick} class="rounded-lg">
+<dialog bind:this={dialog} on:click={onClick} class="rounded-lg bg-subtle">
     <slot />
 </dialog>

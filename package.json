@@ -41,6 +41,7 @@
         "@floating-ui/dom": "^1.5.3",
         "@types/eslint": "^8.44.2",
         "colyseus.js": "^0.15.11",
-        "dayjs": "^1.11.9"
+        "dayjs": "^1.11.9",
+        "tw-colors": "^3.0.3"
     }
 }

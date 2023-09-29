@@ -33,7 +33,7 @@
         }
     });
 
-    let colour: string = "bg-zinc-200";
+    let colour: string = "bg-faint";
     let icon: IconSource = QuestionMarkCircle;
     if (toast.severity === "success") {
         colour = "bg-emerald-200";
@@ -54,8 +54,8 @@
 
 <div in:fly={{ x: 100, duration: 500, opacity: 1, easing: quintOut }} out:fade={{ duration: 200, easing: circOut }} class="flex h-20 w-96">
     <button on:click={remove} class="relative flex flex-grow items-center gap-3 truncate rounded-lg px-4 {colour}">
-        <Icon src={icon} class="h-8 w-8" />
-        <div class="flex flex-grow flex-col items-start">
+        <Icon src={icon} class="h-8 w-8 stroke-zinc-600" />
+        <div class="flex flex-grow flex-col items-start text-zinc-600">
             <div class="text-lg font-medium">{toast.message}</div>
             <div class="text-sm">{toast.detail}</div>
         </div>

@@ -1,3 +1,5 @@
+import { createThemes } from "tw-colors";
+
 /** @type {import('tailwindcss').Config} */
 export default {
     content: ["./src/**/*.{html,js,svelte,ts}"],
@@ -21,5 +23,30 @@ export default {
             1000: "1000ms",
         },
     },
-    plugins: [],
+    plugins: [
+        createThemes({
+            light: {
+                background: "#fafafa",
+                subtle: "#f4f4f5",
+                faint: "#e4e4e7",
+                border: "#d4d4d8",
+                faded: "#a1a1aa",
+                accent: "#71717a",
+                text: "#525252",
+                heading: "#404040",
+            },
+            dark: {
+                background: "#171717",
+                subtle: "#262626",
+                faint: "#404040",
+                border: "#525252",
+                faded: "#71717a",
+                accent: "#a1a1aa",
+                text: "#a1a1aa",
+                heading: "#e4e4e7",
+            },
+        }, {
+            defaultTheme: "light",
+        })
+    ],
 };
