@@ -36,7 +36,7 @@
             if (usernames.includes(match)) {
                 const el = document.createElement("span");
                 el.innerText = match;
-                el.className = "bg-violet-200 text-violet-400 transition-colors hover:bg-violet-300 hover:text-violet-600";
+                el.className = "bg-violet-200 text-violet-400 transition-colors hover:bg-violet-300 hover:text-violet-600 not-italic";
                 messageContent.appendChild(el);
 
                 // Highlight the entire message if the user was mentioned
@@ -55,5 +55,5 @@
 <div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100' : ''}">
     <span class="font-mono text-zinc-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class="font-semibold {colour}">[{author}]</span>
-    <span bind:this={messageContent} class="whitespace-pre-wrap{message.isError ? ' text-red-400' : ''}" />
+    <span bind:this={messageContent} class="whitespace-pre-wrap {message.type === 'system' ? 'italic text-zinc-400' : 'not-italic'}{message.isError ? ' !text-red-400' : ''}" />
 </div>
