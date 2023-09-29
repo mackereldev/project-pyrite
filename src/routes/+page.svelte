@@ -7,7 +7,8 @@
     import PreferencesModal from "$lib/components/Modal/PreferencesModal.svelte";
     import HomeTabContent from "$lib/components/HomeTabContent.svelte";
     import { tabsStore, currentTabIdx, changeTab, closeAllTabs } from "$lib/classes/TabHandler";
-    import { preferencesModalStore } from "$lib/classes/Stores";
+    import { preferencesModalStore, exportModalStore } from "$lib/classes/Stores";
+    import ExportModal from "$lib/components/Modal/ExportModal.svelte";
 
     $: currentTab = $tabsStore[$currentTabIdx];
 
@@ -17,6 +18,7 @@
 </script>
 
 <PreferencesModal bind:this={$preferencesModalStore} />
+<ExportModal bind:this={$exportModalStore} />
 
 <div class="flex h-full w-full gap-4 p-6">
     <div class="flex flex-1 basis-[36rem] flex-col overflow-hidden rounded ring-2 ring-border">

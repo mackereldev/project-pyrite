@@ -8,7 +8,7 @@ export class ChatMessage {
     type: ChatMessageType;
     text;
     isError;
-    private time;
+    time;
 
     constructor(author: string | undefined, type: ChatMessageType, text: string, isError: boolean = false) {
         this.author = author;

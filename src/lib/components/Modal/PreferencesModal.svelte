@@ -19,14 +19,14 @@
         <h2 class="mb-6 text-center text-2xl">Preferences</h2>
         <form on:submit|preventDefault class="flex flex-col gap-2">
             <div class="pref-option">
-                <label for="chat-style">Chat Style</label>
+                <label for="chat-style">Chat style</label>
                 <select id="chat-style" bind:value={$chatStyle}>
                     <option value={ChatStyle.Cozy}>Cozy</option>
                     <option value={ChatStyle.Compact}>Compact</option>
                 </select>
             </div>
             <div class="pref-option">
-                <label for="auto-scroll-behaviour">Auto Scroll Behaviour</label>
+                <label for="auto-scroll-behaviour">Auto scroll behaviour</label>
                 <select id="auto-scroll-behaviour" bind:value={$autoScrollBehaviour}>
                     <option value={AutoScrollBehaviour.Always}>Always</option>
                     <option value={AutoScrollBehaviour.OnlySelf}>Only Self</option>
@@ -34,12 +34,12 @@
                 </select>
             </div>
             <div class="pref-option">
-                <label for="dark-mode">Dark Mode</label>
-                <input id="dark-mode" bind:checked={$darkMode} type="checkbox" value="Dark Mode" />
+                <label for="dark-mode">Dark mode</label>
+                <input id="dark-mode" bind:checked={$darkMode} type="checkbox" />
             </div>
             <div class="pref-option">
-                <label for="join-leave-messages">Join & Leave Messages</label>
-                <input id="join-leave-messages" bind:checked={$joinLeaveMessages} type="checkbox" value="Dark Mode" />
+                <label for="join-leave-messages">Join & leave messages</label>
+                <input id="join-leave-messages" bind:checked={$joinLeaveMessages} type="checkbox" />
             </div>
         </form>
     </div>

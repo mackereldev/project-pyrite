@@ -15,3 +15,12 @@ export const enum ChatStyle {
     /** Tighter leading, less padding. */
     Compact,
 }
+
+/** The range of messages that should be exported. */
+export const enum ExportTimeRange {
+    FifteenMinutes,
+    OneHour,
+    SixHours,
+    Today,
+    All,
+}

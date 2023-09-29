@@ -2,7 +2,7 @@
     import type { ChatTab } from "$lib/classes/ChatTab";
     import { afterUpdate, onDestroy, onMount } from "svelte";
     import ChatItem from "./ChatItem.svelte";
-    import { preferencesModalStore } from "$lib/classes/Stores";
+    import { preferencesModalStore, exportModalStore } from "$lib/classes/Stores";
     import { get, type Unsubscriber } from "svelte/store";
     import { AutoScrollBehaviour, ChatStyle } from "$lib/enums";
     import { commandRefs } from "$lib/classes/CommandDispatcher";
@@ -181,10 +181,6 @@
             }
         });
     };
-
-    const exportChatHistory = () => {
-        console.log("export chat history");
-    };
 </script>
 
 <svelte:window on:resize={updateShowShadow} on:keydown={onKeyDown} />
@@ -206,11 +202,11 @@
             <button bind:this={copyRoomIDButton} on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-faint">
                 <Icon src={Clipboard} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
             </button>
-            <div bind:this={copyRoomIDButtonTooltip} class="pointer-events-none absolute rounded-lg px-2 py-1 opacity-0 transition-opacity duration-150 drop-shadow-sm {copyRoomIDButtonTooltipSuccess ? 'bg-green-300 text-green-600' : 'bg-faint text-accent'}">
+            <div bind:this={copyRoomIDButtonTooltip} class="pointer-events-none absolute rounded-lg px-2 py-1 opacity-0 drop-shadow-sm transition-opacity duration-150 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300 text-green-600' : 'bg-faint text-accent'}">
                 {copyRoomIDButtonTooltipSuccess ? "Copied!" : "Unable to copy"}
                 <div bind:this={copyRoomIDButtonTooltipArrow} class="absolute h-2 w-2 rotate-45 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300' : 'bg-faint'}" />
             </div>
-            <button on:click={exportChatHistory} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-faint">
+            <button on:click={() => $exportModalStore.open(chatTab)} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-faint">
                 <Icon src={ArrowDownTray} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
             </button>
             <button on:click={$preferencesModalStore.open} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-faint">
