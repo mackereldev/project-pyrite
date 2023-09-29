@@ -11,4 +11,4 @@
     export let element: HTMLInputElement | null = null;
 </script>
 
-<input {minlength} {maxlength} {min} {max} {placeholder} {required} data-1p-ignore={disable1Password} bind:this={element} bind:value on:input class="{$$props.class || ''} h-7 w-64 bg-subtle px-3 text-lg font-medium placeholder:text-faint {omitRingStyle ? 'transition-all duration-75' : 'ring-input'}" />
+<input {minlength} {maxlength} {min} {max} {placeholder} {required} data-1p-ignore={disable1Password} bind:this={element} bind:value on:input class="{$$props.class || ''} h-7 w-64 bg-subtle px-3 text-lg font-medium placeholder:text-border {omitRingStyle ? 'transition-all duration-75' : 'ring-input'}" />
