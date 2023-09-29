@@ -185,11 +185,6 @@
     const exportChatHistory = () => {
         console.log("export chat history");
     };
-
-    const leaveRoom = () => {
-        console.log("leave room");
-        closeTab(chatTab);
-    };
 </script>
 
 <svelte:window on:resize={updateShowShadow} on:keydown={onKeyDown} />
@@ -216,13 +211,13 @@
                 <div bind:this={copyRoomIDButtonTooltipArrow} class="absolute h-2 w-2 rotate-45 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300' : 'bg-faint'}" />
             </div>
             <button on:click={exportChatHistory} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-faint">
-                <Icon on:click={exportChatHistory} src={ArrowDownTray} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
+                <Icon src={ArrowDownTray} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
             </button>
             <button on:click={$preferencesModalStore.open} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-faint">
                 <Icon src={Cog6Tooth} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
             </button>
-            <button on:click={leaveRoom} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-faint">
-                <Icon on:click={leaveRoom} src={ArrowRightOnRectangle} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
+            <button on:click={() => closeTab(chatTab)} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-faint">
+                <Icon src={ArrowRightOnRectangle} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
             </button>
         </div>
         <div class="flex flex-1 flex-col overflow-clip border-b border-border p-5">
