@@ -49,7 +49,7 @@ export class ChatRoom extends Room<MainState> {
                 client.leave(4122, `clientId '${clientId}' contains illegal characters`);
             }
         } else {
-            clientId = "User";
+            clientId = `Anonymous (${client.sessionId})`;
         }
 
         if (this.state.clientData.some((client) => client.clientId === clientId)) {

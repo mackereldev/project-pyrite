@@ -21,7 +21,7 @@ export class ChatTab extends Tab {
     lastReadMessage: ChatMessage | undefined;
     isUnread = writable<boolean>(false);
 
-    effectiveUsername = writable<string>(get(preferences.username) || "User");
+    effectiveUsername = writable<string>("");
 
     private acceptingJoinMessages: boolean = false;
 
@@ -73,9 +73,9 @@ export class ChatTab extends Tab {
         room.state.clientData.onAdd((client: ClientData) => {
             this.clients.update((clients) => clients.concat({ clientId: client.clientId, sessionId: client.sessionId, isLeader: get(this.roomStore).state.leader === client.clientId }));
 
-            // Only show join messages once all 'present' clients have been processed
-            if (client.clientId === get(this.effectiveUsername)) {
-                this.acceptingJoinMessages = true;
+            if (client.sessionId === get(this.roomStore).sessionId) {
+                this.acceptingJoinMessages = true; // Only show join messages once all 'present' clients have been processed
+                this.effectiveUsername.set(client.clientId);
             }
 
             if (this.acceptingJoinMessages && get(preferences.joinLeaveMessages)) {

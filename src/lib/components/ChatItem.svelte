@@ -28,7 +28,8 @@
     onMount(() => {
         // https://stackoverflow.com/a/65149088
         const usernames = get(chatTab.clients).map((client) => client.clientId);
-        const pattern = new RegExp(`(.*?)\\b(${usernames.join("|")})\\b`, "g");
+        const usernameMatchQueury = usernames.map((u) => u.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")).join("|"); // Escapes special characters and joins each username by a '|'
+        const pattern = new RegExp(`(.*?)(${usernameMatchQueury})`, "g");
         const matches = message.text.split(pattern).filter(Boolean);
 
         messageContent.innerText = "";
