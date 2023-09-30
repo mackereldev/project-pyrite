@@ -1,4 +1,4 @@
-# Project Pyrite
+# Project Pyrite [![Netlify Status](https://api.netlify.com/api/v1/badges/795ead1f-9c75-4f7e-bef8-a8e56af1238e/deploy-status)](https://app.netlify.com/sites/project-pyrite/deploys)
 A messaging app originally made for a Software Development assessment.
 
 ## Development
