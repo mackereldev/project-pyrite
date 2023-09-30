@@ -35,7 +35,8 @@ export abstract class Cmd {
         if (isNatural(value) || allowNegative && isInteger(value)) {
             return parseInt(value);
         } else {
-            throw new CmdError(`Argument '${name}' must be a positive whole number.`);
+            const errorMessage = allowNegative ? `Argument '${name}' must be a whole number.` : `Argument '${name}' must be a positive whole number.`;
+            throw new CmdError(errorMessage);
         }
     }
 
