@@ -16,7 +16,7 @@ export class ChatTab extends Tab {
     commandDispatcher = new CommandDispatcher(this);
 
     messages = writable<ChatMessage[]>([]);
-    clients = writable<{ clientId: string; isLeader: boolean }[]>([]);
+    clients = writable<{ clientId: string; sessionId: string, isLeader: boolean }[]>([]);
 
     lastReadMessage: ChatMessage | undefined;
     isUnread = writable<boolean>(false);
@@ -71,7 +71,7 @@ export class ChatTab extends Tab {
         }
 
         room.state.clientData.onAdd((client: ClientData) => {
-            this.clients.update((clients) => clients.concat({ clientId: client.clientId, isLeader: get(this.roomStore).state.leader === client.clientId }));
+            this.clients.update((clients) => clients.concat({ clientId: client.clientId, sessionId: client.sessionId, isLeader: get(this.roomStore).state.leader === client.clientId }));
 
             // Only show join messages once all 'present' clients have been processed
             if (client.clientId === get(this.effectiveUsername)) {
@@ -83,8 +83,8 @@ export class ChatTab extends Tab {
             }
         });
 
-        room.state.clientData.onRemove((client: ClientData, key: number) => {
-            this.clients.update((clients) => clients.filter((value, idx) => idx !== key));
+        room.state.clientData.onRemove((client: ClientData) => {
+            this.clients.update((clients) => clients.filter((value) => client.sessionId !== value.sessionId));
             if (get(preferences.joinLeaveMessages)) {
                 this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} left the room.`));
             }
