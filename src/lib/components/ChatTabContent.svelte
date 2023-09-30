@@ -213,7 +213,7 @@
                 <Icon src={Cog6Tooth} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
             </button>
             <button on:click={() => closeTab(chatTab)} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-faint">
-                <Icon src={ArrowRightOnRectangle} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
+                <Icon src={ArrowRightOnRectangle} class="stroke-red-500/50 stroke-2 transition-colors group-hover:stroke-red-500/80" />
             </button>
         </div>
         <div class="flex flex-1 flex-col overflow-clip border-b border-border p-5">
