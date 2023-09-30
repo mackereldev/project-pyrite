@@ -23,6 +23,8 @@ export class ChatTab extends Tab {
 
     effectiveUsername = writable<string>(get(preferences.username) || "User");
 
+    private acceptingJoinMessages: boolean = false;
+
     constructor(code?: string) {
         super();
 
@@ -58,8 +60,7 @@ export class ChatTab extends Tab {
         this.roomStore.set(room);
         this.name.set(room.roomId);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        room.onLeave((code) => {
+        room.onLeave(() => {
             this.dispose();
         });
 
@@ -71,12 +72,17 @@ export class ChatTab extends Tab {
 
         room.state.clientData.onAdd((client: ClientData) => {
             this.clients.update((clients) => clients.concat({ clientId: client.clientId, isLeader: get(this.roomStore).state.leader === client.clientId }));
-            if (get(preferences.joinLeaveMessages)) {
+
+            // Only show join messages once all 'present' clients have been processed
+            if (client.clientId === get(this.effectiveUsername)) {
+                this.acceptingJoinMessages = true;
+            }
+
+            if (this.acceptingJoinMessages && get(preferences.joinLeaveMessages)) {
                 this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} joined the room.`));
             }
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         room.state.clientData.onRemove((client: ClientData, key: number) => {
             this.clients.update((clients) => clients.filter((value, idx) => idx !== key));
             if (get(preferences.joinLeaveMessages)) {
