@@ -1,6 +1,6 @@
 {
-    "name": "softdev-party-game",
-    "description": "The client-side and server-side code for the softdev-party-game website.",
+    "name": "project-pyrite",
+    "description": "The client-side and server-side code for the project-pyrite website.",
     "version": "0.0.1",
     "private": true,
     "type": "module",
