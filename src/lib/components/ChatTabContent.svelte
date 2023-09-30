@@ -188,7 +188,7 @@
 <svelte:window on:resize={updateShowShadow} on:keydown={onKeyDown} />
 
 <div class="flex w-full flex-grow flex-row">
-    <div class="flex flex-1 basis-48 flex-col overflow-clip border-r-2 border-border">
+    <div class="flex flex-1 flex-col overflow-clip border-r-2 border-border">
         <div bind:this={messageHistory} on:scroll={updateShowShadow} class="{$chatStyle === ChatStyle.Cozy ? 'gap-1.5' : 'gap-0.5'} flex flex-grow basis-0 flex-col overflow-y-scroll break-words px-3 pt-3">
             {#each $messages as message, i (message)}
                 <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
@@ -204,7 +204,7 @@
             </div>
         </form>
     </div>
-    <div class="flex basis-80 flex-col">
+    <div class="flex w-80 flex-col">
         <div class="flex h-8 border-b-2 border-border">
             <button bind:this={copyRoomIDButton} on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-faint">
                 <Icon src={Clipboard} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
@@ -242,7 +242,7 @@
                                 </svg>
                             </span>
                         {/if}
-                        <span class="font-bold{client.clientId === $effectiveUsername ? ' text-violet-500' : ''}">{client.clientId}</span>
+                        <span class="truncate font-bold {client.clientId === $effectiveUsername ? ' text-violet-500' : ''}">{client.clientId}</span>
                     </div>
                 {/each}
             </div>
