@@ -53,10 +53,11 @@ export class ChatRoom extends Room<MainState> {
         }
 
         if (this.state.clientData.some((client) => client.clientId === clientId)) {
-            console.log(`clientId '${clientId}' is taken.`);
             client.leave(4101, `clientId '${clientId}' is taken`);
         } else {
-            console.log(`${clientId} (${client.sessionId}) joined!`);
+            if (this.state.clientData.length === 0) {
+                console.debug(`Room '${this.roomId}' was created by '${clientId}' (${client.sessionId})`);
+            }
             client.userData = { clientId };
 
             const clientData = new ClientData(client.id, clientId);
@@ -68,7 +69,6 @@ export class ChatRoom extends Room<MainState> {
     }
 
     override onLeave(client: Client) {
-        console.log(client.sessionId, "left!");
         const replaceLeader = this.commandReceiver.isLeader(client); // Replace leader if the leader is leaving
 
         const idx = this.state.clientData.findIndex((c) => c.sessionId === client.sessionId);
@@ -87,7 +87,7 @@ export class ChatRoom extends Room<MainState> {
     }
 
     override onDispose() {
-        console.log("room", this.roomId, "disposing...");
+        console.debug(`Room '${this.roomId}' was disposed.`);
         this.presence.srem(this.CHAT_CHANNEL, this.roomId);
         this.commandReceiver = null;
     }
