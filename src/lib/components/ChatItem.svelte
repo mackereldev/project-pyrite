@@ -13,7 +13,7 @@
 
     let messageContent: HTMLSpanElement;
 
-    let colour = "text-accent";
+    let colour = "text-theme-500";
     let author = "invalid";
     if (message.type === "user") {
         colour = "text-violet-500";
@@ -54,7 +54,7 @@
 </script>
 
 <div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100 dark:bg-amber-400/20' : ''}">
-    <span class="font-mono text-faded">{message.getRelativeTime(relativeStartTime)}</span>
+    <span class="font-mono text-theme-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class="font-semibold {colour}">[{author}]</span>
-    <span bind:this={messageContent} class="whitespace-pre-wrap {message.type === 'system' ? 'italic text-faded' : 'not-italic'}{message.isError ? ' !text-red-400' : ''}" />
+    <span bind:this={messageContent} class="whitespace-pre-wrap {message.type === 'system' ? 'italic text-theme-400' : 'not-italic'}{message.isError ? ' !text-red-400' : ''}" />
 </div>

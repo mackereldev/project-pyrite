@@ -11,8 +11,8 @@
     const isUnread = (tab as ChatTab)?.isUnread;
 </script>
 
-<button on:click class="group relative flex cursor-pointer border-x border-faint first:border-l-0 first:border-l-transparent last:border-r-2">
-    <div class="flex h-full flex-grow items-center {tab.heroIcon === undefined ? 'px-4' : 'px-1'} text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-faint {isCurrentTab ? 'stroke-violet-500 text-violet-500 shadow-violet-500' : 'stroke-faded text-faded shadow-transparent group-hover:stroke-accent group-hover:text-accent'}">
+<button on:click class="group relative flex cursor-pointer border-x border-theme-200 first:border-l-0 first:border-l-transparent last:border-r-2">
+    <div class="flex h-full flex-grow items-center {tab.heroIcon === undefined ? 'px-4' : 'px-1'} text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-theme-200 {isCurrentTab ? 'stroke-violet-500 text-violet-500 shadow-violet-500' : 'stroke-theme-400 text-theme-400 shadow-transparent group-hover:stroke-theme-500 group-hover:text-theme-500'}">
         {#if tab.heroIcon !== undefined}
             <Icon src={Home} class="h-5 w-5 cursor-pointer fill-none" />
         {:else}

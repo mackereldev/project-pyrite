@@ -33,7 +33,7 @@
         }
     });
 
-    let colour: string = "bg-faint";
+    let colour: string = "bg-theme-200";
     let icon: IconSource = QuestionMarkCircle;
     if (toast.severity === "success") {
         colour = "bg-emerald-200";

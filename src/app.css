@@ -19,7 +19,7 @@
     }
 
     body {
-        @apply bg-background flex h-screen w-screen items-center justify-center;
+        @apply bg-theme-50 flex h-screen w-screen items-center justify-center;
     }
 
     h1,
@@ -28,30 +28,30 @@
     h4,
     h5,
     h6 {
-        @apply text-heading;
+        @apply text-theme-700;
     }
 
     div,
     span {
-        @apply text-text;
+        @apply text-theme-600;
     }
 
     select {
-        @apply bg-faint rounded-lg pl-1 pr-3;
+        @apply bg-theme-200 rounded-lg pl-1 pr-3;
     }
 }
 
 @layer components {
     .ring-input {
-        @apply ring-border rounded-lg ring-2 transition-all focus-within:ring-violet-500;
+        @apply ring-theme-300 rounded-lg ring-2 transition-all focus-within:ring-violet-500;
     }
 
     .btn {
-        @apply text-accent ring-border disabled:text-border disabled:ring-border rounded-lg px-4 py-1 text-center text-lg font-medium ring-2 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:hover:ring-2;
+        @apply text-theme-500 ring-theme-300 disabled:text-theme-300 disabled:ring-theme-300 rounded-lg px-4 py-1 text-center text-lg font-medium ring-2 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:hover:ring-2;
     }
 
-    .btn-accent {
-        @apply text-subtle hover:text-subtle bg-violet-500 font-medium ring-0 hover:bg-violet-400 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
+    .btn-theme-500 {
+        @apply text-theme-100 hover:text-theme-100 bg-violet-500 font-medium ring-0 hover:bg-violet-400 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
     }
 
     .chat-entry-shadow {

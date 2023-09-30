@@ -21,8 +21,8 @@
 <ExportModal bind:this={$exportModalStore} />
 
 <div class="flex h-full w-full gap-4 p-6">
-    <div class="flex flex-1 flex-col overflow-hidden rounded ring-2 ring-border">
-        <div class="flex h-7 border-b-2 border-border">
+    <div class="flex flex-1 flex-col overflow-hidden rounded ring-2 ring-theme-300">
+        <div class="flex h-7 border-b-2 border-theme-300">
             {#each $tabsStore as tab, index}
                 <TabButton on:click={() => changeTab(index)} {tab} isCurrentTab={currentTab === tab} />
             {/each}

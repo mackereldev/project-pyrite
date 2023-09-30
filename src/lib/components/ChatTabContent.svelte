@@ -188,43 +188,43 @@
 <svelte:window on:resize={updateShowShadow} on:keydown={onKeyDown} />
 
 <div class="flex w-full flex-grow flex-row">
-    <div class="flex flex-1 flex-col overflow-clip border-r-2 border-border">
+    <div class="flex flex-1 flex-col overflow-clip border-r-2 border-theme-300">
         <div bind:this={messageHistory} on:scroll={updateShowShadow} class="{$chatStyle === ChatStyle.Cozy ? 'gap-1.5' : 'gap-0.5'} flex flex-grow basis-0 flex-col overflow-y-scroll break-words px-3 pt-3">
             {#each $messages as message, i (message)}
                 <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
         </div>
         <form on:submit|preventDefault={onSubmitMessage} class="p-4 transition-shadow duration-150 {showShadow && 'chat-entry-shadow'}">
-            <div class="flex h-8 w-full rounded bg-subtle ring-2 ring-border">
+            <div class="flex h-8 w-full rounded bg-theme-100 ring-2 ring-theme-300">
                 <!-- svelte-ignore a11y-autofocus -->
-                <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} placeholder="Message {$roomName}" class="h-full flex-grow bg-transparent pl-2 text-sm placeholder:text-border" />
+                <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} placeholder="Message {$roomName}" class="h-full flex-grow bg-transparent pl-2 text-sm placeholder:text-theme-300" />
                 <button class="group aspect-square h-full py-1.5">
-                    <Icon src={PaperAirplane} class="stroke-border stroke-2 transition-colors group-hover:stroke-faded" />
+                    <Icon src={PaperAirplane} class="stroke-theme-300 stroke-2 transition-colors group-hover:stroke-theme-400" />
                 </button>
             </div>
         </form>
     </div>
     <div class="flex w-80 flex-col">
-        <div class="flex h-8 border-b-2 border-border">
-            <button bind:this={copyRoomIDButton} on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-faint">
-                <Icon src={Clipboard} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
+        <div class="flex h-8 border-b-2 border-theme-300">
+            <button bind:this={copyRoomIDButton} on:click={copyRoomID} title="Copy Room ID" class="group flex-grow py-1 transition-colors hover:bg-theme-200">
+                <Icon src={Clipboard} class="stroke-theme-400 stroke-2 transition-colors group-hover:stroke-theme-500" />
             </button>
-            <div bind:this={copyRoomIDButtonTooltip} class="pointer-events-none absolute rounded-lg px-2 py-1 opacity-0 drop-shadow-sm transition-opacity duration-150 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300 text-green-600' : 'bg-faint text-accent'}">
+            <div bind:this={copyRoomIDButtonTooltip} class="pointer-events-none absolute rounded-lg px-2 py-1 opacity-0 drop-shadow-sm transition-opacity duration-150 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300 text-green-600' : 'bg-theme-200 text-theme-500'}">
                 {copyRoomIDButtonTooltipSuccess ? "Copied!" : "Unable to copy"}
-                <div bind:this={copyRoomIDButtonTooltipArrow} class="absolute h-2 w-2 rotate-45 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300' : 'bg-faint'}" />
+                <div bind:this={copyRoomIDButtonTooltipArrow} class="absolute h-2 w-2 rotate-45 {copyRoomIDButtonTooltipSuccess ? 'bg-green-300' : 'bg-theme-200'}" />
             </div>
-            <button on:click={() => $exportModalStore.open(chatTab)} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-faint">
-                <Icon src={ArrowDownTray} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
+            <button on:click={() => $exportModalStore.open(chatTab)} title="Export Chat History" class="group flex-grow py-1 transition-colors hover:bg-theme-200">
+                <Icon src={ArrowDownTray} class="stroke-theme-400 stroke-2 transition-colors group-hover:stroke-theme-500" />
             </button>
-            <button on:click={$preferencesModalStore.open} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-faint">
-                <Icon src={Cog6Tooth} class="stroke-faded stroke-2 transition-colors group-hover:stroke-accent" />
+            <button on:click={$preferencesModalStore.open} title="Preferences" class="group flex-grow py-1 transition-colors hover:bg-theme-200">
+                <Icon src={Cog6Tooth} class="stroke-theme-400 stroke-2 transition-colors group-hover:stroke-theme-500" />
             </button>
-            <button on:click={() => closeTab(chatTab)} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-faint">
+            <button on:click={() => closeTab(chatTab)} title="Leave Room" class="group flex-grow py-1 transition-colors hover:bg-theme-200">
                 <Icon src={ArrowRightOnRectangle} class="stroke-red-500/50 stroke-2 transition-colors group-hover:stroke-red-500/80" />
             </button>
         </div>
-        <div class="flex flex-1 flex-col overflow-clip border-b border-border p-5">
-            <span class="border-b-2 border-border pb-2 text-2xl">Members</span>
+        <div class="flex flex-1 flex-col overflow-clip border-b border-theme-300 p-5">
+            <span class="border-b-2 border-theme-300 pb-2 text-2xl">Members</span>
             <div class="flex flex-col overflow-y-scroll">
                 {#each $clients as client}
                     <div class="flex p-4">
@@ -236,7 +236,7 @@
                             </span>
                         {:else}
                             <span class="mr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-faded stroke-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6 fill-none stroke-theme-400 stroke-2">
                                     <path d="M17.5 21.0001H6.5C5.11929 21.0001 4 19.8808 4 18.5001C4 14.4194 10 14.5001 12 14.5001C14 14.5001 20 14.4194 20 18.5001C20 19.8808 18.8807 21.0001 17.5 21.0001Z" stroke-linecap="round" stroke-linejoin="round" />
                                     <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
@@ -247,12 +247,12 @@
                 {/each}
             </div>
         </div>
-        <div class="flex flex-1 flex-col overflow-clip border-t border-border p-5">
-            <span class="border-b-2 border-border pb-2 text-2xl">Commands</span>
+        <div class="flex flex-1 flex-col overflow-clip border-t border-theme-300 p-5">
+            <span class="border-b-2 border-theme-300 pb-2 text-2xl">Commands</span>
             <div class="flex flex-col overflow-y-scroll">
                 {#each commands as command}
                     <button on:click={() => suggestCommand(command)} class="mt-2 flex">
-                        <div class="w-full rounded-lg px-3 py-2 text-start ring-2 ring-inset ring-faint">{command}</div>
+                        <div class="w-full rounded-lg px-3 py-2 text-start ring-2 ring-inset ring-theme-200">{command}</div>
                     </button>
                 {/each}
             </div>
