@@ -109,12 +109,6 @@ export class ChatTab extends Tab {
             console.debug("MESSAGE:", message);
             this.addMessage(new ChatMessage(author.clientId, "user", msg));
         });
-
-        room.onMessage("cmd-ping", (message) => {
-            const { sender }: { sender: { sessionId: string; clientId: string } } = message;
-
-            this.addMessage(new ChatMessage(undefined, "system", `Client ${sender.clientId} pinged all clients.`));
-        });
     };
 
     private handleError = (err: any) => {

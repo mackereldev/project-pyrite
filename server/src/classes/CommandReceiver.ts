@@ -1,6 +1,7 @@
 import { ChatRoom } from "../room/ChatRoom";
 import * as MathMore from "../../../src/lib/classes/MathMore";
 import { Client } from "colyseus";
+import { ServerChat } from "./ServerChat";
 
 export class CommandReceiver {
     private chatRoom: ChatRoom;
@@ -32,7 +33,7 @@ export class CommandReceiver {
             }
 
             this.chatRoom.clock.setTimeout(() => {
-                this.chatRoom.broadcast("cmd-ping", { sender: { sessionId: client.id, clientId: client.userData.clientId } });
+                this.chatRoom.broadcast("server-chat", new ServerChat(`Client ${client.userData.clientId} pinged all clients.`).serialize());
             }, delay);
         });
     }
