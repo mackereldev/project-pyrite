@@ -1,38 +1,35 @@
-# create-svelte
+# Project Pyrite
+A messaging app originally made for a Software Development assessment.
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+## Development
+### Prerequisites
+- npm: [Node.js](https://nodejs.org/en/download) (Node.js runtime + npm)
+- pnpm:
+    - via npm
+      ```
+      npm install -g pnpm
+      ```
+    - or [installation](https://pnpm.io/installation) instructions
+### Installation
+Installing client-side dependencies
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm install
 ```
-
+Installing server-side dependencies
+```
+cd ./server
+npm install
+```
+### Running the development server
+Running either server will hang the terminal in use, so make sure to open one for each. Ensure commands are being run from the root directory of the project.<br>
+Starting the client server (vite)
+```
+pnpm run dev
+```
+Starting the game server (colyseus)
+```
+cd ./server
+npm run start
+```
 ## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Building for production is currently not set up. Please refer to [Development](#development).
