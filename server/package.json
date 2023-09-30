@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "softdev-party-game-server",
+  "name": "project-pyrite-server",
   "version": "0.0.0",
-  "description": "The game server for softdev-party-game.",
+  "description": "The game server for project-pyrite.",
   "main": "build/index.js",
   "engines": {
     "node": ">= 16.13.0"

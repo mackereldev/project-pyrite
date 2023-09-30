@@ -1,14 +1,14 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 
-export type ChatMessageType = "player" | "game" | "system";
+export type ChatMessageType = "user" | "system";
 
 export class ChatMessage {
     author: string | undefined;
     type: ChatMessageType;
     text;
     isError;
-    private time;
+    time;
 
     constructor(author: string | undefined, type: ChatMessageType, text: string, isError: boolean = false) {
         this.author = author;

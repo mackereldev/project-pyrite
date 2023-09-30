@@ -1,67 +1,38 @@
+import { get, type Writable } from "svelte/store";
+import type { MainState } from "../../../server/src/schema/MainState";
 import { ChatMessage } from "./ChatMessage";
-import { CmdError, PingCmd, QuestCmd, AdvanceCmd, InspectCmd, AttackCmd, EquipCmd, UnequipCmd } from "./Command";
+import { Cmd, CmdContext, CmdError, LeaveCmd, PingCmd } from "./Command";
+import type * as Colyseus from "colyseus.js";
+import type { ChatTab } from "./ChatTab";
 
-export default class CommandDispatcher {
-    static executeCommand = async (commandName: string, ...args: string[]): Promise<ChatMessage | undefined> => {
+export class CommandDispatcher {
+    chatTab: ChatTab;
+    roomStore: Writable<Colyseus.Room<MainState>>;
+
+    constructor(chatTab: ChatTab) {
+        this.chatTab = chatTab;
+        this.roomStore = chatTab.roomStore;
+    }
+
+    executeCommand = async (commandName: string, ...args: string[]): Promise<ChatMessage | undefined> => {
         const err = (message: string) => {
             return new ChatMessage(undefined, "system", message, true);
         };
 
         try {
-            if (commandName === "help") {
-                const helpTarget = args[0];
-                const cmd = commandRefs[helpTarget as keyof typeof commandRefs];
-
-                if (helpTarget) {
-                    if (cmd) {
-                        const help = cmd.help();
-                        if (help) {
-                            return new ChatMessage(undefined, "system", help);
-                        } else {
-                            return new ChatMessage(undefined, "system", "Not yet implemented.");
-                        }
-                    } else {
-                        return err(`Command '${helpTarget}' does not have a valid help implementation.`);
-                    }
-                } else {
-                    const helpStrings: string[] = [];
-                    Object.entries(commandRefs).forEach((entry) => {
-                        const name = entry[0];
-                        const cmd = entry[1];
-                        const help = cmd.help();
-                        if (help) {
-                            helpStrings.push(`${name}\n  ${help}`);
-                        }
-                    });
-                    return new ChatMessage(undefined, "system", helpStrings.join("\n"));
-                }
+            if (Object.keys(commandRefs).includes(commandName)) {
+                const context = new CmdContext(get(this.roomStore), this.chatTab);
+                return await commandRefs[commandName as keyof typeof commandRefs](context, ...args).execute();
             } else {
-                switch (commandRefs[commandName as keyof typeof commandRefs]) {
-                    case PingCmd:
-                        return new PingCmd(args[0]).execute();
-                    case QuestCmd:
-                        return new QuestCmd(args[0], args[1]).execute();
-                    case AdvanceCmd:
-                        return new AdvanceCmd().execute();
-                    case InspectCmd:
-                        return new InspectCmd(args[0], args[1]).execute();
-                    case AttackCmd:
-                        return new AttackCmd(args[0], args[1]).execute();
-                    case EquipCmd:
-                        return new EquipCmd(args[0], args[1]).execute();
-                    case UnequipCmd:
-                        return new UnequipCmd(args[0], args[1]).execute();
-                    default:
-                        return err(`Command '${commandName}' could not be found.`);
-                }
+                return err(`Command '${commandName}' could not be found.`);
             }
         } catch (error) {
             if (error instanceof CmdError) {
                 return err(error.message);
             } else if (error instanceof Error) {
-                console.trace(error);
+                console.error(error);
             } else {
-                console.trace(error);
+                console.error(error);
             }
 
             return err("An unknown error occurred.");
@@ -70,11 +41,6 @@ export default class CommandDispatcher {
 }
 
 export const commandRefs = {
-    ping: PingCmd,
-    quest: QuestCmd,
-    advance: AdvanceCmd,
-    inspect: InspectCmd,
-    attack: AttackCmd,
-    equip: EquipCmd,
-    unequip: UnequipCmd,
-};
+    ping: (context: CmdContext, ...args: string[]) => new PingCmd(context, args[0]),
+    leave: (context: CmdContext) => new LeaveCmd(context),
+} satisfies { [key: string]: (context: CmdContext, ...args: string[]) => Cmd };

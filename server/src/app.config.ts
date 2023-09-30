@@ -2,11 +2,11 @@ import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
 import config from "@colyseus/tools";
 
-import { Game } from "./room/Game";
+import { ChatRoom } from "./room/ChatRoom";
 
 export default config({
     initializeGameServer: (gameServer) => {
-        gameServer.define("game", Game);
+        gameServer.define("chat-room", ChatRoom);
     },
 
     initializeExpress: (app) => {
