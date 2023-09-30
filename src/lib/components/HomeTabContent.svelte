@@ -5,6 +5,9 @@
     import { preferences } from "$lib/classes/Preferences";
     import ToastData from "$lib/classes/ToastData";
     import Input from "./Input.svelte";
+    import { Icon } from "@steeze-ui/svelte-icon";
+    import { Cog6Tooth } from "@steeze-ui/heroicons";
+    import { preferencesModalStore } from "$lib/classes/Stores";
 
     let roomIdValue: string;
 
@@ -25,6 +28,9 @@
 </script>
 
 <div class="relative flex flex-grow flex-col items-center justify-center gap-20">
+    <button on:click={$preferencesModalStore.open} class="group absolute left-4 top-4 h-9 w-9 rounded-lg bg-subtle p-1.5 ring-2 ring-inset ring-faint transition-all hover:bg-faint hover:ring-violet-500">
+        <Icon src={Cog6Tooth} class="stroke-faded transition-colors group-hover:stroke-violet-400" />
+    </button>
     <div class="absolute right-4 top-4 flex flex-col">
         <span>Username</span>
         <Input bind:value={$username} placeholder="User" />
