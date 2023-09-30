@@ -24,7 +24,7 @@
     };
 </script>
 
-<div class="relative flex h-full flex-col items-center justify-center gap-20">
+<div class="relative flex flex-grow flex-col items-center justify-center gap-20">
     <div class="absolute right-4 top-4 flex flex-col">
         <span>Username</span>
         <Input bind:value={$username} placeholder="User" />

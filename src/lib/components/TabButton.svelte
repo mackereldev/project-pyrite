@@ -11,10 +11,8 @@
     const isUnread = (tab as ChatTab)?.isUnread;
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<div on:click class="group relative flex h-full cursor-pointer border-x border-faint first:border-l-0 first:border-l-transparent last:border-r-2">
-    <div class="flex flex-grow items-center {tab.heroIcon === undefined ? 'px-4' : 'px-1'} text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-faint {isCurrentTab ? 'stroke-violet-500 text-violet-500 shadow-violet-500' : 'stroke-faded text-faded shadow-transparent group-hover:stroke-accent group-hover:text-accent'}">
+<button on:click class="group relative flex cursor-pointer border-x border-faint first:border-l-0 first:border-l-transparent last:border-r-2">
+    <div class="flex h-full flex-grow items-center {tab.heroIcon === undefined ? 'px-4' : 'px-1'} text-sm font-semibold shadow-[0_2px] transition-all group-hover:bg-faint {isCurrentTab ? 'stroke-violet-500 text-violet-500 shadow-violet-500' : 'stroke-faded text-faded shadow-transparent group-hover:stroke-accent group-hover:text-accent'}">
         {#if tab.heroIcon !== undefined}
             <Icon src={Home} class="h-5 w-5 cursor-pointer fill-none" />
         {:else}
@@ -26,4 +24,4 @@
             <div class="absolute left-1 top-1 h-1.5 w-1.5 rounded-full bg-violet-400"></div>
         {/if}
     {/if}
-</div>
+</button>
