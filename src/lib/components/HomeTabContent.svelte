@@ -12,6 +12,9 @@
     let roomIdValue: string;
 
     const username = preferences.username;
+    username.subscribe((value) => {
+        $username = value.replace(/[^\x20-\x7F]/g, "");
+    });
 
     const createRoom = () => {
         addTab(new ChatTab());
@@ -33,7 +36,7 @@
     </button>
     <div class="absolute right-4 top-4 flex flex-col">
         <span>Username</span>
-        <Input bind:value={$username} placeholder="User" />
+        <Input bind:value={$username} placeholder="User" maxlength={24} />
     </div>
     <div class="flex flex-col items-center">
         <h1 class="text-3xl">Welcome to <span class="text-amber-500">Pyrite</span></h1>

@@ -38,7 +38,19 @@ export class ChatRoom extends Room<MainState> {
     override onJoin(client: Client, options: any) {
         let { clientId }: { clientId: string } = options;
 
-        clientId = clientId && clientId !== "" ? clientId : "User";
+        if (clientId && clientId !== "") {
+            // Checks if clientId is too long
+            if (clientId.length > 24) {
+                client.leave(4121, `clientId '${clientId}' is longer than 24 characters`);
+            }
+
+            // Checks for illegal characters
+            if (new RegExp(/[^\x20-\x7F]/g).test(clientId)) {
+                client.leave(4122, `clientId '${clientId}' contains illegal characters`);
+            }
+        } else {
+            clientId = "User";
+        }
 
         if (this.state.clientData.some((client) => client.clientId === clientId)) {
             console.log(`clientId '${clientId}' is taken.`);

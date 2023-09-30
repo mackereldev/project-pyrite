@@ -65,6 +65,7 @@
 
     const onSubmitMessage = async () => {
         const room = get(chatTab.roomStore);
+        messageValue = messageValue.replace(/[^\x20-\x7F]/g, ""); // Remove all characters that lie out of the ASCII 20 - 7F range
 
         if (room) {
             if (messageValue.startsWith("/")) {
