@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        @apply text-zinc-600;
-    }
-
     ::-webkit-scrollbar {
         width: 14px;
     }
@@ -23,7 +19,7 @@
     }
 
     body {
-        @apply flex h-screen w-screen items-center justify-center bg-zinc-50;
+        @apply bg-theme-50 flex h-screen w-screen items-center justify-center;
     }
 
     h1,
@@ -32,24 +28,42 @@
     h4,
     h5,
     h6 {
-        @apply text-zinc-700;
+        @apply text-theme-700;
+    }
+
+    div,
+    span {
+        @apply text-theme-600;
+    }
+
+    select {
+        @apply bg-theme-200 rounded-lg pl-1 pr-3;
     }
 }
 
 @layer components {
     .ring-input {
-        @apply rounded-lg ring-2 ring-zinc-300 transition-all focus-within:ring-violet-500;
+        @apply ring-theme-300 rounded-lg ring-2 transition-all focus-within:ring-violet-500;
     }
 
     .btn {
-        @apply rounded-lg px-4 py-1 text-center text-lg font-medium text-zinc-500 ring-2 ring-zinc-300 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:text-zinc-300 disabled:ring-zinc-300 disabled:hover:ring-2;
+        @apply text-theme-500 ring-theme-300 disabled:text-theme-300 disabled:ring-theme-300 rounded-lg px-4 py-1 text-center text-lg font-medium ring-2 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:hover:ring-2;
     }
 
-    .btn-highlight {
-        @apply bg-violet-500 font-medium text-zinc-100 ring-0 hover:bg-violet-400 hover:text-zinc-50 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
+    .btn-theme-500 {
+        @apply text-theme-100 hover:text-theme-100 bg-violet-500 font-medium ring-0 hover:bg-violet-400 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
     }
 
     .chat-entry-shadow {
         @apply shadow-[0px_-5px_10px_rgba(0,0,0,0.1)];
+    }
+
+    .unread-msg-shadow {
+        @apply shadow-[0px_1px_0px_#c4b5fd];
+    }
+
+    .sup {
+        line-height: 50%;
+        font-size: 0.8rem;
     }
 }

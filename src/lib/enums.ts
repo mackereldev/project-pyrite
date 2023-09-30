@@ -1,23 +1,26 @@
-/** When a chat section should automatically scroll. */
+/** The condition for when the chat should automatically scroll. */
 export const enum AutoScrollBehaviour {
     /** Automatically scroll when any message is sent or received. */
     Always,
-
     /** Automatically scroll only when the client sends a message. */
     OnlySelf,
-
     /** Never automatically scroll. */
     Never,
 }
 
-/** The type of sender of a chat message (decides appearance). */
-export const enum ChatMessageType {
-    /** A message sent by a client. */
-    Player,
+/** The style of message chats. */
+export const enum ChatStyle {
+    /** Looser leading, greater readability. */
+    Cozy,
+    /** Tighter leading, less padding. */
+    Compact,
+}
 
-    /** A message representing an action in the game world. */
-    Game,
-
-    /** A message sent by the server. */
-    System,
+/** The range of messages that should be exported. */
+export const enum ExportTimeRange {
+    FifteenMinutes,
+    OneHour,
+    SixHours,
+    Today,
+    All,
 }

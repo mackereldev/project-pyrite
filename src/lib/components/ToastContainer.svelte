@@ -5,7 +5,7 @@
     export let toasts: ToastData[] = [];
 
     export const addToasts = (...toastData: ToastData[]) => {
-        toasts = [...toasts, ...toastData];
+        toasts = toasts.concat(toastData);
     };
 
     const remove = (event: CustomEvent) => {
@@ -13,8 +13,8 @@
     };
 </script>
 
-<div class="fixed bottom-0 right-0 flex flex-col-reverse gap-2 p-2">
-    {#each toasts as toast, i (toast)}
+<div class="fixed bottom-0 right-0 z-10 flex flex-col-reverse gap-2 p-2">
+    {#each toasts as toast (toast)}
         <ToastElement {toast} on:remove={remove} />
     {/each}
 </div>

@@ -1,13 +1,18 @@
 {
-    "tabWidth": 4,
-    "useTabs": false,
-    "printWidth": 500,
-    "bracketSameLine": true,
-    "trailingComma": "es5",
-    "endOfLine": "crlf",
     "plugins": [
         "prettier-plugin-svelte",
         "prettier-plugin-tailwindcss"
     ],
-    "svelteAllowShorthand": true
+    "overrides": [
+        {
+            "files": "*.svelte",
+            "options": {
+                "printWidth": 500,
+                "svelteAllowShorthand": true,
+                "svelteIndentScriptAndStyle": true,
+                "endOfLine": "auto",
+                "parser": "svelte"
+            }
+        }
+    ]
 }

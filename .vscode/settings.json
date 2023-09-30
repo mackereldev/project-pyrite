@@ -1,0 +1,9 @@
+{
+    "eslint.validate": [
+        "javascript",
+        "svelte"
+    ],
+    "[svelte]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}
