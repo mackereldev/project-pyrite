@@ -122,7 +122,7 @@ export class ChatTab extends Tab {
         if (err.code === 4101) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username was taken"));
         } else if (err.code === 4212) {
-            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room not found"));
+            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room does not exist or is full"));
         }
         console.error(`Colyseus error (${err.code}): ${err.message}`);
         closeTab(this);

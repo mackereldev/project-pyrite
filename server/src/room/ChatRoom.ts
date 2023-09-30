@@ -29,13 +29,10 @@ export class ChatRoom extends Room<MainState> {
         return id;
     }
 
-    override async onCreate(options: any) {
-        const { maxClients }: { maxClients: number } = options;
-
+    override async onCreate() {
         this.setState(new MainState(Date.now()));
         this.commandReceiver.register();
         this.roomId = await this.generateRoomId();
-        this.maxClients = [2, 4, 8, 16].includes(maxClients) ? maxClients : 4;
     }
 
     override onJoin(client: Client, options: any) {
