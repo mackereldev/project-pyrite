@@ -7,13 +7,14 @@
     import { AutoScrollBehaviour, ChatStyle } from "$lib/enums";
     import { commandRefs } from "$lib/classes/CommandDispatcher";
     import { Icon } from "@steeze-ui/svelte-icon";
-    import { Clipboard, ArrowDownTray, Cog6Tooth, ArrowRightOnRectangle } from "@steeze-ui/heroicons";
+    import { PaperAirplane, Clipboard, ArrowDownTray, Cog6Tooth, ArrowRightOnRectangle } from "@steeze-ui/heroicons";
     import { closeTab } from "$lib/classes/TabHandler";
     import { computePosition, flip, arrow, offset, shift } from "@floating-ui/dom";
     import { preferences } from "$lib/classes/Preferences";
     import type { ChatMessage } from "$lib/classes/ChatMessage";
 
     export let chatTab: ChatTab;
+    const roomName = chatTab.name;
 
     let messageElement: HTMLInputElement;
     let messageValue: string = "";
@@ -124,7 +125,7 @@
 
     const copyRoomID = () => {
         // Copy code to clipboard
-        navigator.clipboard.writeText(get(chatTab.name)).then(
+        navigator.clipboard.writeText($roomName).then(
             () => {
                 copyRoomIDButtonTooltipSuccess = true;
                 showCopyRoomIdTooltip();
@@ -192,9 +193,14 @@
                 <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
         </div>
-        <form on:submit|preventDefault={onSubmitMessage} class={`p-4 transition-shadow duration-150 ${showShadow && "chat-entry-shadow"}`}>
-            <!-- svelte-ignore a11y-autofocus -->
-            <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} class="h-8 w-full rounded bg-subtle px-2 text-sm ring-2 ring-border" />
+        <form on:submit|preventDefault={onSubmitMessage} class="p-4 transition-shadow duration-150 {showShadow && 'chat-entry-shadow'}">
+            <div class="flex h-8 w-full rounded bg-subtle ring-2 ring-border">
+                <!-- svelte-ignore a11y-autofocus -->
+                <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} placeholder="Message {$roomName}" class="h-full flex-grow bg-transparent pl-2 text-sm placeholder:text-border" />
+                <button class="group aspect-square h-full py-1.5">
+                    <Icon src={PaperAirplane} class="stroke-border stroke-2 transition-colors group-hover:stroke-faded" />
+                </button>
+            </div>
         </form>
     </div>
     <div class="flex basis-80 flex-col">
