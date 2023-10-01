@@ -25,10 +25,6 @@ export abstract class Cmd {
 
     static help(): string | undefined { return }
 
-    protected static asSystem(text: string, isError: boolean = false) {
-        return new ChatMessage(undefined, "system", text, isError);
-    }
-
     protected static toInt<T extends Record<string, string>>(number: SingleKey<T>, allowNegative: boolean = false): number {
         const [name, value] = Object.entries(number)[0];
 
