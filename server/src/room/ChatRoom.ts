@@ -41,11 +41,13 @@ export class ChatRoom extends Room<MainState> {
             // Checks if clientId is too long
             if (clientId.length > 24) {
                 client.leave(4121, `clientId '${clientId}' is longer than 24 characters`);
+                return;
             }
 
             // Checks for illegal characters
             if (new RegExp(/[^\x20-\x7F]/g).test(clientId)) {
                 client.leave(4122, `clientId '${clientId}' contains illegal characters`);
+                return;
             }
         } else {
             clientId = `Anonymous (${client.sessionId})`;
