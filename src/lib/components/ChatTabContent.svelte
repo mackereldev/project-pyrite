@@ -56,6 +56,11 @@
         messagesStoreUnsubscribe();
     });
 
+    /*
+    The callback passed to afterUpdate() is called everytime the component is re-rendered.
+    This is always happen after a message is added, and so the scrollHeight of the div
+    will be accurate.
+    */
     afterUpdate(() => {
         if (queueAutoScroll) {
             messageHistory.scrollTo(0, messageHistory.scrollHeight);
@@ -65,11 +70,11 @@
 
     const onSubmitMessage = async () => {
         const room = get(chatTab.roomStore);
-        messageValue = messageValue.replace(/[^\x20-\x7F]/g, ""); // Remove all characters that lie out of the ASCII 20 - 7F range
+        messageValue = messageValue.replace(/[^\x20-\x7F]/g, ""); // Remove all characters that aren't ASCII printable characters (https://www.ascii-code.com)
 
         if (room) {
+            // All messages preceeded by a '/' are interpreted as commands
             if (messageValue.startsWith("/")) {
-                // Commands
                 // Remove consecutive spaces, remove slashes, and trim leading and trailing spaces
                 const command = messageValue
                     .replace(/\/|([/ ]+(?= ))/g, "")
@@ -84,13 +89,13 @@
                     chatTab.addMessage(response);
                 }
             } else {
-                // Chat messages
                 const msg = messageValue.replace(/[^ -~]+/g, "").trim();
                 if (msg.length > 0) {
                     room.send("client-chat", { msg: messageValue });
                 }
             }
         }
+        // Clear the input box for instant feedback
         messageValue = "";
 
         // Automtically mark as read
@@ -125,7 +130,7 @@
     };
 
     const copyRoomID = () => {
-        // Copy code to clipboard
+        // Copy code to clipboard (copyRoomIDButtonTooltipSuccess changes styling and content of tooltip)
         navigator.clipboard.writeText($roomName).then(
             () => {
                 copyRoomIDButtonTooltipSuccess = true;
@@ -153,7 +158,7 @@
             copyRoomIDButtonTooltipShowTimeout = null;
         }, 1000);
 
-        // Position tooltip
+        // Position tooltip and arrow
         computePosition(copyRoomIDButton, copyRoomIDButtonTooltip, {
             placement: "top",
             middleware: [offset(10), flip({ padding: 5 }), shift({ padding: 5 }), arrow({ element: copyRoomIDButtonTooltipArrow })],

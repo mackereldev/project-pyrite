@@ -3,26 +3,25 @@ import { MainState } from "../schema/MainState";
 import { CommandReceiver } from "../classes/CommandReceiver";
 import { ClientData } from "../schema/ClientData";
 
-const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
-
 export class ChatRoom extends Room<MainState> {
     private CHAT_CHANNEL = "chat:rooms";
 
     private commandReceiver: CommandReceiver = new CommandReceiver(this);
 
-    private generateRoomIdSingle(): string {
-        let result = "";
-        for (let i = 0; i < 4; i++) {
-            result += CONSONANTS.charAt(Math.floor(Math.random() * CONSONANTS.length));
-        }
-        return result;
-    }
-
     private async generateRoomId(): Promise<string> {
+        const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
+        const generateRoomIdSingle = (): string => {
+            let result = "";
+            for (let i = 0; i < 4; i++) {
+                result += CONSONANTS.charAt(Math.floor(Math.random() * CONSONANTS.length));
+            }
+            return result;
+        };
+
         const currentIds = await this.presence.smembers(this.CHAT_CHANNEL);
         let id;
         do {
-            id = this.generateRoomIdSingle();
+            id = generateRoomIdSingle();
         } while (currentIds.includes(id));
 
         await this.presence.sadd(this.CHAT_CHANNEL, id);
@@ -30,6 +29,7 @@ export class ChatRoom extends Room<MainState> {
     }
 
     override async onCreate() {
+        // Setup state and subscribers, and generate unique roomId
         this.setState(new MainState(Date.now()));
         this.commandReceiver.register();
         this.roomId = await this.generateRoomId();
@@ -42,16 +42,20 @@ export class ChatRoom extends Room<MainState> {
             // Checks if clientId is too long
             if (clientId.length > 24) {
                 client.leave(4121, `clientId '${clientId}' is longer than 24 characters`);
+                return;
             }
 
             // Checks for illegal characters
             if (new RegExp(/[^\x20-\x7F]/g).test(clientId)) {
                 client.leave(4122, `clientId '${clientId}' contains illegal characters`);
+                return;
             }
         } else {
+            // Fallback to an anonymous username if one was not provided
             clientId = `Anonymous (${client.sessionId})`;
         }
 
+        // Checks for duplicate clientIds
         if (this.state.clientData.some((client) => client.clientId === clientId)) {
             client.leave(4101, `clientId '${clientId}' is taken`);
         } else {
@@ -69,7 +73,7 @@ export class ChatRoom extends Room<MainState> {
     }
 
     override onLeave(client: Client) {
-        const replaceLeader = this.commandReceiver.isLeader(client); // Replace leader if the leader is leaving
+        const replaceLeader = this.state.isLeader(client); // Replace leader if the leader is leaving
 
         const idx = this.state.clientData.findIndex((c) => c.sessionId === client.sessionId);
         if (idx !== -1) {

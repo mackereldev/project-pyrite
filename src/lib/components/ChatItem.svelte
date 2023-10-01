@@ -13,6 +13,7 @@
 
     let messageContent: HTMLSpanElement;
 
+    // Set styling of message based off type (fallbacks included)
     let colour = "text-theme-500";
     let author = "invalid";
     if (message.type === "user") {
@@ -26,12 +27,14 @@
     let includesMention = false;
 
     onMount(() => {
+        // Search for usernames within the provided message
         // https://stackoverflow.com/a/65149088
         const usernames = get(chatTab.clients).map((client) => client.clientId);
         const usernameMatchQueury = usernames.map((u) => u.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")).join("|"); // Escapes special characters and joins each username by a '|'
         const pattern = new RegExp(`(.*?)(${usernameMatchQueury})`, "g");
         const matches = message.text.split(pattern).filter(Boolean);
 
+        // Surround matched usernames with a visual emphasis
         messageContent.innerText = "";
         for (const match of matches) {
             if (usernames.includes(match)) {

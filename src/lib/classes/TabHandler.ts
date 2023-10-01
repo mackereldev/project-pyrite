@@ -13,8 +13,10 @@ export const addTab = (tab: Tab) => {
 
 export const closeTab = async (tab: Tab) => {
     await tab.dispose();
-    if (tab === get(tabsStore)[get(currentTabIdx)]) {
-        currentTabIdx.update((index) => index > 0 ? index - 1 : 0);
+    const currentIdx = get(currentTabIdx);
+    // If the current tab was closed, then change the tab to the one before it
+    if (tab === get(tabsStore)[currentIdx]) {
+        changeTab(Math.max(0, currentIdx - 1));
     }
     tabsStore.update((value) => value.filter((t) => t !== tab));
 };
@@ -32,10 +34,12 @@ export const changeTab = (index: number) => {
         const currentTab = tabs[index];
         currentTabIdx.set(index);
 
+        // Indicate that the latest message of the previous ChatTab was the last one read by the user
         if (previousTab instanceof ChatTab) {
             previousTab.lastReadMessage = get(previousTab.messages).at(-1);
         }
 
+        // Mark the selected ChatTab as read by the user
         if (currentTab instanceof ChatTab) {
             currentTab.isUnread.set(false);
         }

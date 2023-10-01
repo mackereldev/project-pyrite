@@ -1,4 +1,4 @@
-import { ChatMessage } from "./ChatMessage";
+import type { ChatMessage } from "./ChatMessage";
 import { isInteger, isNatural } from "./Utility";
 import type { MainState } from "../../../server/src/schema/MainState";
 import type { Room } from "colyseus.js";
@@ -23,12 +23,10 @@ export abstract class Cmd {
 
     abstract execute(): Promise<ChatMessage | undefined> | undefined;
 
+    // TODO: help commands are sub-commands that specify the details of the given command (purpose, args)
     static help(): string | undefined { return }
 
-    protected static asSystem(text: string, isError: boolean = false) {
-        return new ChatMessage(undefined, "system", text, isError);
-    }
-
+    // Enforces that an argument must resolve to an integer
     protected static toInt<T extends Record<string, string>>(number: SingleKey<T>, allowNegative: boolean = false): number {
         const [name, value] = Object.entries(number)[0];
 
@@ -40,6 +38,7 @@ export abstract class Cmd {
         }
     }
 
+    // Enforces that an argument must be one of a predefined list
     protected static toEnum<T extends Record<string, string>, K extends string>(string: SingleKey<T>, options: readonly K[]): K {
         const [name, value] = Object.entries(string)[0];
 
@@ -72,6 +71,7 @@ export class CmdError implements Error {
     }
 }
 
+// An example command that demonstrates sending data to the server for validation and broadcasting
 export class PingCmd extends Cmd {
     override args;
 
@@ -88,11 +88,12 @@ export class PingCmd extends Cmd {
     }
 }
 
+// A secondary option to the action bar's leave button
 export class LeaveCmd extends Cmd {
     constructor(context: CmdContext) {
         super(context);
     }
-    
+
     override async execute(): Promise<ChatMessage | undefined> {
         await closeTab(this.context.chatTab);
         return;

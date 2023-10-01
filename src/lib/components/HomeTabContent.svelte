@@ -12,15 +12,18 @@
     let roomIdValue: string;
 
     const username = preferences.username;
+    // Simple username sanitisation (done server-side too, also see https://www.ascii-code.com)
     username.subscribe((value) => {
         $username = value.replace(/[^\x20-\x7F]/g, "");
     });
 
     const createRoom = () => {
+        // A ChatTab constructed without any arguments defaults to creating a new room, then joining
         addTab(new ChatTab());
     };
 
     const joinRoom = () => {
+        // Using client-side validation and toasts provides instant feedback whereas relying on server-side validation may take more time
         if (roomIdValue.length !== 4) {
             $toastContainerStore.addToasts(new ToastData("warning", "Invalid Input", "Room ID must be 4 characters long"));
             return;

@@ -1,8 +1,7 @@
 import { ChatRoom } from "../room/ChatRoom";
-import * as MathUtil from "./MathUtil";
-import { Client } from "colyseus";
 import { ServerChat } from "./ServerChat";
 
+/** Receives and interprets commands and their arguments, and handles the responses. */
 export class CommandReceiver {
     private chatRoom: ChatRoom;
 
@@ -11,34 +10,23 @@ export class CommandReceiver {
     }
 
     register() {
-        /* TODO
-        Most of the validation here should be done on the client side (bar requisite checking).
-        Remove ServerChat all together, since only cheaters will be receiving those messages.
-        Move MessageTemplate to the client side or use inheritance.
-        Wrap everything in try and catch
-        */
-
+        // Chat message queued for broadcasting. Profanity filters and other validation would go here.
         this.chatRoom.onMessage("client-chat", (client, message) => {
             const { msg }: { msg: string } = message;
             this.chatRoom.broadcast("client-chat", { msg, author: { sessionId: client.id, clientId: client.userData.clientId } });
         });
 
+        // Specialised ping command
         this.chatRoom.onMessage("cmd-ping", (client, message) => {
             let { delay }: { delay: number } = message;
 
-            delay = MathUtil.clamp(delay, 0, 10000);
-
             if (Number.isFinite(delay)) {
-                delay = MathUtil.clamp(delay, 0, 10000);
+                delay = Math.max(Math.min(delay, 10000), 0); // Clamp delay between 0 and 10 seconds
+
+                this.chatRoom.clock.setTimeout(() => {
+                    this.chatRoom.broadcast("server-chat", new ServerChat(`Client ${client.userData.clientId} pinged all clients.`).serialize());
+                }, delay);
             }
-
-            this.chatRoom.clock.setTimeout(() => {
-                this.chatRoom.broadcast("server-chat", new ServerChat(`Client ${client.userData.clientId} pinged all clients.`).serialize());
-            }, delay);
         });
-    }
-
-    isLeader(client: Client): boolean {
-        return this.chatRoom.state.leader === client.userData.clientId;
     }
 }

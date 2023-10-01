@@ -1,4 +1,5 @@
 export default class ToastData {
+    // Durations are defined in milliseconds
     static readonly DEFAULT_DURATIONS = {
         success: 5000,
         info: 5000,
@@ -6,17 +7,17 @@ export default class ToastData {
         error: 12000,
     };
 
-    severity;
+    severity: "success" | "info" | "warning" | "error";
     message: string;
     detail: string;
 
-    private _duration;
+    private _duration: "disabled" | "auto" | number;
     get duration() {
         return this._duration === "disabled" ? -1 : this._duration === "auto" ? this.evaluateAutoDuration() : this._duration;
     }
 
     get expires() {
-        // Checkes against getter in case this.#evaluateAutoDuration evaluates to non-positive number
+        // Use getter since this.#evaluateAutoDuration might resolve to a non-positive number (falls back to disabled instead)
         return this.duration >= 0;
     }
 
@@ -29,9 +30,5 @@ export default class ToastData {
 
     private evaluateAutoDuration = () => {
         return ToastData.DEFAULT_DURATIONS[this.severity];
-    };
-
-    clone = () => {
-        return new ToastData(this.severity, this.message, this.detail, this._duration);
     };
 }

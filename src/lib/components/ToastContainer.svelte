@@ -4,6 +4,7 @@
 
     export let toasts: ToastData[] = [];
 
+    // Allows mutliple toasts at once (timers and animations are started simultaneously at the next update)
     export const addToasts = (...toastData: ToastData[]) => {
         toasts = toasts.concat(toastData);
     };

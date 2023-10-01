@@ -36,6 +36,7 @@ export class ChatTab extends Tab {
     }
 
     addMessage = (message: ChatMessage) => {
+        // Add message to the message list (use concat() to reassign the variable, triggering a reactive update)
         this.messages.update((current: ChatMessage[]) => current.concat(message));
 
         // Mark as unread
@@ -74,10 +75,13 @@ export class ChatTab extends Tab {
             this.clients.update((clients) => clients.concat({ clientId: client.clientId, sessionId: client.sessionId, isLeader: get(this.roomStore).state.leader === client.clientId }));
 
             if (client.sessionId === get(this.roomStore).sessionId) {
-                this.acceptingJoinMessages = true; // Only show join messages once all 'present' clients have been processed
+                // Only show join messages once all 'present' clients have been processed
+                this.acceptingJoinMessages = true;
+                // The clientId may be altered by the server after joining (anonymous mode), and is instead found by matching the concrete sessionId
                 this.effectiveUsername.set(client.clientId);
             }
 
+            // Only added if the user specified the joinLeaveMessages preference option
             if (this.acceptingJoinMessages && get(preferences.joinLeaveMessages)) {
                 this.addMessage(new ChatMessage(undefined, "system", `${client.clientId} joined the room.`));
             }
@@ -90,19 +94,22 @@ export class ChatTab extends Tab {
             }
         });
 
+        // The server's means of communicating to a client or all clients
         room.onMessage("server-chat", (message) => {
             const chat = (msg: { serializedMessage: { text: string; isError: boolean } }) => {
                 const chatMessage = new ChatMessage(undefined, "system", msg.serializedMessage.text, msg.serializedMessage.isError);
                 this.addMessage(chatMessage);
             };
-
+            
+            // message can be either a single 'serializedMessage' or an array of them (avoids excessive calls since RCP messages are sent instantly)
             if (Array.isArray(message)) {
                 message.forEach((subMessage) => chat(subMessage));
             } else {
                 chat(message);
             }
         });
-
+         
+        // A client's means of communicating with other clients (chat messages)
         room.onMessage("client-chat", (message) => {
             const { msg, author }: { msg: string; author: { sessionId: string; clientId: string } } = message;
 
@@ -113,6 +120,7 @@ export class ChatTab extends Tab {
 
     private handleError = (err: any) => {
         const toastContainer = get(toastContainerStore);
+        // Codes are defined in the server and are used to clarify otherwise generic error messages
         if (err.code === 4101) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username was taken"));
         } else if (err.code === 4121) {
@@ -122,6 +130,7 @@ export class ChatTab extends Tab {
         } else if (err.code === 4212) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room does not exist or is full"));
         }
+        // Server errors are treated as fatal, logging the trace to the console and closing the tab
         console.error(`Colyseus error (${err.code}): ${err.message}`);
         closeTab(this);
     };
