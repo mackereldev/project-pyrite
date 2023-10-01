@@ -3,12 +3,19 @@
     import { toastContainerStore } from "$lib/classes/Stores";
     import ToastContainer from "$lib/components/ToastContainer.svelte";
     import { tabsStore, currentTabIdx } from "$lib/classes/TabHandler";
-    import { get } from "svelte/store";
+    import type { Unsubscriber } from "svelte/store";
 
     let context = "Home";
+    let tabNameUnsubscriber: Unsubscriber | undefined;
     currentTabIdx.subscribe((tabIndex) => {
+        // Remove existing subscription
+        if (tabNameUnsubscriber) {
+            tabNameUnsubscriber();
+            tabNameUnsubscriber = undefined;
+        }
+        
         if (tabIndex > 0) {
-            context = get($tabsStore[tabIndex].name);
+            tabNameUnsubscriber = $tabsStore[tabIndex].name.subscribe((value) => (context = value));
         } else {
             context = "Home";
         }
