@@ -3,26 +3,25 @@ import { MainState } from "../schema/MainState";
 import { CommandReceiver } from "../classes/CommandReceiver";
 import { ClientData } from "../schema/ClientData";
 
-const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
-
 export class ChatRoom extends Room<MainState> {
     private CHAT_CHANNEL = "chat:rooms";
 
     private commandReceiver: CommandReceiver = new CommandReceiver(this);
 
-    private generateRoomIdSingle(): string {
-        let result = "";
-        for (let i = 0; i < 4; i++) {
-            result += CONSONANTS.charAt(Math.floor(Math.random() * CONSONANTS.length));
-        }
-        return result;
-    }
-
     private async generateRoomId(): Promise<string> {
+        const CONSONANTS = "BCDFGHJKLMNPQRSTVWXYZ";
+        const generateRoomIdSingle = (): string => {
+            let result = "";
+            for (let i = 0; i < 4; i++) {
+                result += CONSONANTS.charAt(Math.floor(Math.random() * CONSONANTS.length));
+            }
+            return result;
+        };
+
         const currentIds = await this.presence.smembers(this.CHAT_CHANNEL);
         let id;
         do {
-            id = this.generateRoomIdSingle();
+            id = generateRoomIdSingle();
         } while (currentIds.includes(id));
 
         await this.presence.sadd(this.CHAT_CHANNEL, id);
