@@ -12,6 +12,7 @@
 
     $: currentTab = $tabsStore[$currentTabIdx];
 
+    // Closes all tabs if the page is changed (going back to another page of the website)
     beforeNavigate(async () => {
         closeAllTabs();
     });

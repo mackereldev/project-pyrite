@@ -1,6 +1,7 @@
 import { ChatRoom } from "../room/ChatRoom";
 import { ServerChat } from "./ServerChat";
 
+/** Receives and interprets commands and their arguments, and handles the responses. */
 export class CommandReceiver {
     private chatRoom: ChatRoom;
 
@@ -9,11 +10,13 @@ export class CommandReceiver {
     }
 
     register() {
+        // Chat message queued for broadcasting. Profanity filters and other validation would go here.
         this.chatRoom.onMessage("client-chat", (client, message) => {
             const { msg }: { msg: string } = message;
             this.chatRoom.broadcast("client-chat", { msg, author: { sessionId: client.id, clientId: client.userData.clientId } });
         });
 
+        // Specialised ping command
         this.chatRoom.onMessage("cmd-ping", (client, message) => {
             let { delay }: { delay: number } = message;
 

@@ -33,6 +33,7 @@
         }
     });
 
+    // The icon and base colour is determined by the severity of the toast
     let colour: string = "bg-theme-200";
     let icon: IconSource = QuestionMarkCircle;
     if (toast.severity === "success") {

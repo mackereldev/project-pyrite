@@ -1,5 +1,6 @@
 import { Schema, type } from "@colyseus/schema";
 
+/** Synced information about a client. */
 export class ClientData extends Schema {
     @type("string")
     sessionId: string;

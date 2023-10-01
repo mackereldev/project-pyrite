@@ -2,6 +2,7 @@
     let dialog: HTMLDialogElement;
 
     const onClick = (e: MouseEvent) => {
+        // Is true if the background was clicked (the content is instead denoted by <slot />)
         if (e.target === dialog) {
             dialog.close();
         }

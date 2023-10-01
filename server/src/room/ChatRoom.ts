@@ -29,6 +29,7 @@ export class ChatRoom extends Room<MainState> {
     }
 
     override async onCreate() {
+        // Setup state and subscribers, and generate unique roomId
         this.setState(new MainState(Date.now()));
         this.commandReceiver.register();
         this.roomId = await this.generateRoomId();
@@ -50,9 +51,11 @@ export class ChatRoom extends Room<MainState> {
                 return;
             }
         } else {
+            // Fallback to an anonymous username if one was not provided
             clientId = `Anonymous (${client.sessionId})`;
         }
 
+        // Checks for duplicate clientIds
         if (this.state.clientData.some((client) => client.clientId === clientId)) {
             client.leave(4101, `clientId '${clientId}' is taken`);
         } else {

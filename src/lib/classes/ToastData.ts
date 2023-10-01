@@ -1,4 +1,5 @@
 export default class ToastData {
+    // Durations are defined in milliseconds
     static readonly DEFAULT_DURATIONS = {
         success: 5000,
         info: 5000,
@@ -16,7 +17,7 @@ export default class ToastData {
     }
 
     get expires() {
-        // Checkes against getter in case this.#evaluateAutoDuration evaluates to non-positive number
+        // Use getter since this.#evaluateAutoDuration might resolve to a non-positive number (falls back to disabled instead)
         return this.duration >= 0;
     }
 

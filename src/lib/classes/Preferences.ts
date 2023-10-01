@@ -16,6 +16,7 @@ export class Preferences {
                 const prop = this[key] as any;
                 if (prop.subscribe) {
                     const store = prop as Writable<never>;
+                    // Each store of the Preferences class is saved independently upon its value being changed
                     subscribeStoreDefer(store, (value) => {
                         const oldStorage = JSON.parse(localStorage.getItem("preferences") || "{}");
                         oldStorage[key] = value;
@@ -38,6 +39,11 @@ export class Preferences {
         });
     }
 
+    /*
+    Preferences are loaded from local storage only if they exist. Each value is
+    tested against the properties of the Preferences class, that is if a store
+    of the same name exists. Otherwise, unknown preferences are ignored.
+    */
     static loadPrefs = () => {
         const prefs = new Preferences();
 
@@ -65,4 +71,5 @@ export class Preferences {
     };
 }
 
+// TODO: Use a static class instead since only one instance of Prefrences should exist
 export const preferences: Preferences = Preferences.loadPrefs();

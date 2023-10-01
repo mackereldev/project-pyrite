@@ -26,6 +26,7 @@
 
     const processExport = () => {
         const getFilteredMessages = (ordered: ChatMessage[]) => {
+            // Filter out system messages
             if (options.excludeSystemMessages) {
                 return ordered.filter((msg) => msg.type !== "system");
             }
@@ -49,6 +50,7 @@
         const orderedMessages = get(context.messages);
         let validatedMessages: ChatMessage[];
 
+        // Set validatedMessages based on the time range specified by the user
         switch (options.timeRange) {
             case ExportTimeRange.FifteenMinutes:
                 validatedMessages = getFilteredMessagesInRange(orderedMessages, dayjs().subtract(15, "minutes"));
@@ -67,8 +69,10 @@
                 break;
         }
 
+        // Only processes the export if there are any messages that match the user's options
         if (validatedMessages.length > 0) {
             // prettier-ignore
+            // Construct the csv content (keys are headers)
             const csvBody = validatedMessages.map((msg) => {return {
                 time: dayjs(msg.time).format("dddd YYYY/MM/DD h:mm:ss.SSS A"),
                 author: msg.type === "system" ? "*SYSTEM*" : msg.author!,
@@ -76,6 +80,7 @@
             };});
 
             // prettier-ignore
+            // Construct the file name
             const fileName = [
                 get(context.name), // Room name
                 "export", // File descriptor / role
@@ -83,6 +88,7 @@
                 `[${validatedMessages.length} messages]`, // Message count
             ].join(" ");
 
+            // Generate and download the csv file
             const csvConfig = mkConfig({ useKeysAsHeaders: true, fieldSeparator: "\t", filename: fileName });
             const csv = generateCsv(csvConfig)(csvBody);
             download(csvConfig)(csv);

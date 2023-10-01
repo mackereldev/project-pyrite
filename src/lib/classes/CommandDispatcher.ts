@@ -40,6 +40,7 @@ export class CommandDispatcher {
     };
 }
 
+// Command keys exist so that the user can specify which command they want to execute
 export const commandRefs = {
     ping: (context: CmdContext, ...args: string[]) => new PingCmd(context, args[0]),
     leave: (context: CmdContext) => new LeaveCmd(context),

@@ -7,6 +7,7 @@ export class ServerChat {
         this.isError = isError;
     }
 
+    // Only serialized messages can be sent to the client since they're plain text
     serialize(): object {
         return {
             serializedMessage: {
