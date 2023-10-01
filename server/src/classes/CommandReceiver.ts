@@ -11,13 +11,6 @@ export class CommandReceiver {
     }
 
     register() {
-        /* TODO
-        Most of the validation here should be done on the client side (bar requisite checking).
-        Remove ServerChat all together, since only cheaters will be receiving those messages.
-        Move MessageTemplate to the client side or use inheritance.
-        Wrap everything in try and catch
-        */
-
         this.chatRoom.onMessage("client-chat", (client, message) => {
             const { msg }: { msg: string } = message;
             this.chatRoom.broadcast("client-chat", { msg, author: { sessionId: client.id, clientId: client.userData.clientId } });
