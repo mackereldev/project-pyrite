@@ -1,5 +1,4 @@
 import { ChatRoom } from "../room/ChatRoom";
-import * as MathUtil from "./MathUtil";
 import { Client } from "colyseus";
 import { ServerChat } from "./ServerChat";
 
@@ -19,15 +18,13 @@ export class CommandReceiver {
         this.chatRoom.onMessage("cmd-ping", (client, message) => {
             let { delay }: { delay: number } = message;
 
-            delay = MathUtil.clamp(delay, 0, 10000);
-
             if (Number.isFinite(delay)) {
-                delay = MathUtil.clamp(delay, 0, 10000);
-            }
+                delay = Math.max(Math.min(delay, 10000), 0); // Clamp delay between 0 and 10 seconds
 
-            this.chatRoom.clock.setTimeout(() => {
-                this.chatRoom.broadcast("server-chat", new ServerChat(`Client ${client.userData.clientId} pinged all clients.`).serialize());
-            }, delay);
+                this.chatRoom.clock.setTimeout(() => {
+                    this.chatRoom.broadcast("server-chat", new ServerChat(`Client ${client.userData.clientId} pinged all clients.`).serialize());
+                }, delay);
+            }
         });
     }
 
