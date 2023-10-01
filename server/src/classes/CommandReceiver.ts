@@ -1,5 +1,5 @@
 import { ChatRoom } from "../room/ChatRoom";
-import * as MathMore from "../../../src/lib/classes/MathMore";
+import * as MathUtil from "./MathUtil";
 import { Client } from "colyseus";
 import { ServerChat } from "./ServerChat";
 
@@ -26,10 +26,10 @@ export class CommandReceiver {
         this.chatRoom.onMessage("cmd-ping", (client, message) => {
             let { delay }: { delay: number } = message;
 
-            delay = MathMore.clamp(delay, 0, 10000);
+            delay = MathUtil.clamp(delay, 0, 10000);
 
             if (Number.isFinite(delay)) {
-                delay = MathMore.clamp(delay, 0, 10000);
+                delay = MathUtil.clamp(delay, 0, 10000);
             }
 
             this.chatRoom.clock.setTimeout(() => {
