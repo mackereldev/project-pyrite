@@ -69,7 +69,7 @@ export class ChatRoom extends Room<MainState> {
     }
 
     override onLeave(client: Client) {
-        const replaceLeader = this.commandReceiver.isLeader(client); // Replace leader if the leader is leaving
+        const replaceLeader = this.state.isLeader(client); // Replace leader if the leader is leaving
 
         const idx = this.state.clientData.findIndex((c) => c.sessionId === client.sessionId);
         if (idx !== -1) {

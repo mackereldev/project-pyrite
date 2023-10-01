@@ -1,5 +1,4 @@
 import { ChatRoom } from "../room/ChatRoom";
-import { Client } from "colyseus";
 import { ServerChat } from "./ServerChat";
 
 export class CommandReceiver {
@@ -26,9 +25,5 @@ export class CommandReceiver {
                 }, delay);
             }
         });
-    }
-
-    isLeader(client: Client): boolean {
-        return this.chatRoom.state.leader === client.userData.clientId;
     }
 }
