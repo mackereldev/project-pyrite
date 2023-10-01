@@ -13,8 +13,9 @@ export const addTab = (tab: Tab) => {
 
 export const closeTab = async (tab: Tab) => {
     await tab.dispose();
-    if (tab === get(tabsStore)[get(currentTabIdx)]) {
-        currentTabIdx.update((index) => index > 0 ? index - 1 : 0);
+    const currentIdx = get(currentTabIdx);
+    if (tab === get(tabsStore)[currentIdx]) {
+        changeTab(Math.max(0, currentIdx - 1));
     }
     tabsStore.update((value) => value.filter((t) => t !== tab));
 };
