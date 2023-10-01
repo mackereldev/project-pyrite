@@ -6,11 +6,11 @@ export default class ToastData {
         error: 12000,
     };
 
-    severity;
+    severity: "success" | "info" | "warning" | "error";
     message: string;
     detail: string;
 
-    private _duration;
+    private _duration: "disabled" | "auto" | number;
     get duration() {
         return this._duration === "disabled" ? -1 : this._duration === "auto" ? this.evaluateAutoDuration() : this._duration;
     }
@@ -29,9 +29,5 @@ export default class ToastData {
 
     private evaluateAutoDuration = () => {
         return ToastData.DEFAULT_DURATIONS[this.severity];
-    };
-
-    clone = () => {
-        return new ToastData(this.severity, this.message, this.detail, this._duration);
     };
 }
