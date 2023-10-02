@@ -112,7 +112,7 @@
             if (event.key === "Escape") {
                 // Manually mark as read
                 chatTab.lastReadMessage = undefined;
-            } else if (document.activeElement !== messageElement && !event.ctrlKey && !event.altKey) {
+            } else if (document.activeElement !== messageElement && !event.ctrlKey && !event.altKey && !event.metaKey) {
                 if (event.key.match(/^[\x20-\x7F]$/g)) {
                     // Automatically focus the message box
                     messageElement.focus();
