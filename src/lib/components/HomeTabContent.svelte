@@ -4,7 +4,6 @@
     import { addTab } from "$lib/classes/TabHandler";
     import { preferences } from "$lib/classes/Preferences";
     import ToastData from "$lib/classes/ToastData";
-    import Input from "./Input.svelte";
     import { Icon } from "@steeze-ui/svelte-icon";
     import { Cog6Tooth } from "@steeze-ui/heroicons";
     import { preferencesModalStore } from "$lib/classes/Stores";
@@ -39,7 +38,7 @@
     </button>
     <div class="absolute right-4 top-4 flex flex-col">
         <span>Username</span>
-        <Input bind:value={$username} placeholder="Anonymous" maxlength={24} />
+        <input bind:value={$username} placeholder="Anonymous" maxlength={24} data-1p-ignore class="input" />
     </div>
     <div class="flex flex-col items-center">
         <h1 class="text-3xl">Welcome to <span class="text-amber-500">Pyrite</span></h1>
@@ -51,9 +50,9 @@
         <div class="flex flex-col items-center">
             <p class="mb-2">Join an existing one</p>
             <div class="flex flex-col gap-2">
-                <form on:submit|preventDefault={joinRoom} class="ring-input flex h-fit flex-row overflow-clip">
+                <form on:submit|preventDefault={joinRoom} class="input flex h-fit w-full flex-row overflow-hidden px-0">
                     <!-- prettier-ignore -->
-                    <Input bind:value={roomIdValue} placeholder="Enter Code" id="room-id-input" on:input={() => {roomIdValue = roomIdValue.replaceAll(/[^A-Za-z]+/g, '').toUpperCase()}} maxlength={4} omitRingStyle class="h-9 w-full flex-grow text-center" />
+                    <input bind:value={roomIdValue} placeholder="Enter Code" on:input={() => {roomIdValue = roomIdValue.replaceAll(/[^A-Za-z]+/g, '').toUpperCase()}} maxlength={4} class="h-9 w-full flex-grow text-center bg-transparent input-text" />
                     <button type="submit" class="group box-content flex w-8 items-center bg-theme-100 px-0.5 transition-colors hover:bg-violet-500">
                         <svg viewBox="0 0 24 24" class="fill-theme-400 transition-colors group-hover:fill-theme-100">
                             <path d="M12.1714 10.9998L7.51451 6.34292L8.92872 4.92871L15.9998 11.9998L8.92872 19.0708L7.51451 17.6566L12.1713 12.9998L2.99953 12.9999L2.99951 10.9999L12.1714 10.9998ZM17.9996 18.9997L17.9996 4.99972H19.9996L19.9996 18.9997H17.9996Z" />
