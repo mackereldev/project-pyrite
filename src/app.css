@@ -50,7 +50,7 @@
         @apply text-theme-500 ring-theme-300 disabled:text-theme-300 disabled:ring-theme-300 rounded-lg px-4 py-1 text-center text-lg font-medium ring-2 transition-all hover:text-violet-600 hover:ring-violet-500 disabled:hover:ring-2;
     }
 
-    .btn-theme-500 {
+    .btn-highlight {
         @apply text-theme-100 hover:text-theme-100 bg-violet-500 font-medium ring-0 hover:bg-violet-400 hover:ring-0 disabled:bg-violet-200 disabled:text-violet-300 disabled:hover:ring-0;
     }
 
