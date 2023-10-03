@@ -75,6 +75,7 @@
             // Construct the csv content (keys are headers)
             const csvBody = validatedMessages.map((msg) => {return {
                 time: dayjs(msg.time).format("dddd YYYY/MM/DD h:mm:ss.SSS A"),
+                type: msg.type,
                 author: msg.type === "system" ? "*SYSTEM*" : msg.author!,
                 message: msg.text.replace(/\t/g, " "),
             };});
