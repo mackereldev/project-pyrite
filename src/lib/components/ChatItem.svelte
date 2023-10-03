@@ -56,7 +56,7 @@
     const chatStyle = preferences.chatStyle;
 </script>
 
-<div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? ' unread-msg-shadow' : ''}{includesMention ? ' bg-amber-100 dark:bg-amber-400/20' : ''}">
+<div class="{$chatStyle === ChatStyle.Cozy ? 'text-base' : 'text-sm'} {unreadIndicator ? 'unread-msg-shadow' : ''}{includesMention ? 'bg-amber-100 dark:bg-amber-400/20' : ''}">
     <span class="font-mono text-theme-400">{message.getRelativeTime(relativeStartTime)}</span>
     <span class="font-semibold {colour}">[{author}]</span>
     <span bind:this={messageContent} class="whitespace-pre-wrap {message.type === 'system' ? 'italic text-theme-400' : 'not-italic'}{message.isError ? ' !text-red-400' : ''}" />
