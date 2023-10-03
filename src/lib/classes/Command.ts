@@ -75,10 +75,10 @@ export class CmdError implements Error {
 export class PingCmd extends Cmd {
     override args;
 
-    constructor(context: CmdContext, delay: string) {
+    constructor(context: CmdContext, delay?: string) {
         super(context);
         this.args = {
-            delay: Cmd.toInt({ delay }),
+            delay: delay ? Cmd.toInt({ delay }) : 0,
         };
     }
 
