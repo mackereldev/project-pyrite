@@ -78,9 +78,7 @@ export class ChatRoom extends Room<MainState> {
 
             const clientData = new ClientData(client.id, clientId);
             this.state.clientData.push(clientData);
-            if (!this.state.leader) {
-                this.state.leader = clientId;
-            }
+            this.state.leader ??= clientId; // Only assign if leader isn't set
         }
     }
 
