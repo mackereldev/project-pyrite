@@ -200,7 +200,7 @@
             {/each}
         </div>
         <form on:submit|preventDefault={onSubmitMessage} class="p-4 transition-shadow duration-150 {showShadow && 'chat-entry-shadow'}">
-            <div class="flex h-8 w-full bg-theme-100 ring-2 ring-theme-300">
+            <div class="flex h-8 w-full rounded bg-theme-100 ring-2 ring-theme-300">
                 <!-- svelte-ignore a11y-autofocus -->
                 <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} placeholder="Message {$roomName}" class="h-full flex-grow bg-transparent pl-2 text-sm placeholder:text-theme-300" />
                 <button class="group aspect-square h-full py-1.5">
