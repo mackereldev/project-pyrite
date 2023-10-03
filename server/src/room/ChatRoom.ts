@@ -3,6 +3,8 @@ import { MainState } from "../schema/MainState";
 import { CommandReceiver } from "../classes/CommandReceiver";
 import { ClientData } from "../schema/ClientData";
 
+export const reservedClientIds: string[] = ["system", "server", "admin", "dev", "developer"];
+
 export class ChatRoom extends Room<MainState> {
     private CHAT_CHANNEL = "chat:rooms";
 
@@ -48,6 +50,16 @@ export class ChatRoom extends Room<MainState> {
             // Checks for illegal characters
             if (new RegExp(/[^\x20-\x7F]/g).test(clientId)) {
                 client.leave(4122, `clientId '${clientId}' contains illegal characters`);
+                return;
+            }
+
+            // Checks for illegal clientIds
+            if (reservedClientIds.some((reserved) => {
+                const sanitisedQuery = reserved.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").toLowerCase();
+                const r = new RegExp(`^(?:\\W|^)+(${sanitisedQuery})(?:\\W|$)+$`, "g");
+                return r.test(clientId.toLowerCase());
+            })) {
+                client.leave(4123, `clientId '${clientId}' is reserved`);
                 return;
             }
         } else {

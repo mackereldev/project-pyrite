@@ -127,6 +127,8 @@ export class ChatTab extends Tab {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username is too long"));
         } else if (err.code === 4122) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username contains illegal characters"));
+        } else if (err.code === 4123) {
+            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username is reserved"));
         } else if (err.code === 4212) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room does not exist or is full"));
         }
