@@ -30,8 +30,8 @@
         // Search for usernames within the provided message
         // https://stackoverflow.com/a/65149088
         const usernames = get(chatTab.clients).map((client) => client.clientId);
-        const usernameMatchQueury = usernames.map((u) => u.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")).join("|"); // Escapes special characters and joins each username by a '|'
-        const pattern = new RegExp(`(.*?)(${usernameMatchQueury})`, "g");
+        const usernameMatchQuery = usernames.map((u) => u.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")).join("|"); // Escapes special characters and joins each username by a '|'
+        const pattern = new RegExp(`(.*?)(${usernameMatchQuery})`, "g");
         const matches = message.text.split(pattern).filter(Boolean);
 
         // Surround matched usernames with a visual emphasis
