@@ -5,9 +5,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite dev",
-        "build": "vite build",
-        "preview": "vite preview",
+        "dev": "PUBLIC_NODE_ENV=development vite dev",
+        "build": "PUBLIC_NODE_ENV=production vite build",
+        "preview": "PUBLIC_NODE_ENV=production vite preview",
         "format": "prettier **/*.svelte --write",
         "lint": "eslint src/ server/",
         "check": "svelte-check"
