@@ -24,12 +24,12 @@ export class ChatMessage {
     getRelativeTime = (relativeStartTime: number) => {
         return dayjs.utc(this.time - relativeStartTime).format("HH:mm:ss");
     };
-    
+
     // Only serialized messages can be sent to the server since they're plain text
     serialize(): string {
         return ChatMessage.serialize(this);
     }
-    
+
     static serialize(chatMessage: ChatMessage): string {
         return JSON.stringify(chatMessage);
     }

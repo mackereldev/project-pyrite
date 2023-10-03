@@ -100,7 +100,7 @@ export class ChatTab extends Tab {
                 const chatMessage = new ChatMessage(undefined, "system", msg.serializedMessage.text, msg.serializedMessage.isError);
                 this.addMessage(chatMessage);
             };
-            
+
             // message can be either a single 'serializedMessage' or an array of them (avoids excessive calls since RCP messages are sent instantly)
             if (Array.isArray(message)) {
                 message.forEach((subMessage) => chat(subMessage));

@@ -13,7 +13,7 @@
             tabNameUnsubscriber();
             tabNameUnsubscriber = undefined;
         }
-        
+
         if (tabIndex > 0) {
             tabNameUnsubscriber = $tabsStore[tabIndex].name.subscribe((value) => (context = value));
         } else {
