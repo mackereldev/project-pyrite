@@ -8,7 +8,7 @@
     import { Cog6Tooth } from "@steeze-ui/heroicons";
     import { preferencesModalStore } from "$lib/classes/Stores";
 
-    let roomIdValue: string;
+    let roomIdValue: string = "";
 
     const username = preferences.username;
     // Simple username sanitisation (done server-side too, also see https://www.ascii-code.com)
