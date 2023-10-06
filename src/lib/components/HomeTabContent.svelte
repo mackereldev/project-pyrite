@@ -48,7 +48,7 @@
         <button on:click={createRoom} class="btn w-full">Create a room</button>
         <p class="text-lg">OR</p>
         <div class="flex flex-col items-center">
-            <p class="mb-2">Join an existing one</p>
+            <p class="mb-2">Join an existing room</p>
             <div class="flex flex-col gap-2">
                 <form on:submit|preventDefault={joinRoom} class="input flex h-fit w-full flex-row overflow-hidden px-0">
                     <!-- prettier-ignore -->
