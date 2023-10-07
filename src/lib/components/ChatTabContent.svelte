@@ -68,9 +68,14 @@
         }
     });
 
+    const sanitiseMessageValue = () => {
+        // Remove all characters that aren't ASCII printable characters (https://www.ascii-code.com)
+        messageValue = messageValue.replace(/[^\x20-\x7F]/g, "");
+    };
+
     const onSubmitMessage = async () => {
         const room = get(chatTab.roomStore);
-        messageValue = messageValue.replace(/[^\x20-\x7F]/g, ""); // Remove all characters that aren't ASCII printable characters (https://www.ascii-code.com)
+        sanitiseMessageValue();
 
         if (room) {
             // All messages preceeded by a '/' are interpreted as commands
@@ -199,7 +204,7 @@
                 <ChatItem {chatTab} {message} unreadIndicator={i !== $messages.length - 1 && chatTab.lastReadMessage === message} relativeStartTime={get(chatTab.roomStore).state.serverStartTime} />
             {/each}
         </div>
-        <form on:submit|preventDefault={onSubmitMessage} class="p-4 transition-shadow duration-150 {showShadow && 'chat-entry-shadow'}">
+        <form on:submit|preventDefault={onSubmitMessage} on:input={sanitiseMessageValue} class="p-4 transition-shadow duration-150 {showShadow && 'chat-entry-shadow'}">
             <div class="flex h-8 w-full rounded bg-theme-100 ring-2 ring-theme-300">
                 <!-- svelte-ignore a11y-autofocus -->
                 <input type="text" autofocus bind:this={messageElement} bind:value={messageValue} placeholder="Message {$roomName}" class="h-full flex-grow bg-transparent pl-2 text-sm placeholder:text-theme-300" />
