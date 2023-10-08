@@ -75,6 +75,7 @@
             // Construct the csv content (keys are headers)
             const csvBody = validatedMessages.map((msg) => {return {
                 time: dayjs(msg.time).format("dddd YYYY/MM/DD h:mm:ss.SSS A"),
+                type: msg.type,
                 author: msg.type === "system" ? "*SYSTEM*" : msg.author!,
                 message: msg.text.replace(/\t/g, " "),
             };});
@@ -102,22 +103,25 @@
     {#if context && options}
         <div class="flex w-96 flex-col p-6">
             <h2 class="mb-6 text-center text-2xl">Export Chat</h2>
-            <form on:submit|preventDefault class="flex flex-col gap-2">
-                <div class="pref-option">
-                    <label for="time-range">Time range</label>
-                    <select id="time-range" bind:value={options.timeRange}>
-                        <option value={ExportTimeRange.FifteenMinutes}>15 Mins</option>
-                        <option value={ExportTimeRange.OneHour}>1 Hour</option>
-                        <option value={ExportTimeRange.SixHours}>6 Hours</option>
-                        <option value={ExportTimeRange.Today}>Today</option>
-                        <option value={ExportTimeRange.All}>All</option>
-                    </select>
+            <form on:submit|preventDefault class="flex flex-col">
+                <div class="flex flex-col gap-2">
+                    <div class="pref-option">
+                        <label for="time-range">Time range</label>
+                        <select id="time-range" bind:value={options.timeRange}>
+                            <option value={ExportTimeRange.FifteenMinutes}>15 Mins</option>
+                            <option value={ExportTimeRange.OneHour}>1 Hour</option>
+                            <option value={ExportTimeRange.SixHours}>6 Hours</option>
+                            <option value={ExportTimeRange.Today}>Today</option>
+                            <option value={ExportTimeRange.All}>All</option>
+                        </select>
+                    </div>
+                    <div class="pref-option">
+                        <label for="exclude-system-messages">Exclude system messages</label>
+                        <input id="exclude-system-messages" bind:checked={options.excludeSystemMessages} type="checkbox" />
+                    </div>
                 </div>
-                <div class="pref-option">
-                    <label for="exclude-system-messages">Exclude system messages</label>
-                    <input id="exclude-system-messages" bind:checked={options.excludeSystemMessages} type="checkbox" />
-                </div>
-                <button on:click={processExport} class="btn mt-4">Export</button>
+                <button on:click={processExport} class="btn mt-6">Export</button>
+                <span class="text-sm italic text-theme-400 mt-1.5 self-center">Exported CSV files use tab delimiters</span>
             </form>
         </div>
     {/if}

@@ -56,9 +56,9 @@
 <div in:fly={{ x: 100, duration: 500, opacity: 1, easing: quintOut }} out:fade={{ duration: 200, easing: circOut }} class="flex h-20 w-96">
     <button on:click={remove} class="relative flex flex-grow items-center gap-3 truncate rounded-lg px-4 {colour}">
         <Icon src={icon} class="h-8 w-8 stroke-zinc-600" />
-        <div class="flex flex-grow flex-col items-start text-zinc-600">
-            <div class="text-lg font-medium">{toast.message}</div>
-            <div class="text-sm">{toast.detail}</div>
+        <div class="flex flex-grow flex-col items-start">
+            <div class="text-lg font-medium text-zinc-600">{toast.message}</div>
+            <div class="text-sm text-zinc-600">{toast.detail}</div>
         </div>
         <Icon src={XMark} class="h-7 w-7 stroke-neutral-800/20 stroke-2 transition-colors hover:stroke-neutral-600/50" />
         {#if toast.expires}

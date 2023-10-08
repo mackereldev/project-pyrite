@@ -5,7 +5,7 @@ import { clientStore, toastContainerStore } from "./Stores";
 import type * as Colyseus from "colyseus.js";
 import type { MainState } from "../../../server/src/schema/MainState";
 import { CommandDispatcher } from "./CommandDispatcher";
-import { closeTab } from "./TabHandler";
+import { changeTab, closeTab } from "./TabHandler";
 import ToastData from "./ToastData";
 import { tabsStore, currentTabIdx } from "./TabHandler";
 import type { ClientData } from "../../../server/src/schema/ClientData";
@@ -100,7 +100,7 @@ export class ChatTab extends Tab {
                 const chatMessage = new ChatMessage(undefined, "system", msg.serializedMessage.text, msg.serializedMessage.isError);
                 this.addMessage(chatMessage);
             };
-            
+
             // message can be either a single 'serializedMessage' or an array of them (avoids excessive calls since RCP messages are sent instantly)
             if (Array.isArray(message)) {
                 message.forEach((subMessage) => chat(subMessage));
@@ -108,7 +108,7 @@ export class ChatTab extends Tab {
                 chat(message);
             }
         });
-         
+
         // A client's means of communicating with other clients (chat messages)
         room.onMessage("client-chat", (message) => {
             const { msg, author }: { msg: string; author: { sessionId: string; clientId: string } } = message;
@@ -127,12 +127,15 @@ export class ChatTab extends Tab {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username is too long"));
         } else if (err.code === 4122) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username contains illegal characters"));
+        } else if (err.code === 4123) {
+            toastContainer.addToasts(new ToastData("error", "Unable to Join", "Username is reserved"));
         } else if (err.code === 4212) {
             toastContainer.addToasts(new ToastData("error", "Unable to Join", "Room does not exist or is full"));
         }
-        // Server errors are treated as fatal, logging the trace to the console and closing the tab
+        // Server errors are treated as fatal, closing the tab and redirecting to the home tab
         console.error(`Colyseus error (${err.code}): ${err.message}`);
         closeTab(this);
+        changeTab(0);
     };
 
     override dispose = async () => {
