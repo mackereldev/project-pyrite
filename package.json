@@ -40,7 +40,7 @@
         "tslib": "^2.6.1",
         "tw-colors": "^3.0.3",
         "typescript": "^5.1.6",
-        "vite": "^4.4.7",
+        "vite": "^4.5.2",
         "ws": "^8.13.0"
     },
     "dependencies": {
